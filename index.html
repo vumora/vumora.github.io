@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f0f0f" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="description" content="VidLoom — watch like YouTube. Instant play." />
+  <title>VidLoom</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
+  <link rel="preconnect" href="https://www.youtube.com" />
+  <link rel="preconnect" href="https://s.ytimg.com" />
+  <link rel="dns-prefetch" href="https://corsproxy.io" />
+  <link rel="dns-prefetch" href="https://inv.nadeko.net" />
+  <script>
+    (function () {
+      var t = "dark";
+      try { t = localStorage.getItem("vl-theme") || t; } catch (e) {}
+      document.documentElement.className = t === "light" ? "light" : "dark";
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="ptr" class="ptr" aria-hidden="true">Release to refresh</div>
+  <header class="site-header" id="top">
+    <div class="header-inner">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="icon-192.png" width="36" height="36" alt="" />
+        <span class="brand-name">VidLoom</span>
+      </a>
+      <button type="button" class="settings-btn" id="settingsBtn" aria-label="Settings" onclick="window.openSettings&&window.openSettings()">⚙</button>
+    </div>
+    <nav class="header-nav" aria-label="Format">
+      <button type="button" class="nav-btn is-active" data-filter="all" data-i18n="home">Home</button>
+      <button type="button" class="nav-btn" data-filter="short" data-i18n="shorts">Shorts</button>
+      <button type="button" class="nav-btn" data-filter="long" data-i18n="videos">Videos</button>
+      <button type="button" class="nav-btn" id="refreshBtn" title="Refresh">↻</button>
+    </nav>
+    <form class="search-row" id="searchForm" action="#" autocomplete="off">
+      <label class="sr-only" for="search">Search</label>
+      <input id="search" type="search" placeholder="Search VidLoom" enterkeyhint="search" />
+      <button type="submit" class="search-go" aria-label="Search" data-i18n="go">Go</button>
+    </form>
+    <div id="azBar" class="az-bar" aria-label="Categories"></div>
+  </header>
+
+  <div id="settingsSheet" class="settings-sheet hidden" role="dialog" aria-label="Settings">
+    <div class="settings-backdrop" id="settingsBackdrop"></div>
+    <div class="settings-card">
+      <div class="settings-head">
+        <strong data-i18n="settings">Settings</strong>
+        <button type="button" class="dock-close" id="settingsClose" onclick="window.closeSettings&&window.closeSettings()">Close</button>
+      </div>
+      <label class="set-label" data-i18n="language">Language</label>
+      <select id="langSwitch" class="lang-switch" aria-label="Language"></select>
+      <label class="set-label" data-i18n="theme">Theme</label>
+      <button type="button" class="theme-switch" id="themeSwitch" aria-label="Dark or light mode"></button>
+      <a class="set-link" href="dmca.html" data-i18n="dmca">DMCA</a>
+      <a class="set-link" href="terms.html">Terms of Use</a>
+      <a class="set-link" href="privacy.html">Privacy Policy</a>
+      <a class="set-link" href="developer.html" data-i18n="developer">Developer</a>
+    </div>
+  </div>
+
+  <div id="watchDock" class="watch-dock hidden">
+    <div id="dockPlayer" class="dock-player ratio-16x9"></div>
+    <div class="dock-info">
+      <h2 id="dockTitle" class="dock-title"></h2>
+      <p id="dockMeta" class="dock-meta"></p>
+      <button type="button" class="dock-close" id="dockClose" aria-label="Close">Close</button>
+    </div>
+  </div>
+
+  <main>
+    <p class="status-bar" id="statusBar">Ready</p>
+    <section id="videoGrid" class="video-grid" aria-label="Feed"></section>
+    <p id="emptyState" class="empty-state hidden">No results.</p>
+    <div id="scrollSentinel" class="sentinel" aria-hidden="true"></div>
+  </main>
+
+  <div id="shortsReel" class="shorts-reel hidden" aria-modal="true" role="dialog">
+    <button type="button" class="reel-close" id="reelClose" aria-label="Close shorts">×</button>
+    <div id="reelTrack" class="reel-track"></div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="disclaimer">
+      VidLoom is a video embedding platform. All video content, views, and ad revenues belong entirely to the respective YouTube channel owners via standard YouTube Iframe Player embedding.
+    </p>
+    <p class="footer-links">
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="dmca.html">DMCA</a>
+      <a href="developer.html">Developer</a>
+    </p>
+    <p class="copy">© <span id="year"></span> VidLoom · Developed by <strong>Pawan Verma</strong> · <strong>PAWANGAMINGSTUDIO</strong></p>
+  </footer>
+  <script src="script.js" defer></script>
+</body>
+</html>
