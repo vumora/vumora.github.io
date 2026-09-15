@@ -1,4 +1,16 @@
-/* VidLoom — search any keyword, infinite scroll, instant play. No API key. */
+/* VidLoom — location-aware feed, sticky mini player, infinite scroll, no API key.
+ * Fixes: (1) chalti hui video ab scroll nahi hoti — fixed mini player dock.
+ *        (2) feed user ki location (country) ke hisaab se + search query ke hisaab se. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Data sources  (Invidious + Piped — direct JSON from browser)
+ * ------------------------------------------------------------------ */
+/* Browser (CORS) me test kiye gaye working sources — jo fail ho jaye usse agla try hota hai. */
+const SOURCES = [
+  { id: "piped.private.coffee", kind: "piped", base: "https://api.piped.private.coffee" },
+  { id: "invidious.flokinet.to", kind: "iv", base: "https://invidious.flokinet.to" },
+  { id: "pipedapi.ducks.party", kind: "piped", base: "https://pipedapi.ducks.party" }
+];
 
 const CATEGORIES = [
   { key: "A", name: "Autos", q: "cars autos review" },
@@ -29,12 +41,127 @@ const CATEGORIES = [
   { key: "Z", name: "Zoo", q: "animals zoo" }
 ];
 
-const API_BASES = [
-  "https://invidious.materialio.us",
-  "https://invidious.flokinet.to",
-  "https://inv.nadeko.net",
-  "https://yewtu.be"
+/* Country list — home feed ke liye local trending query + UI language. */
+const COUNTRIES = [
+  { cc: "IN", name: "India", q: "आज के ट्रेंडिंग वीडियो", hl: "hi" },
+  { cc: "PK", name: "Pakistan", q: "آج کے ٹرینڈنگ ویڈیوز", hl: "ur" },
+  { cc: "BD", name: "Bangladesh", q: "আজকের ট্রেন্ডিং ভিডিও", hl: "bn" },
+  { cc: "NP", name: "Nepal", q: "आजका ट्रेन्डिङ भिडियो", hl: "ne" },
+  { cc: "LK", name: "Sri Lanka", q: "sri lanka trending videos", hl: "si" },
+  { cc: "US", name: "United States", q: "trending videos today", hl: "en" },
+  { cc: "CA", name: "Canada", q: "trending videos canada today", hl: "en" },
+  { cc: "GB", name: "United Kingdom", q: "trending videos uk today", hl: "en" },
+  { cc: "IE", name: "Ireland", q: "trending videos ireland", hl: "en" },
+  { cc: "AU", name: "Australia", q: "trending videos australia", hl: "en" },
+  { cc: "NZ", name: "New Zealand", q: "trending videos new zealand", hl: "en" },
+  { cc: "SG", name: "Singapore", q: "trending videos singapore", hl: "en" },
+  { cc: "PH", name: "Philippines", q: "trending videos philippines", hl: "en" },
+  { cc: "NG", name: "Nigeria", q: "trending videos nigeria", hl: "en" },
+  { cc: "KE", name: "Kenya", q: "trending videos kenya", hl: "en" },
+  { cc: "GH", name: "Ghana", q: "trending videos ghana", hl: "en" },
+  { cc: "ZA", name: "South Africa", q: "trending videos south africa", hl: "en" },
+  { cc: "TZ", name: "Tanzania", q: "video zinazovuma leo", hl: "sw" },
+  { cc: "DE", name: "Germany", q: "trending videos heute", hl: "de" },
+  { cc: "AT", name: "Austria", q: "trending videos heute", hl: "de" },
+  { cc: "CH", name: "Switzerland", q: "trending videos heute", hl: "de" },
+  { cc: "FR", name: "France", q: "vidéos tendance aujourd'hui", hl: "fr" },
+  { cc: "BE", name: "Belgium", q: "vidéos tendance aujourd'hui", hl: "fr" },
+  { cc: "ES", name: "Spain", q: "videos en tendencia hoy", hl: "es" },
+  { cc: "MX", name: "Mexico", q: "videos en tendencia hoy", hl: "es" },
+  { cc: "AR", name: "Argentina", q: "videos en tendencia hoy", hl: "es" },
+  { cc: "CL", name: "Chile", q: "videos en tendencia hoy", hl: "es" },
+  { cc: "CO", name: "Colombia", q: "videos en tendencia hoy", hl: "es" },
+  { cc: "PE", name: "Peru", q: "videos en tendencia hoy", hl: "es" },
+  { cc: "BR", name: "Brazil", q: "vídeos em alta hoje", hl: "pt" },
+  { cc: "PT", name: "Portugal", q: "vídeos em alta hoje", hl: "pt" },
+  { cc: "IT", name: "Italy", q: "video di tendenza oggi", hl: "it" },
+  { cc: "NL", name: "Netherlands", q: "trending videos vandaag", hl: "nl" },
+  { cc: "SE", name: "Sweden", q: "trendande videor idag", hl: "sv" },
+  { cc: "NO", name: "Norway", q: "trendende videoer i dag", hl: "no" },
+  { cc: "DK", name: "Denmark", q: "trending videoer i dag", hl: "da" },
+  { cc: "FI", name: "Finland", q: "trendaavat videot tänään", hl: "fi" },
+  { cc: "PL", name: "Poland", q: "popularne filmy dzisiaj", hl: "pl" },
+  { cc: "CZ", name: "Czechia", q: "trendující videa dnes", hl: "cs" },
+  { cc: "HU", name: "Hungary", q: "felkapott videók ma", hl: "hu" },
+  { cc: "RO", name: "Romania", q: "videoclipuri populare azi", hl: "ro" },
+  { cc: "GR", name: "Greece", q: "δημοφιλή βίντεο σήμερα", hl: "el" },
+  { cc: "RU", name: "Russia", q: "тренды видео сегодня", hl: "ru" },
+  { cc: "KZ", name: "Kazakhstan", q: "тренды видео сегодня", hl: "ru" },
+  { cc: "UA", name: "Ukraine", q: "трендові відео сьогодні", hl: "uk" },
+  { cc: "TR", name: "Türkiye", q: "trend videolar bugün", hl: "tr" },
+  { cc: "IL", name: "Israel", q: "סרטונים פופולריים היום", hl: "he" },
+  { cc: "AE", name: "United Arab Emirates", q: "تريند فيديو اليوم", hl: "ar" },
+  { cc: "SA", name: "Saudi Arabia", q: "مقاطع ترند اليوم", hl: "ar" },
+  { cc: "QA", name: "Qatar", q: "مقاطع ترند اليوم", hl: "ar" },
+  { cc: "KW", name: "Kuwait", q: "مقاطع ترند اليوم", hl: "ar" },
+  { cc: "EG", name: "Egypt", q: "فيديوهات ترند اليوم", hl: "ar" },
+  { cc: "MA", name: "Morocco", q: "فيديوهات ترند اليوم", hl: "ar" },
+  { cc: "DZ", name: "Algeria", q: "فيديوهات ترند اليوم", hl: "ar" },
+  { cc: "IR", name: "Iran", q: "ویدیوهای محبوب امروز", hl: "fa" },
+  { cc: "JP", name: "Japan", q: "人気の動画 日本", hl: "ja" },
+  { cc: "KR", name: "South Korea", q: "인기 동영상", hl: "ko" },
+  { cc: "CN", name: "China", q: "热门视频 今日", hl: "zh" },
+  { cc: "TW", name: "Taiwan", q: "發燒影片", hl: "zh-TW" },
+  { cc: "HK", name: "Hong Kong", q: "熱門影片", hl: "zh-HK" },
+  { cc: "MY", name: "Malaysia", q: "video trending hari ini", hl: "ms" },
+  { cc: "ID", name: "Indonesia", q: "video trending hari ini", hl: "id" },
+  { cc: "TH", name: "Thailand", q: "วิดีโอมาแรงวันนี้", hl: "th" },
+  { cc: "VN", name: "Vietnam", q: "video thịnh hành hôm nay", hl: "vi" }
 ];
+const BY_CC = Object.create(null);
+for (var ci = 0; ci < COUNTRIES.length; ci++) BY_CC[COUNTRIES[ci].cc] = COUNTRIES[ci];
+
+function regionFor(cc) {
+  cc = String(cc || "").toUpperCase();
+  if (BY_CC[cc]) return BY_CC[cc];
+  return { cc: cc, name: cc ? cc : "Global", q: "trending videos today", hl: "en" };
+}
+
+/* Timezone → country (jab IP geo block ho / fail ho jaye) */
+const TZ_CC = [
+  [/Kolkata|Calcutta/, "IN"], [/Karachi/, "PK"], [/Dhaka/, "BD"], [/Kathmandu/, "NP"], [/Colombo/, "LK"],
+  [/Dubai|Muscat/, "AE"], [/Riyadh/, "SA"], [/Qatar/, "QA"], [/Kuwait/, "KW"], [/Baghdad/, "IQ"],
+  [/Jerusalem|Tel_Aviv/, "IL"], [/Tehran/, "IR"], [/Tokyo/, "JP"], [/Seoul/, "KR"], [/Taipei/, "TW"],
+  [/Hong_Kong/, "HK"], [/Shanghai|Chongqing|Urumqi|Beijing/, "CN"], [/Singapore/, "SG"], [/Kuala_Lumpur/, "MY"],
+  [/Jakarta|Makassar|Jayapura|Pontianak/, "ID"], [/Bangkok/, "TH"], [/Ho_Chi_Minh|Saigon/, "VN"], [/Manila/, "PH"],
+  [/Yangon/, "MM"], [/Almaty|Qostanay|Aqtobe/, "KZ"], [/Tashkent/, "UZ"], [/Kabul/, "AF"], [/London/, "GB"],
+  [/Dublin/, "IE"], [/Berlin|Busingen/, "DE"], [/Paris/, "FR"], [/Madrid/, "ES"], [/Lisbon/, "PT"],
+  [/Rome/, "IT"], [/Amsterdam/, "NL"], [/Brussels/, "BE"], [/Vienna/, "AT"], [/Zurich/, "CH"],
+  [/Stockholm/, "SE"], [/Oslo/, "NO"], [/Copenhagen/, "DK"], [/Helsinki/, "FI"], [/Warsaw/, "PL"],
+  [/Prague/, "CZ"], [/Budapest/, "HU"], [/Bucharest/, "RO"], [/Athens/, "GR"], [/Kyiv|Kiev|Simferopol/, "UA"],
+  [/Moscow|Yekaterinburg|Novosibirsk|Vladivostok/, "RU"], [/Istanbul/, "TR"], [/Cairo/, "EG"], [/Lagos/, "NG"],
+  [/Nairobi/, "KE"], [/Johannesburg|Accra/, "ZA"], [/Casablanca|Algiers/, "MA"], [/Toronto|Vancouver|Edmonton|Winnipeg|Halifax|Regina|St_Johns/, "CA"],
+  [/New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Honolulu|Detroit|Boise|Juneau/, "US"],
+  [/Mexico_City|Tijuana|Monterrey|Cancun|Chihuahua/, "MX"], [/Sao_Paulo|Rio|Fortaleza|Manaus|Bahia|Recife/, "BR"],
+  [/Buenos_Aires|Argentina/, "AR"], [/Santiago/, "CL"], [/Bogota/, "CO"], [/Lima/, "PE"], [/Caracas/, "VE"],
+  [/Sydney|Melbourne|Brisbane|Perth|Adelaide|Hobart|Darwin/, "AU"], [/Auckland/, "NZ"]
+];
+function ccFromTimezone() {
+  var tz = "";
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+  for (var i = 0; i < TZ_CC.length; i++) if (TZ_CC[i][0].test(tz)) return TZ_CC[i][1];
+  return "";
+}
+const LANG_CC = {
+  hi: "IN", bn: "BD", ta: "IN", te: "IN", mr: "IN", gu: "IN", kn: "IN", ml: "IN", pa: "IN", ur: "PK",
+  ne: "NP", si: "LK", ja: "JP", ko: "KR", zh: "CN", th: "TH", vi: "VN", id: "ID", ms: "MY", fil: "PH",
+  de: "DE", fr: "FR", es: "ES", pt: "BR", it: "IT", nl: "NL", pl: "PL", ru: "RU", uk: "UA", tr: "TR",
+  ar: "SA", fa: "IR", he: "IL", sw: "KE", sv: "SE", no: "NO", da: "DK", fi: "FI", cs: "CZ", ro: "RO",
+  el: "GR", hu: "HU", am: "ET", ha: "NG"
+};
+function ccFromLanguage() {
+  var list = [];
+  try { list = navigator.languages || [navigator.language || ""]; } catch (e) {}
+  for (var i = 0; i < list.length; i++) {
+    var m = /^([a-z]{2})[-_]([A-Za-z]{2})/.exec(String(list[i]));
+    if (m && BY_CC[m[2].toUpperCase()]) return m[2].toUpperCase();
+  }
+  for (var j = 0; j < list.length; j++) {
+    var tag = String(list[j]).toLowerCase().split("-")[0];
+    if (LANG_CC[tag]) return LANG_CC[tag];
+  }
+  return "";
+}
 
 const SEED = [
   ["kJQP7kiw5Fk", "Luis Fonsi — Despacito", "LuisFonsiVEVO", 282],
@@ -44,7 +171,7 @@ const SEED = [
   ["fJ9rUzIMcZQ", "Queen — Bohemian Rhapsody", "Queen Official", 355],
   ["YQHsXMglC9A", "Adele — Hello", "Adele", 366]
 ].map(function (r) {
-  return { id: r[0], title: r[1], author: r[2], published: "", thumb: "https://i.ytimg.com/vi/" + r[0] + "/mqdefault.jpg", short: false, seconds: r[3] };
+  return { id: r[0], title: r[1], author: r[2], published: "", thumb: "https://i.ytimg.com/vi/" + r[0] + "/mqdefault.jpg", short: false, seconds: r[3], live: false };
 });
 
 const LANGS = [
@@ -56,9 +183,26 @@ const LANGS = [
   ["ta", "தமிழ்"], ["te", "తెలుగు"], ["th", "ไทย"], ["tr", "Türkçe"],
   ["uk", "Українська"], ["ur", "اردو"], ["vi", "Tiếng Việt"], ["zh", "中文"]
 ];
+
 const I18N = {
-  en: { home: "Home", shorts: "Shorts", videos: "Videos", go: "Go", dmca: "DMCA", developer: "Developer", search: "Search VidLoom", ready: "Ready", settings: "Settings", language: "Language", theme: "Theme" },
-  hi: { home: "होम", shorts: "शॉर्ट्स", videos: "वीडियो", go: "जाओ", dmca: "डीएमसीए", developer: "डेवलपर", search: "विडलूम खोजें", ready: "तैयार", settings: "सेटिंग", language: "भाषा", theme: "थीम" },
+  en: {
+    home: "Home", shorts: "Shorts", videos: "Videos", go: "Go", dmca: "DMCA", developer: "Developer",
+    search: "Search VidLoom", ready: "Ready", settings: "Settings", language: "Language", theme: "Theme",
+    forYou: "For You", nowPlaying: "Now playing", nearYou: "near you", loading: "Loading…", videosWord: "videos",
+    scrollMore: "scroll for more", feedBusy: "Feed busy — tap ↻", region: "Region", autoRegion: "Auto (my location)",
+    regionNote: "Home feed aapki location se. Search aapki query se.", bigScreen: "Big screen", smallScreen: "Small player",
+    closePlayer: "Close player", searchIn: "Search results for", notFound: "No videos found. Try another word.",
+    openYt: "Open on YouTube"
+  },
+  hi: {
+    home: "होम", shorts: "शॉर्ट्स", videos: "वीडियो", go: "जाओ", dmca: "डीएमसीए", developer: "डेवलपर",
+    search: "विडलूम खोजें", ready: "तैयार", settings: "सेटिंग", language: "भाषा", theme: "थीम",
+    forYou: "आपके लिए", nowPlaying: "चल रहा है", nearYou: "आपके आसपास", loading: "लोड हो रहा है…", videosWord: "वीडियो",
+    scrollMore: "और देखने के लिए स्क्रॉल करें", feedBusy: "फीड व्यस्त — ↻ दबाएँ", region: "क्षेत्र", autoRegion: "ऑटो (मेरी लोकेशन)",
+    regionNote: "होम फीड आपकी लोकेशन से, सर्च आपकी क्वेरी से।", bigScreen: "बड़ी स्क्रीन", smallScreen: "छोटा प्लेयर",
+    closePlayer: "प्लेयर बंद करें", searchIn: "सर्च नतीजे", notFound: "कोई वीडियो नहीं मिला। दूसरा शब्द आज़माएँ।",
+    openYt: "YouTube पर खोलें"
+  },
   ar: { home: "الرئيسية", shorts: "شورتس", videos: "فيديو", go: "اذهب", dmca: "DMCA", developer: "المطور", search: "ابحث في VidLoom", ready: "جاهز" },
   bn: { home: "হোম", shorts: "শর্টস", videos: "ভিডিও", go: "যাও", dmca: "DMCA", developer: "ডেভেলপার", search: "VidLoom খুঁজুন", ready: "প্রস্তুত" },
   de: { home: "Start", shorts: "Shorts", videos: "Videos", go: "Los", dmca: "DMCA", developer: "Entwickler", search: "VidLoom suchen", ready: "Bereit" },
@@ -88,84 +232,55 @@ const I18N = {
 };
 
 const SHORTS_HINT = /#shorts?\b|\/shorts\b|\bshorts\b|\breels?\b/i;
-const FETCH_MS = 8000;
+const LIVE_HINT = /\bis live\b|\blive\b|\blivestream\b|🔴|\bpremiere\b|\bupcoming\b|लाइव|ライブ|생방송|مباشر|\ben vivo\b|\bao vivo\b|\bEN DIRECTO\b|\b直播\b|\b24\/7\b/i;
 
-function geoFromTimezone() {
-  var tz = "";
-  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
-  if (/Kolkata|Calcutta/.test(tz)) return { country: "India", city: "", cc: "IN" };
-  if (/New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Honolulu/.test(tz)) {
-    return { country: "United States", city: "", cc: "US" };
-  }
-  if (/London/.test(tz)) return { country: "United Kingdom", city: "", cc: "GB" };
-  if (/Tokyo/.test(tz)) return { country: "Japan", city: "", cc: "JP" };
-  if (/Dubai/.test(tz)) return { country: "United Arab Emirates", city: "", cc: "AE" };
-  if (/Karachi/.test(tz)) return { country: "Pakistan", city: "", cc: "PK" };
-  if (/Dhaka/.test(tz)) return { country: "Bangladesh", city: "", cc: "BD" };
-  if (/Sao_Paulo/.test(tz)) return { country: "Brazil", city: "", cc: "BR" };
-  if (/Berlin|Paris|Rome|Madrid|Amsterdam/.test(tz)) return { country: "Europe", city: "", cc: "DE" };
-  return { country: "", city: "", cc: "" };
-}
-
+/* ------------------------------------------------------------------ *
+ * 2. State
+ * ------------------------------------------------------------------ */
 const state = {
-  videos: [],
-  seen: Object.create(null),
+  videos: [], seen: Object.create(null),
   filter: "all",
-  query: "",
+  query: "",            // search mode query
   category: "T",
-  page: 1,
-  mode: "cat",
+  mode: "home",         // home | cat | search
+  page: 1,              // agla search page (1-based)
   loading: false,
   more: true,
   gen: 0,
-  apiBase: API_BASES[0],
-  geo: geoFromTimezone(),
-  lang: "en"
+  sourceIdx: 0,
+  geo: { cc: "", country: "", city: "" },
+  region: regionFor(""),
+  lang: "en",
+  playingId: "",
+  dockMode: "mini",
+  userTouched: false
 };
-
-function detectGeo() {
-  return fetch("https://get.geojs.io/v1/ip/geo.json")
-    .then(function (r) { return r.json(); })
-    .then(function (g) {
-      if (!g || !g.country) return state.geo;
-      state.geo = {
-        country: g.country,
-        city: g.city || "",
-        cc: String(g.country_code || "").toUpperCase()
-      };
-      return state.geo;
-    })
-    .catch(function () { return state.geo; });
-}
-
-function localFeedQuery() {
-  var g = state.geo || {};
-  var parts = [];
-  if (g.country) parts.push(g.country);
-  if (g.city) parts.push(g.city);
-  parts.push("trending");
-  return parts.join(" ").replace(/\s+/g, " ").trim();
-}
+var pipedCursor = Object.create(null);   // query key -> { token, page }
+var emptySkips = 0;
 
 const $ = function (id) { return document.getElementById(id); };
-const grid = $("videoGrid");
-const statusBar = $("statusBar");
-const emptyState = $("emptyState");
-const search = $("search");
-const azBar = $("azBar");
-const watchDock = $("watchDock");
-const dockPlayer = $("dockPlayer");
-const dockTitle = $("dockTitle");
-const dockMeta = $("dockMeta");
-const shortsReel = $("shortsReel");
-const reelTrack = $("reelTrack");
-const yearEl = $("year");
+var grid = $("videoGrid");
+var statusBar = $("statusBar");
+var emptyState = $("emptyState");
+var search = $("search");
+var azBar = $("azBar");
+var watchDock = $("watchDock");
+var dockPlayer = $("dockPlayer");
+var dockTitle = $("dockTitle");
+var dockMeta = $("dockMeta");
+var shortsReel = $("shortsReel");
+var reelTrack = $("reelTrack");
+var yearEl = $("year");
 if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
 function t(key) {
   var pack = I18N[state.lang] || I18N.en;
   return pack[key] || I18N.en[key] || key;
 }
+
+/* ------------------------------------------------------------------ *
+ * 3. Language / settings
+ * ------------------------------------------------------------------ */
 function applyLang(code) {
   if (!I18N[code]) code = "en";
   state.lang = code;
@@ -175,10 +290,17 @@ function applyLang(code) {
   document.querySelectorAll("[data-i18n]").forEach(function (el) {
     el.textContent = t(el.getAttribute("data-i18n"));
   });
+  document.querySelectorAll("[data-i18n-label]").forEach(function (el) {
+    el.setAttribute("aria-label", t(el.getAttribute("data-i18n-label")));
+    el.setAttribute("title", t(el.getAttribute("data-i18n-label")));
+  });
   if (search) search.setAttribute("placeholder", t("search"));
+  document.documentElement.style.setProperty("--np-text", '"' + t("nowPlaying") + '"');
   var sel = $("langSwitch");
   if (sel && sel.value !== code) sel.value = code;
+  updateStatus();
 }
+
 function fillLangs() {
   var sel = $("langSwitch");
   if (!sel) return;
@@ -191,41 +313,113 @@ function fillLangs() {
   sel.addEventListener("change", function () { applyLang(sel.value); });
 }
 
-function thumb(id) {
-  return "https://i.ytimg.com/vi/" + id + "/mqdefault.jpg";
+function fillRegions() {
+  var sel = $("regionSwitch");
+  if (!sel) return;
+  var opts = ['<option value="auto">📍 ' + t("autoRegion") + "</option>"];
+  for (var i = 0; i < COUNTRIES.length; i++) {
+    opts.push('<option value="' + COUNTRIES[i].cc + '">' + COUNTRIES[i].name + "</option>");
+  }
+  sel.innerHTML = opts.join("");
+  var saved = "";
+  try { saved = localStorage.getItem("vl-cc") || ""; } catch (e) {}
+  sel.value = saved && BY_CC[saved] ? saved : "auto";
+  sel.addEventListener("change", function () {
+    var v = sel.value;
+    try {
+      if (v === "auto") localStorage.removeItem("vl-cc");
+      else localStorage.setItem("vl-cc", v);
+    } catch (e) {}
+    if (v === "auto") {
+      state.geo = geoGuess();
+      state.region = regionFor(state.geo.cc);
+      detectGeo(true).then(function () { loadHome(); });
+    } else {
+      state.geo = { cc: v, country: BY_CC[v].name, city: "" };
+      state.region = BY_CC[v];
+      loadHome();
+    }
+  });
 }
+
+/* ------------------------------------------------------------------ *
+ * 4. Geo
+ * ------------------------------------------------------------------ */
+function geoGuess() {
+  var cc = ccFromTimezone() || ccFromLanguage();
+  return { cc: cc, country: BY_CC[cc] ? BY_CC[cc].name : "", city: "" };
+}
+
+function readGeoCache() {
+  try {
+    var raw = JSON.parse(localStorage.getItem("vl-geo") || "null");
+    if (raw && raw.cc && raw.ts && (Date.now() - raw.ts) < 12 * 3600 * 1000) return raw;
+  } catch (e) {}
+  return null;
+}
+
+function detectGeo(force) {
+  var override = "";
+  try { override = localStorage.getItem("vl-cc") || ""; } catch (e) {}
+  if (override && BY_CC[override]) {
+    state.geo = { cc: override, country: BY_CC[override].name, city: "" };
+    state.region = BY_CC[override];
+    return Promise.resolve(state.geo);
+  }
+  return fetch("https://get.geojs.io/v1/ip/geo.json")
+    .then(function (r) { return r.json(); })
+    .then(function (g) {
+      if (!g || !g.country_code) throw new Error("no geo");
+      return { cc: String(g.country_code).toUpperCase(), country: g.country || "", city: g.city || "" };
+    })
+    .catch(function () {
+      return fetch("https://ipwho.is/")
+        .then(function (r) { return r.json(); })
+        .then(function (g) {
+          if (!g || !g.success || !g.country_code) throw new Error("no geo");
+          return { cc: String(g.country_code).toUpperCase(), country: g.country || "", city: g.city || "" };
+        });
+    })
+    .catch(function () {
+      return fetch("https://api.country.is/")
+        .then(function (r) { return r.json(); })
+        .then(function (g) {
+          if (!g || !g.country) throw new Error("no geo");
+          return { cc: String(g.country).toUpperCase(), country: BY_CC[g.country] ? BY_CC[g.country].name : "", city: "" };
+        });
+    })
+    .then(function (geo) {
+      if (!geo.cc) throw new Error("no geo");
+      geo.ts = Date.now();
+      try { localStorage.setItem("vl-geo", JSON.stringify(geo)); } catch (e) {}
+      state.geo = geo;
+      state.region = regionFor(geo.cc);
+      return geo;
+    })
+    .catch(function () {
+      if (!state.geo.cc) { state.geo = geoGuess(); state.region = regionFor(state.geo.cc); }
+      return state.geo;
+    });
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Network — Invidious + Piped adapters (same output shape)
+ * ------------------------------------------------------------------ */
+const FETCH_MS = 8000;
 
 function fetchTimeout(url, ms) {
   var c = typeof AbortController !== "undefined" ? new AbortController() : null;
-  var t = setTimeout(function () { if (c) c.abort(); }, ms);
+  var timer = setTimeout(function () { if (c) c.abort(); }, ms || FETCH_MS);
   return fetch(url, { cache: "no-store", signal: c ? c.signal : undefined }).then(function (res) {
-    clearTimeout(t);
+    clearTimeout(timer);
     if (!res.ok) throw new Error(String(res.status));
+    var ct = res.headers.get("content-type") || "";
+    if (ct.indexOf("json") === -1) throw new Error("not-json");
     return res.json();
-  }, function (e) { clearTimeout(t); throw e; });
+  }, function (e) { clearTimeout(timer); throw e; });
 }
 
-function apiGet(path) {
-  var order = [state.apiBase].concat(API_BASES).filter(function (b, i, a) { return b && a.indexOf(b) === i; });
-  var i = 0;
-  function next() {
-    if (i >= order.length) return Promise.reject(new Error("offline"));
-    var base = order[i++];
-    return fetchTimeout(base + path, 5000).then(function (data) {
-      state.apiBase = base;
-      return data;
-    }, function () { return next(); });
-  }
-  return next();
-}
-
-function showSeed() {
-  if (state.videos.length) return;
-  state.seen = Object.create(null);
-  SEED.forEach(function (v) { state.seen[v.id] = true; });
-  state.videos = SEED.slice();
-  render();
-}
+function thumb(id) { return "https://i.ytimg.com/vi/" + id + "/mqdefault.jpg"; }
 
 function isShortItem(item) {
   var len = Number(item.lengthSeconds) || 0;
@@ -235,11 +429,12 @@ function isShortItem(item) {
   return SHORTS_HINT.test(title);
 }
 
-function mapItem(item) {
+function mapIvItem(item) {
   if (!item) return null;
   var id = item.videoId || item.id;
   if (!id || item.type === "channel" || item.type === "playlist") return null;
   var title = item.title || "Untitled";
+  var sec = Number(item.lengthSeconds) || 0;
   return {
     id: id,
     title: title,
@@ -247,36 +442,131 @@ function mapItem(item) {
     published: item.published ? new Date(item.published * 1000).toISOString() : "",
     thumb: thumb(id),
     short: isShortItem(item),
-    seconds: Number(item.lengthSeconds) || 0
+    seconds: sec,
+    views: Number(item.viewCount) || 0,
+    live: sec === 0 && (item.liveNow === true || item.isUpcoming === true || LIVE_HINT.test(title))
   };
 }
 
-function mergeVideos(list) {
-  var n = 0;
-  for (var i = 0; i < list.length; i++) {
-    var v = list[i];
-    if (!v || state.seen[v.id]) continue;
-    state.seen[v.id] = true;
-    state.videos.push(v);
-    n++;
-  }
-  return n;
+function mapPipedItem(item) {
+  if (!item) return null;
+  var m = /[?&]v=([A-Za-z0-9_-]{6,})/.exec(item.url || "");
+  if (!m) return null;
+  var id = m[1];
+  var title = item.title || "Untitled";
+  var sec = Number(item.duration) || 0;
+  if (sec < 0) sec = 0;
+  return {
+    id: id,
+    title: title,
+    author: item.uploaderName || "YouTube",
+    published: item.uploaded ? new Date(item.uploaded).toISOString() : "",
+    thumb: thumb(id),
+    short: item.isShort === true || (sec > 0 && sec <= 60) || SHORTS_HINT.test(title),
+    seconds: sec,
+    views: Number(item.views) || 0,
+    live: sec === 0
+  };
 }
+
+function ivSearch(src, q, page, opts) {
+  var url = src.base + "/api/v1/search?type=video&q=" + encodeURIComponent(q) + "&page=" + page;
+  if (opts.cc) url += "&region=" + encodeURIComponent(opts.cc);
+  if (opts.hl) url += "&hl=" + encodeURIComponent(opts.hl);
+  if (opts.sort) url += "&sort_by=" + encodeURIComponent(opts.sort);
+  if (opts.date) url += "&date=" + encodeURIComponent(opts.date);
+  return fetchTimeout(url, 7000).then(function (data) {
+    var arr = Array.isArray(data) ? data : [];
+    var list = [];
+    for (var i = 0; i < arr.length; i++) { var v = mapIvItem(arr[i]); if (v) list.push(v); }
+    return { items: list, hasMore: list.length >= 10, source: src.id };
+  });
+}
+
+function pipedSearch(src, q, page, opts) {
+  var key = src.id + "|" + q;
+  var cursor = pipedCursor[key] || { token: "", page: 0 };
+  var hops = 0;
+  function step(token) {
+    var url = token
+      ? src.base + "/nextpage/search?q=" + encodeURIComponent(q) + "&filter=videos&nextpage=" + encodeURIComponent(token)
+      : src.base + "/search?q=" + encodeURIComponent(q) + "&filter=videos";
+    return fetchTimeout(url, 8000).then(function (data) {
+      var arr = (data && data.items) || [];
+      var list = [];
+      for (var i = 0; i < arr.length; i++) { var v = mapPipedItem(arr[i]); if (v) list.push(v); }
+      var token2 = "";
+      if (data && data.nextpage) token2 = typeof data.nextpage === "string" ? data.nextpage : JSON.stringify(data.nextpage);
+      cursor = { token: token2, page: cursor.page + 1 };
+      pipedCursor[key] = cursor;
+      if (cursor.page < page && token2 && hops < 3) { hops++; return step(token2); }
+      return { items: list, hasMore: list.length >= 8 && !!token2, source: src.id };
+    });
+  }
+  return step(cursor.token && cursor.page < page ? cursor.token : (page <= 1 ? "" : cursor.token));
+}
+
+function withSource(fn) {
+  var order = [];
+  for (var i = 0; i < SOURCES.length; i++) order.push(SOURCES[(state.sourceIdx + i) % SOURCES.length]);
+  var idx = 0;
+  function next() {
+    if (idx >= order.length) return Promise.reject(new Error("all-sources-failed"));
+    var src = order[idx++];
+    return fn(src).then(function (out) {
+      state.sourceIdx = SOURCES.indexOf(src);
+      try { localStorage.setItem("vl-src", String(state.sourceIdx)); } catch (e) {}
+      return out;
+    }, function () { return next(); });
+  }
+  return next();
+}
+
+function apiSearch(q, page, opts) {
+  opts = opts || {};
+  return withSource(function (src) {
+    if (src.kind === "iv") return ivSearch(src, q, page, opts);
+    return pipedSearch(src, q, page, opts);
+  });
+}
+
+function apiTrending(cc) {
+  return withSource(function (src) {
+    var url = src.kind === "iv"
+      ? src.base + "/api/v1/trending?region=" + encodeURIComponent(cc || "US")
+      : src.base + "/trending?region=" + encodeURIComponent(cc || "US");
+    return fetchTimeout(url, 8000).then(function (data) {
+      var arr = Array.isArray(data) ? data : ((data && data.items) || []);
+      var list = [];
+      for (var i = 0; i < arr.length; i++) {
+        var v = src.kind === "iv" ? mapIvItem(arr[i]) : mapPipedItem(arr[i]);
+        if (v) list.push(v);
+      }
+      return list;
+    });
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Cards / rendering (incremental — scroll par feed jump nahi karti)
+ * ------------------------------------------------------------------ */
+var renderedFilter = null;
+var renderedCount = 0;
 
 function formatDate(iso) {
   if (!iso) return "";
   var d = new Date(iso);
   return isNaN(d.getTime()) ? "" : d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
-
 function formatDur(sec) {
   sec = Number(sec) || 0;
   if (sec <= 0) return "";
-  var m = Math.floor(sec / 60);
+  var h = Math.floor(sec / 3600);
+  var m = Math.floor((sec % 3600) / 60);
   var s = sec % 60;
+  if (h > 0) return h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
   return m + ":" + (s < 10 ? "0" : "") + s;
 }
-
 function escapeHtml(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
@@ -292,27 +582,11 @@ function visibleVideos() {
   return out;
 }
 
-function embedSrc(id, autoplay) {
-  var origin = "";
-  try {
-    if (location.origin && location.origin !== "null") {
-      origin = "&origin=" + encodeURIComponent(location.origin);
-    }
-  } catch (e) {}
-  return "https://www.youtube.com/embed/" + encodeURIComponent(id) +
-    "?autoplay=" + (autoplay ? "1" : "0") +
-    "&rel=0&modestbranding=1&playsinline=1&fs=1&enablejsapi=1" + origin;
-}
-
-function iframeHtml(id, title, autoplay) {
-  return '<iframe src="' + embedSrc(id, autoplay) + '" title="' + escapeHtml(title) +
-    '" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe>';
-}
-
 function cardHtml(v) {
   var dur = v.short ? "SHORTS" : (formatDur(v.seconds) || "PLAY");
-  return '<article class="card' + (v.short ? " is-short" : "") + '">' +
-    '<a class="thumb-btn" href="#v=' + encodeURIComponent(v.id) + '" data-play="' + escapeHtml(v.id) + '" onclick="window.playNow(\'' + escapeHtml(v.id) + '\');return false;">' +
+  var playAttr = v.short ? 'data-reel="' + escapeHtml(v.id) + '"' : 'data-play="' + escapeHtml(v.id) + '"';
+  return '<article class="card' + (v.short ? " is-short" : "") + '" data-id="' + escapeHtml(v.id) + '">' +
+    '<a class="thumb-btn" href="#v=' + encodeURIComponent(v.id) + '" ' + playAttr + '>' +
       '<img src="' + escapeHtml(v.thumb) + '" alt="" width="320" height="180" loading="lazy" decoding="async" />' +
       '<span class="play-glyph"></span>' +
       '<span class="badge' + (v.short ? " short" : "") + '">' + dur + "</span>" +
@@ -322,12 +596,32 @@ function cardHtml(v) {
     "</p></div></article>";
 }
 
-function render() {
+function appendCards() {
   var items = visibleVideos();
   emptyState.classList.toggle("hidden", items.length !== 0 || state.loading);
+  if (renderedFilter !== state.filter) { grid.innerHTML = ""; renderedCount = 0; renderedFilter = state.filter; }
+  if (renderedCount > items.length) { grid.innerHTML = ""; renderedCount = 0; }
+  if (items.length <= renderedCount) { markPlayingCard(); return; }
   var html = "";
-  for (var i = 0; i < items.length; i++) html += cardHtml(items[i]);
-  grid.innerHTML = html;
+  for (var i = renderedCount; i < items.length; i++) html += cardHtml(items[i]);
+  grid.insertAdjacentHTML("beforeend", html);
+  renderedCount = items.length;
+  markPlayingCard();
+}
+
+function renderAll() {
+  renderedFilter = state.filter;
+  grid.innerHTML = "";
+  renderedCount = 0;
+  appendCards();
+}
+
+function markPlayingCard() {
+  var cards = grid.querySelectorAll(".card");
+  for (var i = 0; i < cards.length; i++) {
+    var on = !!state.playingId && cards[i].getAttribute("data-id") === state.playingId;
+    cards[i].classList.toggle("is-playing", on);
+  }
 }
 
 function findVideo(id) {
@@ -335,20 +629,134 @@ function findVideo(id) {
   return null;
 }
 
+function mergeVideos(list) {
+  var n = 0;
+  for (var i = 0; i < list.length; i++) {
+    var v = list[i];
+    if (!v || state.seen[v.id]) continue;
+    state.seen[v.id] = true;
+    state.videos.push(v);
+    n++;
+  }
+  return n;
+}
+
+/* home/category feed se live + duration-unknown (stream) items hata do.
+   Trending India me 80% live streams hote hain — isliye ye zaroori hai. */
+function dropLive(list) {
+  var out = [];
+  for (var i = 0; i < list.length; i++) {
+    var v = list[i];
+    if (!v.live && v.seconds > 0) out.push(v);
+  }
+  return out;
+}
+
+function updateStatus(prefix) {
+  if (!statusBar) return;
+  var bits = [];
+  if (state.mode === "home" && state.region && state.region.cc) bits.push("📍 " + state.region.name + " · " + t("nearYou"));
+  else if (state.mode === "search" && state.query) bits.push(t("searchIn") + " “" + state.query + "”");
+  if (prefix) bits.push(prefix);
+  bits.push(visibleVideos().length + " " + t("videosWord"));
+  if (state.more) bits.push(t("scrollMore"));
+  if (state.loading) bits.push(t("loading"));
+  statusBar.textContent = bits.join(" · ");
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Player dock — FIXED rakhta hai, scroll par hilta nahi
+ * ------------------------------------------------------------------ */
+function embedSrc(id, autoplay) {
+  var origin = "";
+  try { if (location.origin && location.origin !== "null") origin = "&origin=" + encodeURIComponent(location.origin); } catch (e) {}
+  return "https://www.youtube.com/embed/" + encodeURIComponent(id) +
+    "?autoplay=" + (autoplay ? "1" : "0") +
+    "&rel=0&modestbranding=1&playsinline=1&fs=1&enablejsapi=1" + origin;
+}
+function iframeHtml(id, title, autoplay) {
+  return '<iframe src="' + embedSrc(id, autoplay) + '" title="' + escapeHtml(title) +
+    '" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe>';
+}
+
+function isSmallScreen() { return window.innerWidth <= 640; }
+function defaultDockMode() { return isSmallScreen() ? "top" : "mini"; }
+function isTopAnchored() { return state.dockMode === "top" || (state.dockMode === "wide" && isSmallScreen()); }
+
+function syncDockSpace() {
+  var open = watchDock && !watchDock.classList.contains("hidden");
+  var h = open ? Math.ceil(watchDock.getBoundingClientRect().height) : 0;
+  var top = open && isTopAnchored();
+  // player ke peeche content na chhupe: top wale player me upar padding, floating mini me neeche
+  document.body.style.setProperty("--dock-top", top && h ? (h + 8) + "px" : "0px");
+  document.body.style.setProperty("--dock-space", (!top && h) ? (h + 26) + "px" : "0px");
+}
+
+function setDockMode(mode, save) {
+  if (mode !== "wide" && mode !== "top" && mode !== "mini") mode = defaultDockMode();
+  // chhoti screen par floating mini player nahi — player screen ke top par hi khulega
+  if (isSmallScreen() && mode === "mini" && save === false) mode = "top";
+  state.dockMode = mode;
+  if (watchDock) watchDock.setAttribute("data-mode", mode);
+  if (save !== false) { try { localStorage.setItem("vl-dock", mode); } catch (e) {} }
+  var btn = $("dockSize");
+  if (btn) {
+    var label = t(mode === "wide" ? "smallScreen" : "bigScreen");
+    btn.textContent = mode === "wide" ? "⤡" : "⤢";
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("title", label);
+  }
+  syncDockSpace();
+}
+
+function toggleDockSize() {
+  if (state.dockMode === "wide") setDockMode(isSmallScreen() ? "top" : "mini");
+  else setDockMode("wide");
+}
+
 function playNow(id) {
   if (!id) return;
+  state.userTouched = true;
   var v = findVideo(id) || { id: id, title: "Video", author: "YouTube", published: "", short: false, thumb: thumb(id) };
   closeReel();
-  document.body.style.overflow = "";
-  dockTitle.textContent = v.title;
-  dockMeta.textContent = v.author + (v.published ? " · " + formatDate(v.published) : "");
-  dockPlayer.className = "dock-player " + (v.short ? "ratio-9x16" : "ratio-16x9");
-  dockPlayer.style.backgroundImage = "url(" + thumb(v.id) + ")";
-  dockPlayer.innerHTML = iframeHtml(v.id, v.title, true);
+  var wasHidden = watchDock.classList.contains("hidden");
+  var same = state.playingId === id && dockPlayer && dockPlayer.firstChild;
+  state.playingId = id;
+  var nowTitle = $("dockNowTitle");
+  if (nowTitle) nowTitle.textContent = v.title;
+  var openLink = $("dockOpen");
+  if (openLink) openLink.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(id);
+  if (dockTitle) dockTitle.textContent = v.title;
+  if (dockMeta) dockMeta.textContent = v.author + (v.published ? " · " + formatDate(v.published) : "");
+  if (!same && dockPlayer) {
+    dockPlayer.className = "dock-player " + (v.short ? "ratio-9x16" : "ratio-16x9");
+    dockPlayer.style.backgroundImage = "url(" + thumb(v.id) + ")";
+    dockPlayer.innerHTML = iframeHtml(v.id, v.title, true);
+  }
+  var saved = "";
+  try { saved = localStorage.getItem("vl-dock") || ""; } catch (e) {}
+  setDockMode(saved || defaultDockMode(), false);
   watchDock.classList.remove("hidden");
-  try { watchDock.scrollIntoView({ block: "start" }); } catch (e) {}
+  document.body.classList.add("has-dock");
+  syncDockSpace();
+  markPlayingCard();
+  // mobile: player upar khulta hai, isliye page ko top par le aao (YouTube app jaisa)
+  if (isSmallScreen() && (wasHidden || !same) && window.scrollY > 0) {
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+}
+
+function closeDock() {
+  if (!watchDock) return;
+  watchDock.classList.add("hidden");
+  document.body.classList.remove("has-dock");
+  if (dockPlayer) { dockPlayer.innerHTML = ""; dockPlayer.style.backgroundImage = ""; }
+  state.playingId = "";
+  syncDockSpace();
+  markPlayingCard();
 }
 window.playNow = playNow;
+window.closeDock = closeDock;
 
 window.openSettings = function () {
   var sheet = document.getElementById("settingsSheet");
@@ -359,43 +767,60 @@ window.closeSettings = function () {
   if (sheet) sheet.classList.add("hidden");
 };
 
-function closeDock() {
-  watchDock.classList.add("hidden");
-  dockPlayer.innerHTML = "";
-}
-
+/* ------------------------------------------------------------------ *
+ * 8. Shorts reel (full-screen, apna scroll — page hilta nahi)
+ * ------------------------------------------------------------------ */
 function shortsList() {
   var list = visibleVideos().filter(function (v) { return v.short; });
   return list.length ? list : visibleVideos();
 }
 
+var reelObs = null;
+
 function openReel(startId) {
+  state.userTouched = true;
   closeDock();
   var list = shortsList();
   var html = "";
   var startIndex = 0;
   for (var i = 0; i < list.length; i++) {
     if (list[i].id === startId) startIndex = i;
-    html += '<section class="reel-slide" data-rid="' + escapeHtml(list[i].id) + '" data-title="' + escapeHtml(list[i].title) + '">' +
-      '<div class="reel-frame ratio-9x16"></div>' +
-      '<p class="reel-cap">' + escapeHtml(list[i].title) + "</p></section>";
+    html += reelSlideHtml(list[i]);
   }
   reelTrack.innerHTML = html;
   shortsReel.classList.remove("hidden");
-  document.body.style.overflow = "hidden";
+  document.body.classList.add("lock");
   var slides = reelTrack.querySelectorAll(".reel-slide");
   if (slides[startIndex]) slides[startIndex].scrollIntoView();
   bindReelObserver();
   activateSlide(slides[startIndex] || slides[0], true);
 }
 
+function reelSlideHtml(v) {
+  return '<section class="reel-slide" data-rid="' + escapeHtml(v.id) + '" data-title="' + escapeHtml(v.title) + '">' +
+    '<div class="reel-frame ratio-9x16"></div>' +
+    '<p class="reel-cap">' + escapeHtml(v.title) + "</p></section>";
+}
+
+function syncReel() {
+  if (!shortsReel || shortsReel.classList.contains("hidden")) return;
+  var have = Object.create(null);
+  var slides = reelTrack.querySelectorAll(".reel-slide");
+  for (var i = 0; i < slides.length; i++) have[slides[i].getAttribute("data-rid")] = true;
+  var list = shortsList();
+  var html = "";
+  for (var j = 0; j < list.length; j++) if (!have[list[j].id]) html += reelSlideHtml(list[j]);
+  if (!html) return;
+  reelTrack.insertAdjacentHTML("beforeend", html);
+  bindReelObserver();
+}
+
 function closeReel() {
   shortsReel.classList.add("hidden");
   reelTrack.innerHTML = "";
-  document.body.style.overflow = "";
+  document.body.classList.remove("lock");
 }
 
-var reelObs = null;
 function bindReelObserver() {
   if (reelObs) reelObs.disconnect();
   reelObs = new IntersectionObserver(function (entries) {
@@ -419,161 +844,154 @@ function activateSlide(slide, autoplay) {
   if (!box || box.getAttribute("data-on") === id) return;
   box.setAttribute("data-on", id);
   box.innerHTML = iframeHtml(id, title, autoplay);
+  var slides = reelTrack.querySelectorAll(".reel-slide");
+  var index = 0;
+  for (var i = 0; i < slides.length; i++) if (slides[i] === slide) index = i;
+  if (index >= slides.length - 3 && state.more && !state.loading) nextPage(true);
 }
 
+/* ------------------------------------------------------------------ *
+ * 9. Feed loading (home = aapki country, search = aapki query)
+ * ------------------------------------------------------------------ */
 function catByKey(key) {
   for (var i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].key === key) return CATEGORIES[i];
   return CATEGORIES[19];
 }
 
 function renderAz() {
-  var html = "";
+  var html = '<button type="button" class="az-chip az-for-you' + (state.mode === "home" ? " is-active" : "") +
+    '" data-for-you="1">📍 ' + escapeHtml(t("forYou")) + "</button>";
   for (var i = 0; i < CATEGORIES.length; i++) {
     var c = CATEGORIES[i];
-    var on = c.key === state.category && state.mode !== "search" ? " is-active" : "";
+    var on = c.key === state.category && state.mode === "cat" ? " is-active" : "";
     html += '<button type="button" class="az-chip' + on + '" data-cat="' + c.key + '">' + c.key + " · " + c.name + "</button>";
   }
   azBar.innerHTML = html;
 }
 
-function currentQuery() {
+function contextQuery() {
   if (state.mode === "search") return state.query.trim();
-  return catByKey(state.category).q;
+  if (state.mode === "cat") return catByKey(state.category).q;
+  return state.region.q || "trending videos today";     // home
 }
 
-function searchPath(q, page) {
-  var qq = q;
-  if (state.filter === "short" && !SHORTS_HINT.test(qq)) qq += " shorts";
-  var extra = (state.geo && state.geo.cc) ? "&region=" + encodeURIComponent(state.geo.cc) : "";
-  return "/api/v1/search?type=video&q=" + encodeURIComponent(qq) + "&page=" + page + extra;
+function contextOpts(searchPage) {
+  var opts = { cc: state.geo.cc || "", hl: state.mode === "home" ? (state.region.hl || "") : "" };
+  if (state.mode === "home" && searchPage === 1) { opts.sort = "view_count"; opts.date = "week"; }
+  return opts;
 }
 
-function cacheKey(q, page) { return "vl:" + q + ":" + page + ":" + state.filter; }
-function cacheGet(k) {
-  try { return JSON.parse(sessionStorage.getItem(k) || "null"); } catch (e) { return null; }
-}
-function cachePut(k, v) {
-  try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+function pageQuery(base) {
+  var q = base;
+  if (state.filter === "short" && !SHORTS_HINT.test(q)) q += " shorts";
+  return q;
 }
 
-function loadPage(reset) {
-  if (state.loading && !reset) return;
-  if (!reset && !state.more) return;
-  var gen = reset ? ++state.gen : state.gen;
-  var q = currentQuery();
+function resetFeed(mode) {
+  state.gen++;
+  state.mode = mode;
+  state.videos = [];
+  state.seen = Object.create(null);
+  state.page = 1;
+  state.more = true;
+  state.loading = false;
+  emptySkips = 0;
+  renderedFilter = null;
+  renderedCount = 0;
+  grid.innerHTML = "";
+  renderAz();
+}
+
+function nextPage(fromReel) {
+  if (state.loading || !state.more) return;
+  var q = pageQuery(contextQuery());
   if (!q) return;
-  if (reset) {
-    state.page = 1;
-    state.videos = [];
-    state.seen = Object.create(null);
-    state.more = true;
-    var hit = cacheGet(cacheKey(q, 1));
-    if (hit && hit.length) {
-      mergeVideos(hit);
-      render();
-      statusBar.textContent = "“" + q + "” · instant";
-    } else render();
-  }
-  state.loading = true;
-  if (!state.videos.length) statusBar.textContent = "Searching “" + q + "”…";
+  var gen = state.gen;
   var page = state.page;
-  apiGet(searchPath(q, page)).then(function (data) {
+  var opts = contextOpts(page);
+  state.loading = true;
+  updateStatus();
+  if (!state.videos.length) statusBar.textContent = t("loading") + " “" + q + "”…";
+  apiSearch(q, page, opts).then(function (res) {
     if (gen !== state.gen) return;
-    var raw = Array.isArray(data) ? data : [];
-    var list = [];
-    for (var i = 0; i < raw.length; i++) {
-      var m = mapItem(raw[i]);
-      if (m) list.push(m);
-    }
+    var list = state.mode === "search" ? res.items : dropLive(res.items);
     var added = mergeVideos(list);
-    cachePut(cacheKey(q, page), list);
-    if (list.length < 5 && added === 0) state.more = false;
-    else state.page = page + 1;
+    state.page = page + 1;
     state.loading = false;
-    statusBar.textContent = "“" + q + "” · " + visibleVideos().length + " videos · scroll for more";
-    render();
+    if (!res.hasMore || (added === 0 && res.items.length < 5)) state.more = false;
+    else state.more = true;
+    appendCards();
+    syncReel();
+    updateStatus();
+    if (!fromReel && added === 0 && state.more && emptySkips < 2) { emptySkips++; nextPage(false); }
   }).catch(function () {
     if (gen !== state.gen) return;
     state.loading = false;
-    statusBar.textContent = "Feed busy — scroll or search again";
-    render();
+    state.more = false;
+    updateStatus(t("feedBusy"));
+    if (!state.videos.length) showSeed(); else appendCards();
   });
 }
 
+function loadHome(keepScroll) {
+  resetFeed("home");
+  var region = regionFor(state.geo.cc);
+  state.region = region;
+  statusBar.textContent = "📍 " + (region.cc ? region.name : "") + " · " + t("loading");
+  var gen = state.gen;
+  apiTrending(state.geo.cc).then(function (items) {
+    if (gen !== state.gen) return;
+    var clean = dropLive(items);          // sirf real videos, live stream nahi
+    if (clean.length >= 4) { mergeVideos(clean); appendCards(); }
+    state.more = true;
+    updateStatus();
+    nextPage(false);
+  }).catch(function () {
+    if (gen !== state.gen) return;
+    updateStatus();
+    nextPage(false);
+  });
+  setTimeout(function () {
+    if (gen !== state.gen || state.videos.length || state.loading) return;
+    showSeed();
+  }, 9000);
+}
+
 function startCategory(key) {
-  state.mode = "cat";
+  state.userTouched = true;
   state.category = key;
   state.query = "";
   if (search) search.value = "";
-  renderAz();
-  loadPage(true);
+  resetFeed("cat");
+  updateStatus();
+  nextPage(false);
 }
 
 function startSearch(q) {
   q = String(q || "").trim();
-  if (q.length < 2) {
-    startCategory(state.category);
-    return;
-  }
-  state.mode = "search";
+  if (q.length < 2) { state.mode = "home"; loadHome(); return; }
+  state.userTouched = true;
   state.query = q;
-  renderAz();
-  loadPage(true);
+  resetFeed("search");
+  updateStatus();
+  nextPage(false);
 }
 
-function loadHome() {
-  state.mode = "cat";
-  state.category = "T";
-  state.loading = false;
-  state.more = true;
-  state.page = 1;
-  state.videos = [];
-  state.seen = Object.create(null);
-  renderAz();
-  showSeed();
-  statusBar.textContent = "Loading live feed…";
-  var localQ = localFeedQuery() || "trending";
-  var gen = ++state.gen;
-  state.loading = true;
-  function finish(raw, label) {
-    if (gen !== state.gen) return;
-    var list = [];
-    for (var i = 0; i < (raw || []).length; i++) {
-      var m = mapItem(raw[i]);
-      if (m) list.push(m);
-    }
-    if (list.length) {
-      state.videos = [];
-      state.seen = Object.create(null);
-      mergeVideos(list);
-    }
-    state.loading = false;
-    state.more = list.length >= 5;
-    state.mode = "search";
-    state.query = localQ;
-    if (search) search.value = "";
-    statusBar.textContent = label + " · " + visibleVideos().length + " videos";
-    render();
-  }
-  apiGet("/api/v1/trending").then(function (data) {
-    finish(Array.isArray(data) ? data : [], state.geo.city || state.geo.country || "Trending");
-  }).catch(function () {
-    apiGet(searchPath(localQ, 1)).then(function (data) {
-      finish(Array.isArray(data) ? data : [], localQ);
-    }).catch(function () {
-      if (gen !== state.gen) return;
-      state.loading = false;
-      showSeed();
-      statusBar.textContent = "Live feed busy — showing starter videos. Tap ↻";
-      render();
-    });
-  });
+function showSeed() {
+  if (state.videos.length) return;
+  for (var i = 0; i < SEED.length; i++) state.seen[SEED[i].id] = true;
+  state.videos = SEED.slice();
+  appendCards();
 }
 
+/* ------------------------------------------------------------------ *
+ * 10. Wiring
+ * ------------------------------------------------------------------ */
 azBar.addEventListener("click", function (e) {
-  var b = e.target.closest("[data-cat]");
+  var b = e.target.closest("[data-cat],[data-for-you]");
   if (!b) return;
-  startCategory(b.getAttribute("data-cat"));
+  if (b.getAttribute("data-for-you")) loadHome();
+  else startCategory(b.getAttribute("data-cat"));
 });
 
 document.querySelectorAll(".nav-btn").forEach(function (btn) {
@@ -581,9 +999,10 @@ document.querySelectorAll(".nav-btn").forEach(function (btn) {
     document.querySelectorAll(".nav-btn").forEach(function (x) { x.classList.remove("is-active"); });
     btn.classList.add("is-active");
     state.filter = btn.getAttribute("data-filter") || "all";
-    if (state.filter === "short" && state.videos.filter(function (v) { return v.short; }).length < 8) {
-      loadPage(true);
-    } else render();
+    renderAll();
+    if (!state.videos.length) nextPage(false);
+    else if (state.filter === "short" && state.videos.filter(function (v) { return v.short; }).length < 8 && state.more) nextPage(false);
+    updateStatus();
   });
 });
 
@@ -611,39 +1030,59 @@ search.addEventListener("input", function () {
   }, 400);
 });
 
-
-
+/* card click: long video = mini player, short = reel */
 document.addEventListener("click", function (e) {
-  var a = e.target.closest("[data-play]");
+  var a = e.target.closest("[data-play],[data-reel]");
   if (!a) return;
   e.preventDefault();
-  playNow(a.getAttribute("data-play"));
+  if (a.hasAttribute("data-reel")) openReel(a.getAttribute("data-reel"));
+  else playNow(a.getAttribute("data-play"));
 }, true);
 
-$("dockClose").addEventListener("click", closeDock);
-$("reelClose").addEventListener("click", closeReel);
+var dockCloseBtn = $("dockClose");
+if (dockCloseBtn) dockCloseBtn.addEventListener("click", closeDock);
+var dockSizeBtn = $("dockSize");
+if (dockSizeBtn) dockSizeBtn.addEventListener("click", toggleDockSize);
+var reelCloseBtn = $("reelClose");
+if (reelCloseBtn) reelCloseBtn.addEventListener("click", closeReel);
 
 document.addEventListener("keydown", function (e) {
-  if (e.key === "Escape") { closeDock(); closeReel(); }
+  if (e.key !== "Escape") return;
+  if (shortsReel && !shortsReel.classList.contains("hidden")) closeReel();
+  else if (watchDock && !watchDock.classList.contains("hidden")) closeDock();
+  window.closeSettings && window.closeSettings();
+});
+
+window.addEventListener("resize", function () {
+  if (isSmallScreen() && state.dockMode === "mini") setDockMode("top", false);
+  syncDockSpace();
 });
 
 new IntersectionObserver(function (entries) {
   if (!entries[0] || !entries[0].isIntersecting) return;
-  if (!state.loading && state.more && (state.videos.length > 0)) loadPage(false);
-}, { rootMargin: "800px" }).observe($("scrollSentinel"));
+  if (!state.loading && state.more && state.videos.length > 0) nextPage(false);
+}, { rootMargin: "900px" }).observe($("scrollSentinel"));
+
+/* #v= deep link */
+function openHashVideo() {
+  var m = /#v=([A-Za-z0-9_-]{6,})/.exec(location.hash || "");
+  if (m) playNow(m[1]);
+}
+window.addEventListener("hashchange", openHashVideo);
 
 fillLangs();
+fillRegions();
 
-document.getElementById("settingsBtn") && document.getElementById("settingsBtn").addEventListener("click", function (e) {
+var settingsBtn = $("settingsBtn");
+if (settingsBtn) settingsBtn.addEventListener("click", function (e) {
   e.preventDefault();
   e.stopPropagation();
   window.openSettings();
 });
-document.getElementById("settingsClose") && document.getElementById("settingsClose").addEventListener("click", window.closeSettings);
-document.getElementById("settingsBackdrop") && document.getElementById("settingsBackdrop").addEventListener("click", window.closeSettings);
-document.addEventListener("keydown", function (e) {
-  if (e.key === "Escape") window.closeSettings();
-});
+var settingsClose = $("settingsClose");
+if (settingsClose) settingsClose.addEventListener("click", window.closeSettings);
+var settingsBackdrop = $("settingsBackdrop");
+if (settingsBackdrop) settingsBackdrop.addEventListener("click", window.closeSettings);
 
 (function themeInit() {
   var btn = $("themeSwitch");
@@ -654,8 +1093,7 @@ document.addEventListener("keydown", function (e) {
     if (meta) meta.setAttribute("content", mode === "light" ? "#f4f4f5" : "#0f0f0f");
     if (btn) btn.setAttribute("aria-pressed", mode === "light" ? "true" : "false");
   }
-  var now = document.documentElement.classList.contains("light") ? "light" : "dark";
-  apply(now);
+  apply(document.documentElement.classList.contains("light") ? "light" : "dark");
   if (btn) {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
@@ -665,12 +1103,42 @@ document.addEventListener("keydown", function (e) {
   }
 })();
 
+(function boot() {
+  var savedDock = "";
+  try { savedDock = localStorage.getItem("vl-dock") || ""; } catch (e) {}
+  if (!savedDock) savedDock = defaultDockMode();
+  try {
+    var si = parseInt(localStorage.getItem("vl-src") || "0", 10);
+    if (si >= 0 && si < SOURCES.length) state.sourceIdx = si;
+  } catch (e) {}
+  setDockMode(savedDock, false);
+  renderAz();
+
+  /* pehle guess (timezone/language) se feed turant dikhao, phir IP se confirm karo */
+  var cached = readGeoCache();
+  var override = "";
+  try { override = localStorage.getItem("vl-cc") || ""; } catch (e) {}
+  if (override && BY_CC[override]) state.geo = { cc: override, country: BY_CC[override].name, city: "" };
+  else if (cached) state.geo = { cc: cached.cc, country: cached.country, city: cached.city };
+  else state.geo = geoGuess();
+  state.region = regionFor(state.geo.cc);
+
+  loadHome();
+
+  detectGeo().then(function (geo) {
+    if (!geo || !geo.cc) return;
+    var changed = geo.cc !== state.region.cc;
+    state.region = regionFor(geo.cc);
+    if (changed && !state.userTouched) loadHome();          // location ke hisaab se feed refresh
+    else updateStatus();
+  });
+
+  openHashVideo();
+})();
+
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").catch(function () {});
 }
-
-renderAz();
-detectGeo().then(function () { loadHome(); });
 
 (function pullRefresh() {
   var ptr = $("ptr");

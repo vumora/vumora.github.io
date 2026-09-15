@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0f0f0f" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta name="description" content="VidLoom — watch like YouTube. Instant play." />
+  <meta name="description" content="VidLoom — watch like YouTube. Instant play. Location ke hisaab se feed." />
   <title>VidLoom</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -14,8 +14,11 @@
   <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
   <link rel="preconnect" href="https://www.youtube.com" />
   <link rel="preconnect" href="https://s.ytimg.com" />
-  <link rel="dns-prefetch" href="https://corsproxy.io" />
-  <link rel="dns-prefetch" href="https://inv.nadeko.net" />
+  <link rel="dns-prefetch" href="https://invidious.flokinet.to" />
+  <link rel="dns-prefetch" href="https://api.piped.private.coffee" />
+  <link rel="dns-prefetch" href="https://pipedapi.ducks.party" />
+  <link rel="dns-prefetch" href="https://get.geojs.io" />
+  <link rel="dns-prefetch" href="https://ipwho.is" />
   <script>
     (function () {
       var t = "dark";
@@ -23,7 +26,7 @@
       document.documentElement.className = t === "light" ? "light" : "dark";
     })();
   </script>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=3" />
 </head>
 <body>
   <div id="ptr" class="ptr" aria-hidden="true">Release to refresh</div>
@@ -58,6 +61,9 @@
       </div>
       <label class="set-label" data-i18n="language">Language</label>
       <select id="langSwitch" class="lang-switch" aria-label="Language"></select>
+      <label class="set-label" data-i18n="region">Region</label>
+      <select id="regionSwitch" class="lang-switch" aria-label="Region"></select>
+      <p class="set-note" data-i18n="regionNote"></p>
       <label class="set-label" data-i18n="theme">Theme</label>
       <button type="button" class="theme-switch" id="themeSwitch" aria-label="Dark or light mode"></button>
       <a class="set-link" href="dmca.html" data-i18n="dmca">DMCA</a>
@@ -67,12 +73,22 @@
     </div>
   </div>
 
-  <div id="watchDock" class="watch-dock hidden">
+  <!-- Mini player: position:fixed — scroll karne par bhi apni jagah rehta hai, video chalti rehti hai -->
+  <div id="watchDock" class="watch-dock hidden" data-mode="top">
+    <div class="dock-bar">
+      <span class="dock-dot" aria-hidden="true"></span>
+      <span class="dock-now" data-i18n="nowPlaying">Now playing</span>
+      <span class="dock-nowtitle" id="dockNowTitle"></span>
+      <span class="dock-actions">
+        <a class="dock-btn dock-open" id="dockOpen" href="https://www.youtube.com/" target="_blank" rel="noopener" data-i18n-label="openYt" aria-label="Open on YouTube" title="Open on YouTube">↗</a>
+        <button type="button" class="dock-btn" id="dockSize" data-i18n-label="bigScreen" aria-label="Big screen" title="Big screen">⤢</button>
+        <button type="button" class="dock-btn" id="dockClose" data-i18n-label="closePlayer" aria-label="Close player" title="Close player">✕</button>
+      </span>
+    </div>
     <div id="dockPlayer" class="dock-player ratio-16x9"></div>
     <div class="dock-info">
       <h2 id="dockTitle" class="dock-title"></h2>
       <p id="dockMeta" class="dock-meta"></p>
-      <button type="button" class="dock-close" id="dockClose" aria-label="Close">Close</button>
     </div>
   </div>
 
@@ -100,6 +116,6 @@
     </p>
     <p class="copy">© <span id="year"></span> VidLoom · Developed by <strong>Pawan Verma</strong> · <strong>PAWANGAMINGSTUDIO</strong></p>
   </footer>
-  <script src="script.js" defer></script>
+  <script src="script.js?v=3" defer></script>
 </body>
 </html>

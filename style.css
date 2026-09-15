@@ -28,7 +28,11 @@ html.light {
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html, body {
+/* NOTE: html/body par overflow-y:auto / touch-action:pan-y nahi rakhte —
+   warna sticky header toot jata hai aur horizontal chip bar swipe nahi hoti. */
+html { overflow-x: clip; }
+
+body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
@@ -36,11 +40,15 @@ html, body {
   font-size: 16px;
   line-height: 1.4;
   min-height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
+  overflow-x: clip;
+  /* player ke peeche content chhupna nahi chahiye (mini = neeche, top = upar) */
+  padding-top: var(--dock-top, 0px);
+  padding-bottom: var(--dock-space, 0px);
+  transition: padding-top .18s ease, padding-bottom .18s ease;
+  -webkit-text-size-adjust: 100%;
 }
+
+body.lock { overflow: hidden; }
 
 img, iframe { border: 0; max-width: 100%; }
 a { color: var(--link); text-decoration: none; }
@@ -153,6 +161,7 @@ a { color: var(--link); text-decoration: none; }
   margin-bottom: 0.25rem;
 }
 .set-label { font-size: 0.78rem; color: var(--muted); font-weight: 700; }
+.set-note { margin: -0.15rem 0 0.35rem; font-size: 0.72rem; color: var(--muted); }
 .set-link {
   background: var(--bg);
   color: var(--text) !important;
@@ -242,6 +251,7 @@ html.light .theme-switch::after {
   overflow-y: hidden;
   padding: 0 0.85rem 0.5rem;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
   scrollbar-width: none;
 }
 .az-bar::-webkit-scrollbar { display: none; }
@@ -256,6 +266,8 @@ html.light .theme-switch::after {
   white-space: nowrap;
 }
 .az-chip.is-active { background: #fff; color: #111; }
+.az-for-you { background: var(--red); color: #fff; }
+.az-for-you.is-active { background: #fff; color: #111; }
 
 .more-menu { position: relative; margin: 0; }
 .more-sum {
@@ -304,22 +316,120 @@ html.light .theme-switch::after {
   font-weight: 700;
 }
 
+/* ---------------- Mini player (FIXED) ----------------
+   Pehle ye position:sticky tha, isi wajah se scroll karte hi
+   chalti hui video bhi scroll ho jati thi. Ab fixed hai:
+   page scroll ho ya na ho, player apni jagah rehta hai. */
 .watch-dock {
-  position: sticky;
-  top: 0;
-  z-index: 60;
+  position: fixed;
+  right: 14px;
+  bottom: calc(14px + var(--safe));
+  z-index: 95;
+  width: min(400px, calc(100vw - 28px));
   background: #000;
-  border-bottom: 1px solid var(--line);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .55);
+  display: flex;
+  flex-direction: column;
+  animation: dockIn .18s ease;
+  will-change: transform;
 }
+.watch-dock.hidden { display: none !important; }
+
+/* Upar wala player (mobile default): screen ke TOP par fixed — YouTube app jaisa */
+.watch-dock[data-mode="top"] {
+  top: 0;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  width: 100%;
+  border-radius: 0 0 14px 14px;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  animation: dockDropIn .18s ease;
+}
+.watch-dock[data-mode="top"] .dock-player { max-height: 40vh; }
+.watch-dock[data-mode="top"] .dock-info { display: none; }
+
+@keyframes dockDropIn {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: none; }
+}
+
+.watch-dock[data-mode="wide"] {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(940px, calc(100vw - 28px));
+  animation: none;
+}
+
+@keyframes dockIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+.dock-bar {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .26rem .32rem .26rem .6rem;
+  background: var(--elev);
+  border-bottom: 1px solid var(--line);
+  cursor: default;
+}
+.dock-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: dockPulse 1.6s ease-in-out infinite;
+}
+@keyframes dockPulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+.dock-now { font-size: .72rem; font-weight: 800; color: var(--muted); flex: 0 0 auto; }
+.dock-nowtitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .76rem;
+  font-weight: 700;
+}
+.dock-open { text-decoration: none; font-size: .95rem; }
+.dock-actions { margin-left: auto; display: flex; gap: .3rem; flex: 0 0 auto; }
+.dock-btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  font-size: .85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.dock-btn:active { transform: scale(.93); }
 
 .dock-player {
   position: relative;
   width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
   background: #111 center / cover no-repeat;
-  max-height: 42vh;
 }
+.watch-dock[data-mode="mini"] .dock-player { max-height: 42vh; }
+.watch-dock[data-mode="wide"] .dock-player { max-height: 62vh; }
+
+.dock-info { padding: .55rem .7rem .7rem; }
+.watch-dock[data-mode="mini"] .dock-info { display: none; }
+.watch-dock[data-mode="mini"] .dock-title { font-size: .82rem; }
+.watch-dock[data-mode="mini"] .dock-nowtitle { display: none; }
 
 .dock-player iframe, .reel-slide iframe {
   position: absolute;
@@ -342,10 +452,35 @@ html.light .theme-switch::after {
 .ratio-16x9 { aspect-ratio: 16 / 9; }
 .ratio-9x16 { aspect-ratio: 9 / 16; }
 
-.dock-info {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0.65rem 0.85rem 0.8rem;
+@media (max-width: 640px) {
+  /* mobile: player hamesha UPAR (YouTube app jaisa). Bada mode = thoda bada player. */
+  .watch-dock {
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: auto;
+    padding-top: env(safe-area-inset-top, 0px);
+    width: 100%;
+    border-radius: 0 0 14px 14px;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+  .watch-dock[data-mode="top"] .dock-player { max-height: 38vh; }
+  .watch-dock[data-mode="wide"] {
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: auto;
+    transform: none;
+    width: 100%;
+    border-radius: 0 0 14px 14px;
+    animation: dockDropIn .18s ease;
+  }
+  .watch-dock[data-mode="wide"] .dock-player { max-height: 46vh; }
+  .watch-dock .dock-now { display: none; }
+  .dock-info { padding: .5rem .7rem .6rem; }
+  .dock-title { font-size: .92rem; margin-bottom: .15rem; }
 }
 
 .dock-title { margin: 0 0 0.2rem; font-size: 1rem; }
@@ -453,6 +588,22 @@ html.light .theme-switch::after {
 }
 .badge.short { background: var(--red); }
 
+.card.is-playing .thumb-btn { box-shadow: inset 0 0 0 2px var(--red); }
+.card.is-playing .play-glyph { background: rgba(225, 29, 72, .75); }
+.card.is-playing .thumb-btn::after {
+  content: var(--np-text, "Now playing");
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  background: var(--red);
+  color: #fff;
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 0.14rem 0.42rem;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
 .card-body { padding: 0.55rem 0.1rem 0.2rem; }
 .card-title {
   margin: 0 0 0.2rem;
@@ -472,7 +623,7 @@ html.light .theme-switch::after {
 .shorts-reel {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 100;               /* mini player (95) ke upar */
   background: #000;
 }
 
@@ -494,7 +645,9 @@ html.light .theme-switch::after {
 .reel-track {
   height: 100%;
   overflow-y: auto;
+  overscroll-behavior: contain;
   scroll-snap-type: y mandatory;
+  touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
 }
 
