@@ -1,10 +1,10 @@
-# VidLoom
+# Vumora
 
 Lightweight YouTube **embedding** site. Videos stay on YouTube. Built by **Pawan Verma** / **PAWANGAMINGSTUDIO**.
 
 ## GitHub — drag-drop ye files (repo root)
 
-Repo name: **`vidloom`**
+Repo name: **`vumora`**
 
 **Zaroori (GitHub root pe drag-drop):**
 - `index.html`
@@ -55,10 +55,10 @@ Repo name: **`vidloom`**
 
 ## GitHub Pages (live)
 
-1. New repository → name `vidloom` → Public  
+1. New repository → name `vumora` → Public  
 2. **Add file → Upload files** → upar wali files drop → Commit  
 3. **Settings → Pages → Branch: `main` / folder `/ (root)` → Save**  
-4. Site: `https://YOUR-USERNAME.github.io/vidloom/`
+4. Site: `https://YOUR-USERNAME.github.io/vumora/`
 
 HTTPS + meta referrer already in `index.html` (YouTube Error 153 ke liye).
 

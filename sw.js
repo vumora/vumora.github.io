@@ -1,5 +1,5 @@
-const CACHE = "vidloom-shell-v1";
-const SHELL = ["./index.html", "./style.css", "./script.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
+const CACHE = "vumora-shell-v7";
+const SHELL = ["./index.html", "./style.css", "./script.js", "./theme-init.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }));

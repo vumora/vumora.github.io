@@ -1,4 +1,4 @@
-/* VidLoom — location-aware feed, sticky mini player, infinite scroll, no API key.
+/* Vumora — location-aware feed, sticky mini player, infinite scroll, no API key.
  * Fixes: (1) chalti hui video ab scroll nahi hoti — fixed mini player dock.
  *        (2) feed user ki location (country) ke hisaab se + search query ke hisaab se. */
 
@@ -187,49 +187,90 @@ const LANGS = [
 const I18N = {
   en: {
     home: "Home", shorts: "Shorts", videos: "Videos", go: "Go", dmca: "DMCA", developer: "Developer",
-    search: "Search VidLoom", ready: "Ready", settings: "Settings", language: "Language", theme: "Theme",
+    search: "Search Vumora", ready: "Ready", settings: "Settings", language: "Language", theme: "Theme",
     forYou: "For You", nowPlaying: "Now playing", nearYou: "near you", loading: "Loading…", videosWord: "videos",
     scrollMore: "scroll for more", feedBusy: "Feed busy — tap ↻", region: "Region", autoRegion: "Auto (my location)",
     regionNote: "Home feed aapki location se. Search aapki query se.", bigScreen: "Big screen", smallScreen: "Small player",
     closePlayer: "Close player", searchIn: "Search results for", notFound: "No videos found. Try another word.",
-    openYt: "Open on YouTube"
+    openYt: "Open on YouTube", related: "Related videos"
   },
   hi: {
     home: "होम", shorts: "शॉर्ट्स", videos: "वीडियो", go: "जाओ", dmca: "डीएमसीए", developer: "डेवलपर",
-    search: "विडलूम खोजें", ready: "तैयार", settings: "सेटिंग", language: "भाषा", theme: "थीम",
+    search: "Vumora खोजें", ready: "तैयार", settings: "सेटिंग", language: "भाषा", theme: "थीम",
     forYou: "आपके लिए", nowPlaying: "चल रहा है", nearYou: "आपके आसपास", loading: "लोड हो रहा है…", videosWord: "वीडियो",
     scrollMore: "और देखने के लिए स्क्रॉल करें", feedBusy: "फीड व्यस्त — ↻ दबाएँ", region: "क्षेत्र", autoRegion: "ऑटो (मेरी लोकेशन)",
     regionNote: "होम फीड आपकी लोकेशन से, सर्च आपकी क्वेरी से।", bigScreen: "बड़ी स्क्रीन", smallScreen: "छोटा प्लेयर",
     closePlayer: "प्लेयर बंद करें", searchIn: "सर्च नतीजे", notFound: "कोई वीडियो नहीं मिला। दूसरा शब्द आज़माएँ।",
-    openYt: "YouTube पर खोलें"
+    openYt: "YouTube पर खोलें", related: "संबंधित वीडियो"
   },
-  ar: { home: "الرئيسية", shorts: "شورتس", videos: "فيديو", go: "اذهب", dmca: "DMCA", developer: "المطور", search: "ابحث في VidLoom", ready: "جاهز" },
-  bn: { home: "হোম", shorts: "শর্টস", videos: "ভিডিও", go: "যাও", dmca: "DMCA", developer: "ডেভেলপার", search: "VidLoom খুঁজুন", ready: "প্রস্তুত" },
-  de: { home: "Start", shorts: "Shorts", videos: "Videos", go: "Los", dmca: "DMCA", developer: "Entwickler", search: "VidLoom suchen", ready: "Bereit" },
-  es: { home: "Inicio", shorts: "Shorts", videos: "Videos", go: "Ir", dmca: "DMCA", developer: "Desarrollador", search: "Buscar VidLoom", ready: "Listo" },
-  fa: { home: "خانه", shorts: "شورتس", videos: "ویدیو", go: "برو", dmca: "DMCA", developer: "سازنده", search: "جستجو VidLoom", ready: "آماده" },
-  fr: { home: "Accueil", shorts: "Shorts", videos: "Vidéos", go: "OK", dmca: "DMCA", developer: "Développeur", search: "Rechercher VidLoom", ready: "Prêt" },
-  id: { home: "Beranda", shorts: "Shorts", videos: "Video", go: "Cari", dmca: "DMCA", developer: "Pengembang", search: "Cari VidLoom", ready: "Siap" },
-  it: { home: "Home", shorts: "Shorts", videos: "Video", go: "Vai", dmca: "DMCA", developer: "Sviluppatore", search: "Cerca VidLoom", ready: "Pronto" },
-  ja: { home: "ホーム", shorts: "ショート", videos: "動画", go: "検索", dmca: "DMCA", developer: "開発者", search: "VidLoomを検索", ready: "準備完了" },
-  ko: { home: "홈", shorts: "쇼츠", videos: "동영상", go: "검색", dmca: "DMCA", developer: "개발자", search: "VidLoom 검색", ready: "준비" },
-  mr: { home: "मुख्य", shorts: "शॉर्ट्स", videos: "व्हिडिओ", go: "जा", dmca: "DMCA", developer: "डेव्हलपर", search: "VidLoom शोधा", ready: "तयार" },
-  ms: { home: "Utama", shorts: "Shorts", videos: "Video", go: "Cari", dmca: "DMCA", developer: "Pembangun", search: "Cari VidLoom", ready: "Sedia" },
-  nl: { home: "Home", shorts: "Shorts", videos: "Video's", go: "Zoek", dmca: "DMCA", developer: "Ontwikkelaar", search: "Zoek VidLoom", ready: "Klaar" },
-  pa: { home: "ਘਰ", shorts: "ਸ਼ਾਰਟਸ", videos: "ਵੀਡੀਓ", go: "ਜਾਓ", dmca: "DMCA", developer: "ਡਿਵੈਲਪਰ", search: "VidLoom ਖੋਜੋ", ready: "ਤਿਆਰ" },
-  pl: { home: "Start", shorts: "Shorts", videos: "Wideo", go: "Szukaj", dmca: "DMCA", developer: "Twórca", search: "Szukaj VidLoom", ready: "Gotowe" },
-  pt: { home: "Início", shorts: "Shorts", videos: "Vídeos", go: "Ir", dmca: "DMCA", developer: "Desenvolvedor", search: "Pesquisar VidLoom", ready: "Pronto" },
-  ru: { home: "Главная", shorts: "Shorts", videos: "Видео", go: "Найти", dmca: "DMCA", developer: "Разработчик", search: "Поиск VidLoom", ready: "Готово" },
-  sw: { home: "Nyumbani", shorts: "Shorts", videos: "Video", go: "Tafuta", dmca: "DMCA", developer: "Msanidi", search: "Tafuta VidLoom", ready: "Tayari" },
-  ta: { home: "முகப்பு", shorts: "ஷார்ட்ஸ்", videos: "வீடியோ", go: "தேடு", dmca: "DMCA", developer: "டெவலப்பர்", search: "VidLoom தேடுக", ready: "தயார்" },
-  te: { home: "హోమ్", shorts: "షార్ట్స్", videos: "వీడియోలు", go: "వెళ్ళు", dmca: "DMCA", developer: "డెవలపర్", search: "VidLoom వెతకండి", ready: "సిద్ధం" },
-  th: { home: "หน้าแรก", shorts: "ช็อตส์", videos: "วิดีโอ", go: "ค้นหา", dmca: "DMCA", developer: "ผู้พัฒนา", search: "ค้นหา VidLoom", ready: "พร้อม" },
-  tr: { home: "Ana sayfa", shorts: "Shorts", videos: "Videolar", go: "Git", dmca: "DMCA", developer: "Geliştirici", search: "VidLoom ara", ready: "Hazır" },
-  uk: { home: "Головна", shorts: "Shorts", videos: "Відео", go: "Шукати", dmca: "DMCA", developer: "Розробник", search: "Пошук VidLoom", ready: "Готово" },
-  ur: { home: "ہوم", shorts: "شارٹس", videos: "ویڈیوز", go: "جائیں", dmca: "DMCA", developer: "ڈویلپر", search: "VidLoom تلاش", ready: "تیار" },
-  vi: { home: "Trang chủ", shorts: "Shorts", videos: "Video", go: "Tìm", dmca: "DMCA", developer: "Lập trình viên", search: "Tìm VidLoom", ready: "Sẵn sàng" },
-  zh: { home: "首页", shorts: "短片", videos: "视频", go: "搜索", dmca: "DMCA", developer: "开发者", search: "搜索 VidLoom", ready: "就绪" }
+  ar: { home: "الرئيسية", shorts: "شورتس", videos: "فيديو", go: "اذهب", dmca: "DMCA", developer: "المطور", search: "ابحث في Vumora", ready: "جاهز" },
+  bn: { home: "হোম", shorts: "শর্টস", videos: "ভিডিও", go: "যাও", dmca: "DMCA", developer: "ডেভেলপার", search: "Vumora খুঁজুন", ready: "প্রস্তুত" },
+  de: { home: "Start", shorts: "Shorts", videos: "Videos", go: "Los", dmca: "DMCA", developer: "Entwickler", search: "Vumora suchen", ready: "Bereit" },
+  es: { home: "Inicio", shorts: "Shorts", videos: "Videos", go: "Ir", dmca: "DMCA", developer: "Desarrollador", search: "Buscar Vumora", ready: "Listo" },
+  fa: { home: "خانه", shorts: "شورتس", videos: "ویدیو", go: "برو", dmca: "DMCA", developer: "سازنده", search: "جستجو Vumora", ready: "آماده" },
+  fr: { home: "Accueil", shorts: "Shorts", videos: "Vidéos", go: "OK", dmca: "DMCA", developer: "Développeur", search: "Rechercher Vumora", ready: "Prêt" },
+  id: { home: "Beranda", shorts: "Shorts", videos: "Video", go: "Cari", dmca: "DMCA", developer: "Pengembang", search: "Cari Vumora", ready: "Siap" },
+  it: { home: "Home", shorts: "Shorts", videos: "Video", go: "Vai", dmca: "DMCA", developer: "Sviluppatore", search: "Cerca Vumora", ready: "Pronto" },
+  ja: { home: "ホーム", shorts: "ショート", videos: "動画", go: "検索", dmca: "DMCA", developer: "開発者", search: "Vumoraを検索", ready: "準備完了" },
+  ko: { home: "홈", shorts: "쇼츠", videos: "동영상", go: "검색", dmca: "DMCA", developer: "개발자", search: "Vumora 검색", ready: "준비" },
+  mr: { home: "मुख्य", shorts: "शॉर्ट्स", videos: "व्हिडिओ", go: "जा", dmca: "DMCA", developer: "डेव्हलपर", search: "Vumora शोधा", ready: "तयार" },
+  ms: { home: "Utama", shorts: "Shorts", videos: "Video", go: "Cari", dmca: "DMCA", developer: "Pembangun", search: "Cari Vumora", ready: "Sedia" },
+  nl: { home: "Home", shorts: "Shorts", videos: "Video's", go: "Zoek", dmca: "DMCA", developer: "Ontwikkelaar", search: "Zoek Vumora", ready: "Klaar" },
+  pa: { home: "ਘਰ", shorts: "ਸ਼ਾਰਟਸ", videos: "ਵੀਡੀਓ", go: "ਜਾਓ", dmca: "DMCA", developer: "ਡਿਵੈਲਪਰ", search: "Vumora ਖੋਜੋ", ready: "ਤਿਆਰ" },
+  pl: { home: "Start", shorts: "Shorts", videos: "Wideo", go: "Szukaj", dmca: "DMCA", developer: "Twórca", search: "Szukaj Vumora", ready: "Gotowe" },
+  pt: { home: "Início", shorts: "Shorts", videos: "Vídeos", go: "Ir", dmca: "DMCA", developer: "Desenvolvedor", search: "Pesquisar Vumora", ready: "Pronto" },
+  ru: { home: "Главная", shorts: "Shorts", videos: "Видео", go: "Найти", dmca: "DMCA", developer: "Разработчик", search: "Поиск Vumora", ready: "Готово" },
+  sw: { home: "Nyumbani", shorts: "Shorts", videos: "Video", go: "Tafuta", dmca: "DMCA", developer: "Msanidi", search: "Tafuta Vumora", ready: "Tayari" },
+  ta: { home: "முகப்பு", shorts: "ஷார்ட்ஸ்", videos: "வீடியோ", go: "தேடு", dmca: "DMCA", developer: "டெவலப்பர்", search: "Vumora தேடுக", ready: "தயார்" },
+  te: { home: "హోమ్", shorts: "షార్ట్స్", videos: "వీడియోలు", go: "వెళ్ళు", dmca: "DMCA", developer: "డెవలపర్", search: "Vumora వెతకండి", ready: "సిద్ధం" },
+  th: { home: "หน้าแรก", shorts: "ช็อตส์", videos: "วิดีโอ", go: "ค้นหา", dmca: "DMCA", developer: "ผู้พัฒนา", search: "ค้นหา Vumora", ready: "พร้อม" },
+  tr: { home: "Ana sayfa", shorts: "Shorts", videos: "Videolar", go: "Git", dmca: "DMCA", developer: "Geliştirici", search: "Vumora ara", ready: "Hazır" },
+  uk: { home: "Головна", shorts: "Shorts", videos: "Відео", go: "Шукати", dmca: "DMCA", developer: "Розробник", search: "Пошук Vumora", ready: "Готово" },
+  ur: { home: "ہوم", shorts: "شارٹس", videos: "ویڈیوز", go: "جائیں", dmca: "DMCA", developer: "ڈویلپر", search: "Vumora تلاش", ready: "تیار" },
+  vi: { home: "Trang chủ", shorts: "Shorts", videos: "Video", go: "Tìm", dmca: "DMCA", developer: "Lập trình viên", search: "Tìm Vumora", ready: "Sẵn sàng" },
+  zh: { home: "首页", shorts: "短片", videos: "视频", go: "搜索", dmca: "DMCA", developer: "开发者", search: "搜索 Vumora", ready: "就绪" }
 };
+
+/* ------------------------------------------------------------------ *
+ * A2Z WORLD LANGUAGES — saari 30 languages ke COMPLETE packs (28/28 keys).
+ * en + hi upar already complete hain; baaki duniya bhar ki languages yaha.
+ * Brand "Vumora" sab jagah same rehta hai (brand names translate nahi hote).
+ * ------------------------------------------------------------------ */
+var I18N_FULL = {
+  ar: { home: "الرئيسية", shorts: "شورتس", videos: "فيديو", go: "اذهب", dmca: "DMCA", developer: "المطور", search: "ابحث في Vumora", ready: "جاهز", settings: "الإعدادات", language: "اللغة", theme: "السمة", forYou: "لك", nowPlaying: "قيد التشغيل", nearYou: "بالقرب منك", loading: "جارٍ التحميل…", videosWord: "مقاطع فيديو", scrollMore: "مرّر للمزيد", feedBusy: "الخلاصة مشغولة — اضغط ↻", region: "المنطقة", autoRegion: "تلقائي (موقعي)", regionNote: "الصفحة الرئيسية حسب موقعك، والبحث حسب استعلامك.", bigScreen: "شاشة كبيرة", smallScreen: "مشغل صغير", closePlayer: "إغلاق المشغل", searchIn: "نتائج البحث عن", notFound: "لم يتم العثور على مقاطع فيديو. جرب كلمة أخرى.", openYt: "فتح على YouTube", related: "مقاطع ذات صلة" },
+  bn: { home: "হোম", shorts: "শর্টস", videos: "ভিডিও", go: "যাও", dmca: "DMCA", developer: "ডেভেলপার", search: "Vumora-এ খুঁজুন", ready: "প্রস্তুত", settings: "সেটিংস", language: "ভাষা", theme: "থিম", forYou: "আপনার জন্য", nowPlaying: "এখন চলছে", nearYou: "আপনার কাছাকাছি", loading: "লোড হচ্ছে…", videosWord: "ভিডিও", scrollMore: "আরও দেখতে স্ক্রল করুন", feedBusy: "ফিড ব্যস্ত — ↻ চাপুন", region: "অঞ্চল", autoRegion: "অটো (আমার অবস্থান)", regionNote: "হোম ফিড আপনার অবস্থান অনুযায়ী, সার্চ আপনার কোয়েরি অনুযায়ী।", bigScreen: "বড় স্ক্রিন", smallScreen: "ছোট প্লেয়ার", closePlayer: "প্লেয়ার বন্ধ করুন", searchIn: "অনুসন্ধানের ফলাফল", notFound: "কোনো ভিডিও পাওয়া যায়নি। অন্য শব্দ চেষ্টা করুন।", openYt: "YouTube-এ খুলুন", related: "সম্পর্কিত ভিডিও" },
+  de: { home: "Start", shorts: "Shorts", videos: "Videos", go: "Los", dmca: "DMCA", developer: "Entwickler", search: "Vumora suchen", ready: "Bereit", settings: "Einstellungen", language: "Sprache", theme: "Design", forYou: "Für dich", nowPlaying: "Läuft gerade", nearYou: "in deiner Nähe", loading: "Wird geladen…", videosWord: "Videos", scrollMore: "scrollen für mehr", feedBusy: "Feed beschäftigt — ↻ tippen", region: "Region", autoRegion: "Auto (mein Standort)", regionNote: "Start-Feed nach deinem Standort, Suche nach deiner Anfrage.", bigScreen: "Großbild", smallScreen: "Kleiner Player", closePlayer: "Player schließen", searchIn: "Suchergebnisse für", notFound: "Keine Videos gefunden. Anderes Wort versuchen.", openYt: "Auf YouTube öffnen", related: "Ähnliche Videos" },
+  es: { home: "Inicio", shorts: "Shorts", videos: "Videos", go: "Ir", dmca: "DMCA", developer: "Desarrollador", search: "Buscar en Vumora", ready: "Listo", settings: "Ajustes", language: "Idioma", theme: "Tema", forYou: "Para ti", nowPlaying: "Reproduciendo", nearYou: "cerca de ti", loading: "Cargando…", videosWord: "videos", scrollMore: "desliza para más", feedBusy: "Feed ocupado — toca ↻", region: "Región", autoRegion: "Auto (mi ubicación)", regionNote: "Inicio según tu ubicación, búsqueda según tu consulta.", bigScreen: "Pantalla grande", smallScreen: "Reproductor pequeño", closePlayer: "Cerrar reproductor", searchIn: "Resultados de", notFound: "No se encontraron videos. Prueba otra palabra.", openYt: "Abrir en YouTube", related: "Videos relacionados" },
+  fa: { home: "خانه", shorts: "شورتس", videos: "ویدیو", go: "برو", dmca: "DMCA", developer: "سازنده", search: "جستجو در Vumora", ready: "آماده", settings: "تنظیمات", language: "زبان", theme: "پوسته", forYou: "برای شما", nowPlaying: "در حال پخش", nearYou: "نزدیک شما", loading: "در حال بارگذاری…", videosWord: "ویدیو", scrollMore: "برای بیشتر اسکرول کنید", feedBusy: "فید شلوغ است — ↻ بزنید", region: "منطقه", autoRegion: "خودکار (مکان من)", regionNote: "صفحه اصلی بر اساس مکان شما، جستجو بر اساس عبارت شما.", bigScreen: "صفحه بزرگ", smallScreen: "پخش‌کننده کوچک", closePlayer: "بستن پخش‌کننده", searchIn: "نتایج جستجو برای", notFound: "ویدیویی یافت نشد. کلمه دیگری امتحان کنید.", openYt: "باز کردن در YouTube", related: "ویدیوهای مرتبط" },
+  fr: { home: "Accueil", shorts: "Shorts", videos: "Vidéos", go: "OK", dmca: "DMCA", developer: "Développeur", search: "Rechercher sur Vumora", ready: "Prêt", settings: "Paramètres", language: "Langue", theme: "Thème", forYou: "Pour vous", nowPlaying: "En lecture", nearYou: "près de chez vous", loading: "Chargement…", videosWord: "vidéos", scrollMore: "défiler pour plus", feedBusy: "Flux occupé — touchez ↻", region: "Région", autoRegion: "Auto (ma position)", regionNote: "Accueil selon votre position, recherche selon votre requête.", bigScreen: "Grand écran", smallScreen: "Petit lecteur", closePlayer: "Fermer le lecteur", searchIn: "Résultats pour", notFound: "Aucune vidéo trouvée. Essayez un autre mot.", openYt: "Ouvrir sur YouTube", related: "Vidéos similaires" },
+  id: { home: "Beranda", shorts: "Shorts", videos: "Video", go: "Cari", dmca: "DMCA", developer: "Pengembang", search: "Cari di Vumora", ready: "Siap", settings: "Pengaturan", language: "Bahasa", theme: "Tema", forYou: "Untuk Anda", nowPlaying: "Sedang diputar", nearYou: "di dekat Anda", loading: "Memuat…", videosWord: "video", scrollMore: "gulir untuk lainnya", feedBusy: "Feed sibuk — ketuk ↻", region: "Wilayah", autoRegion: "Otomatis (lokasi saya)", regionNote: "Beranda sesuai lokasi Anda, pencarian sesuai kueri Anda.", bigScreen: "Layar besar", smallScreen: "Pemutar kecil", closePlayer: "Tutup pemutar", searchIn: "Hasil untuk", notFound: "Video tidak ditemukan. Coba kata lain.", openYt: "Buka di YouTube", related: "Video terkait" },
+  it: { home: "Home", shorts: "Shorts", videos: "Video", go: "Vai", dmca: "DMCA", developer: "Sviluppatore", search: "Cerca su Vumora", ready: "Pronto", settings: "Impostazioni", language: "Lingua", theme: "Tema", forYou: "Per te", nowPlaying: "In riproduzione", nearYou: "vicino a te", loading: "Caricamento…", videosWord: "video", scrollMore: "scorri per altro", feedBusy: "Feed occupato — tocca ↻", region: "Regione", autoRegion: "Auto (mia posizione)", regionNote: "Home in base alla tua posizione, ricerca in base alla tua query.", bigScreen: "Schermo grande", smallScreen: "Player piccolo", closePlayer: "Chiudi player", searchIn: "Risultati per", notFound: "Nessun video trovato. Prova un'altra parola.", openYt: "Apri su YouTube", related: "Video correlati" },
+  ja: { home: "ホーム", shorts: "ショート", videos: "動画", go: "検索", dmca: "DMCA", developer: "開発者", search: "Vumoraを検索", ready: "準備完了", settings: "設定", language: "言語", theme: "テーマ", forYou: "おすすめ", nowPlaying: "再生中", nearYou: "あなたの地域", loading: "読み込み中…", videosWord: "本の動画", scrollMore: "スクロールで続きを表示", feedBusy: "フィード混雑中 — ↻をタップ", region: "地域", autoRegion: "自動（現在地）", regionNote: "ホームは現在地から、検索はキーワードから。", bigScreen: "大画面", smallScreen: "小さなプレーヤー", closePlayer: "プレーヤーを閉じる", searchIn: "検索結果：", notFound: "動画が見つかりません。別の言葉を試してください。", openYt: "YouTubeで開く", related: "関連動画" },
+  ko: { home: "홈", shorts: "쇼츠", videos: "동영상", go: "검색", dmca: "DMCA", developer: "개발자", search: "Vumora 검색", ready: "준비됨", settings: "설정", language: "언어", theme: "테마", forYou: "맞춤", nowPlaying: "재생 중", nearYou: "내 주변", loading: "로딩 중…", videosWord: "개 동영상", scrollMore: "더 복려면 스크롤", feedBusy: "피드 사용 중 — ↻ 탭", region: "지역", autoRegion: "자동 (내 위치)", regionNote: "홈 피드는 내 위치 기반, 검색은 검색어 기반.", bigScreen: "큰 화면", smallScreen: "작은 플레이어", closePlayer: "플레이어 닫기", searchIn: "검색 결과:", notFound: "동영상이 없습니다. 다른 단어로 검색하세요.", openYt: "YouTube에서 열기", related: "관련 동영상" },
+  mr: { home: "मुख्य", shorts: "शॉर्ट्स", videos: "व्हिडिओ", go: "जा", dmca: "DMCA", developer: "डेव्हलपर", search: "Vumora शोधा", ready: "तयार", settings: "सेटिंग्ज", language: "भाषा", theme: "थीम", forYou: "तुमच्यासाठी", nowPlaying: "आता चालू", nearYou: "तुमच्या जवळ", loading: "लोड होत आहे…", videosWord: "व्हिडिओ", scrollMore: "अजून पाहण्यासाठी स्क्रोल करा", feedBusy: "फीड व्यस्त — ↻ दाबा", region: "प्रदेश", autoRegion: "ऑटो (माझे स्थान)", regionNote: "होम फीड तुमच्या स्थानावरून, शोध तुमच्या क्वेरीवरून.", bigScreen: "मोठी स्क्रीन", smallScreen: "छोटा प्लेयर", closePlayer: "प्लेयर बंद करा", searchIn: "शोध निकाल", notFound: "व्हिडिओ सापडला नाही. दुसरा शब्द वापरा.", openYt: "YouTube वर उघडा", related: "संबंधित व्हिडिओ" },
+  ms: { home: "Utama", shorts: "Shorts", videos: "Video", go: "Cari", dmca: "DMCA", developer: "Pembangun", search: "Cari di Vumora", ready: "Sedia", settings: "Tetapan", language: "Bahasa", theme: "Tema", forYou: "Untuk Anda", nowPlaying: "Sedang dimainkan", nearYou: "berhampiran anda", loading: "Memuatkan…", videosWord: "video", scrollMore: "skrol untuk lagi", feedBusy: "Suapan sibuk — ketik ↻", region: "Rantau", autoRegion: "Auto (lokasi saya)", regionNote: "Suapan utama ikut lokasi anda, carian ikut pertanyaan anda.", bigScreen: "Skrin besar", smallScreen: "Pemain kecil", closePlayer: "Tutup pemain", searchIn: "Hasil untuk", notFound: "Tiada video dijumpai. Cuba perkataan lain.", openYt: "Buka di YouTube", related: "Video berkaitan" },
+  nl: { home: "Home", shorts: "Shorts", videos: "Video's", go: "Zoek", dmca: "DMCA", developer: "Ontwikkelaar", search: "Vumora doorzoeken", ready: "Klaar", settings: "Instellingen", language: "Taal", theme: "Thema", forYou: "Voor jou", nowPlaying: "Speelt nu", nearYou: "bij jou in de buurt", loading: "Laden…", videosWord: "video's", scrollMore: "scroll voor meer", feedBusy: "Feed bezet — tik op ↻", region: "Regio", autoRegion: "Auto (mijn locatie)", regionNote: "Homefeed op basis van je locatie, zoeken op je zoekopdracht.", bigScreen: "Groot scherm", smallScreen: "Kleine speler", closePlayer: "Speler sluiten", searchIn: "Resultaten voor", notFound: "Geen video's gevonden. Probeer een ander woord.", openYt: "Openen op YouTube", related: "Gerelateerde video's" },
+  pa: { home: "ਘਰ", shorts: "ਸ਼ਾਰਟਸ", videos: "ਵੀਡੀਓ", go: "ਜਾਓ", dmca: "DMCA", developer: "ਡਿਵੈਲਪਰ", search: "Vumora ਖੋਜੋ", ready: "ਤਿਆਰ", settings: "ਸੈਟਿੰਗ", language: "ਭਾਸ਼ਾ", theme: "ਥੀਮ", forYou: "ਤੁਹਾਡੇ ਲਈ", nowPlaying: "ਹੁਣ ਚੱਲ ਰਿਹਾ", nearYou: "ਤੁਹਾਡੇ ਨੇੜੇ", loading: "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…", videosWord: "ਵੀਡੀਓ", scrollMore: "ਹੋਰ ਲਈ ਸਕ੍ਰੌਲ ਕਰੋ", feedBusy: "ਫੀਡ ਬਿਜ਼ੀ — ↻ ਦਬਾਓ", region: "ਖੇਤਰ", autoRegion: "ਆਟੋ (ਮੇਰੀ ਲੋਕੇਸ਼ਨ)", regionNote: "ਹੋਮ ਫੀਡ ਤੁਹਾਡੀ ਲੋਕੇਸ਼ਨ ਤੋਂ, ਖੋਜ ਤੁਹਾਡੀ ਕੁਐਰੀ ਤੋਂ।", bigScreen: "ਵੱਡੀ ਸਕ੍ਰੀਨ", smallScreen: "ਛੋਟਾ ਪਲੇਅਰ", closePlayer: "ਪਲੇਅਰ ਬੰਦ ਕਰੋ", searchIn: "ਖੋਜ ਨਤੀਜੇ", notFound: "ਕੋਈ ਵੀਡੀਓ ਨਹੀਂ ਮਿਲੀ। ਹੋਰ ਸ਼ਬਦ ਵਰਤੋ।", openYt: "YouTube 'ਤੇ ਖੋਲ੍ਹੋ", related: "ਸੰਬੰਧਤ ਵੀਡੀਓ" },
+  pl: { home: "Start", shorts: "Shorts", videos: "Wideo", go: "Szukaj", dmca: "DMCA", developer: "Twórca", search: "Szukaj w Vumora", ready: "Gotowe", settings: "Ustawienia", language: "Język", theme: "Motyw", forYou: "Dla Ciebie", nowPlaying: "Teraz odtwarzane", nearYou: "w Twojej okolicy", loading: "Ładowanie…", videosWord: "filmy", scrollMore: "przewiń po więcej", feedBusy: "Kanał zajęty — dotknij ↻", region: "Region", autoRegion: "Auto (moja lokalizacja)", regionNote: "Strona główna wg lokalizacji, szukaj wg zapytania.", bigScreen: "Duży ekran", smallScreen: "Mały odtwarzacz", closePlayer: "Zamknij odtwarzacz", searchIn: "Wyniki dla", notFound: "Nie znaleziono filmów. Spróbuj innego słowa.", openYt: "Otwórz w YouTube", related: "Podobne filmy" },
+  pt: { home: "Início", shorts: "Shorts", videos: "Vídeos", go: "Ir", dmca: "DMCA", developer: "Desenvolvedor", search: "Pesquisar no Vumora", ready: "Pronto", settings: "Configurações", language: "Idioma", theme: "Tema", forYou: "Para você", nowPlaying: "Reproduzindo", nearYou: "perto de você", loading: "Carregando…", videosWord: "vídeos", scrollMore: "role para mais", feedBusy: "Feed ocupado — toque em ↻", region: "Região", autoRegion: "Auto (minha localização)", regionNote: "Início conforme sua localização, busca conforme sua consulta.", bigScreen: "Tela grande", smallScreen: "Player pequeno", closePlayer: "Fechar player", searchIn: "Resultados para", notFound: "Nenhum vídeo encontrado. Tente outra palavra.", openYt: "Abrir no YouTube", related: "Vídeos relacionados" },
+  ru: { home: "Главная", shorts: "Shorts", videos: "Видео", go: "Найти", dmca: "DMCA", developer: "Разработчик", search: "Поиск в Vumora", ready: "Готово", settings: "Настройки", language: "Язык", theme: "Тема", forYou: "Для вас", nowPlaying: "Сейчас играет", nearYou: "рядом с вами", loading: "Загрузка…", videosWord: "видео", scrollMore: "листайте дальше", feedBusy: "Лента занята — нажмите ↻", region: "Регион", autoRegion: "Авто (моё местоположение)", regionNote: "Лента по вашему местоположению, поиск по запросу.", bigScreen: "Большой экран", smallScreen: "Маленький плеер", closePlayer: "Закрыть плеер", searchIn: "Результаты для", notFound: "Видео не найдены. Попробуйте другое слово.", openYt: "Открыть на YouTube", related: "Похожие видео" },
+  sw: { home: "Nyumbani", shorts: "Shorts", videos: "Video", go: "Tafuta", dmca: "DMCA", developer: "Msanidi", search: "Tafuta Vumora", ready: "Tayari", settings: "Mipangilio", language: "Lugha", theme: "Mandhari", forYou: "Kwa Ajili Yako", nowPlaying: "Inacheza sasa", nearYou: "karibu nawe", loading: "Inapakia…", videosWord: "video", scrollMore: "sogeza kwa zaidi", feedBusy: "Feed bize — gusa ↻", region: "Mkoa", autoRegion: "Auto (eneo langu)", regionNote: "Feed ya nyumbani kutoka eneo lako, utafutaji kutoka swali lako.", bigScreen: "Skrini kubwa", smallScreen: "Kichezeshaji kidogo", closePlayer: "Funga kichezeshaji", searchIn: "Matokeo ya", notFound: "Hakuna video. Jaribu neno jingine.", openYt: "Fungua YouTube", related: "Video zinazohusiana" },
+  ta: { home: "முகப்பு", shorts: "ஷார்ட்ஸ்", videos: "வீடியோ", go: "தேடு", dmca: "DMCA", developer: "டெவலப்பர்", search: "Vumora-ல் தேடுக", ready: "தயார்", settings: "அமைப்புகள்", language: "மொழி", theme: "தீம்", forYou: "உங்களுக்காக", nowPlaying: "இப்போது ஓடுகிறது", nearYou: "உங்கள் அருகில்", loading: "ஏற்றுகிறது…", videosWord: "வீடியோக்கள்", scrollMore: "மேலும் பார்க்க ஸ்க்ரோல் செய்யவும்", feedBusy: "ஃபீடு பிஸி — ↻ தட்டவும்", region: "பிராந்தியம்", autoRegion: "ஆட்டோ (என் இருப்பிடம்)", regionNote: "முகப்பு உங்கள் இருப்பிடத்திலிருந்து, தேடல் உங்கள் வினவலிலிருந்து.", bigScreen: "பெரிய திரை", smallScreen: "சிறிய பிளேயர்", closePlayer: "பிளேயரை மூடு", searchIn: "தேடல் முடிவுகள்", notFound: "வீடியோ எதுவும் இல்லை. வேறு சொல் முயற்சிக்கவும்.", openYt: "YouTube-ல் திறக்கவும்", related: "தொடர்புடைய வீடியோக்கள்" },
+  te: { home: "హోమ్", shorts: "షార్ట్స్", videos: "వీడియోలు", go: "వెళ్లు", dmca: "DMCA", developer: "డెవలపర్", search: "Vumoraలో వెతకండి", ready: "సిద్ధం", settings: "సెట్టింగ్స్", language: "భాష", theme: "థీమ్", forYou: "మీ కోసం", nowPlaying: "ఇప్పుడు ప్లే అవుతోంది", nearYou: "మీ దగ్గర", loading: "లోడ్ అవుతోంది…", videosWord: "వీడియోలు", scrollMore: "మరింత కోసం స్క్రోల్ చేయండి", feedBusy: "ఫీడ్ బిజీ — ↻ నొక్కండి", region: "ప్రాంతం", autoRegion: "ఆటో (నా లొకేషన్)", regionNote: "హోమ్ ఫీడ్ మీ లొకేషన్ నుండి, శోధన మీ క్వేరీ నుండి.", bigScreen: "పెద్ద స్క్రీన్", smallScreen: "చిన్న ప్లేయర్", closePlayer: "ప్లేయర్ మూసివేయండి", searchIn: "శోధన ఫలితాలు", notFound: "వీడియోలు దొరకలేదు. మరో పదం ప్రయత్నించండి.", openYt: "YouTubeలో తెరవండి", related: "సంబంధిత వీడియోలు" },
+  th: { home: "หน้าแรก", shorts: "ช็อตส์", videos: "วิดีโอ", go: "ค้นหา", dmca: "DMCA", developer: "ผู้พัฒนา", search: "ค้นหาใน Vumora", ready: "พร้อม", settings: "การตั้งค่า", language: "ภาษา", theme: "ธีม", forYou: "สำหรับคุณ", nowPlaying: "กำลังเล่น", nearYou: "ใกล้คุณ", loading: "กำลังโหลด…", videosWord: "วิดีโอ", scrollMore: "เลื่อนเพื่อดูเพิ่ม", feedBusy: "ฟีดไม่ว่าง — แตะ ↻", region: "ภูมิภาค", autoRegion: "อัตโนมัติ (ตำแหน่งของฉัน)", regionNote: "หน้าแรกตามตำแหน่งของคุณ ค้นหาตามคำค้น", bigScreen: "หน้าจอใหญ่", smallScreen: "เพลเยอร์เล็ก", closePlayer: "ปิดเพลเยอร์", searchIn: "ผลการค้นหาสำหรับ", notFound: "ไม่พบวิดีโอ ลองคำอื่น", openYt: "เปิดใน YouTube", related: "วิดีโอที่เกี่ยวข้อง" },
+  tr: { home: "Ana sayfa", shorts: "Shorts", videos: "Videolar", go: "Git", dmca: "DMCA", developer: "Geliştirici", search: "Vumora'da ara", ready: "Hazır", settings: "Ayarlar", language: "Dil", theme: "Tema", forYou: "Sana Özel", nowPlaying: "Şimdi oynatılıyor", nearYou: "yakınında", loading: "Yükleniyor…", videosWord: "video", scrollMore: "daha fazlası için kaydır", feedBusy: "Akış meşgul — ↻ dokun", region: "Bölge", autoRegion: "Otomatik (konumum)", regionNote: "Ana akış konumuna göre, arama sorguna göre.", bigScreen: "Büyük ekran", smallScreen: "Küçük oynatıcı", closePlayer: "Oynatıcıyı kapat", searchIn: "Arama sonuçları", notFound: "Video bulunamadı. Başka kelime dene.", openYt: "YouTube'da aç", related: "Benzer videolar" },
+  uk: { home: "Головна", shorts: "Shorts", videos: "Відео", go: "Шукати", dmca: "DMCA", developer: "Розробник", search: "Пошук у Vumora", ready: "Готово", settings: "Налаштування", language: "Мова", theme: "Тема", forYou: "Для вас", nowPlaying: "Зараз відтворюється", nearYou: "поруч із вами", loading: "Завантаження…", videosWord: "відео", scrollMore: "гортайте далі", feedBusy: "Стрічка зайнята — натисніть ↻", region: "Регіон", autoRegion: "Авто (моє місце)", regionNote: "Стрічка за вашим місцем, пошук за запитом.", bigScreen: "Великий екран", smallScreen: "Маленький програвач", closePlayer: "Закрити програвач", searchIn: "Результати для", notFound: "Відео не знайдено. Спробуйте інше слово.", openYt: "Відкрити на YouTube", related: "Схожі відео" },
+  ur: { home: "ہوم", shorts: "شارٹس", videos: "ویڈیوز", go: "جائیں", dmca: "DMCA", developer: "ڈیویلپر", search: "Vumora تلاش کریں", ready: "تیار", settings: "سیٹنگز", language: "زبان", theme: "تھیم", forYou: "آپ کے لیے", nowPlaying: "اب چل رہا ہے", nearYou: "آپ کے قریب", loading: "لوڈ ہو رہا ہے…", videosWord: "ویڈیوز", scrollMore: "مزید کے لیے سکرول کریں", feedBusy: "فیڈ مصروف ہے — ↻ دبائیں", region: "خطہ", autoRegion: "آٹو (میرا مقام)", regionNote: "ہوم فیڈ آپ کے مقام کے مطابق، تلاش آپ کی کیوری کے مطابق۔", bigScreen: "بڑی اسکرین", smallScreen: "چھوٹا پلیئر", closePlayer: "پلیئر بند کریں", searchIn: "تلاش کے نتائج", notFound: "کوئی ویڈیو نہیں ملی۔ دوسرا لفظ آزمائیں۔", openYt: "YouTube پر کھولیں", related: "متعلقہ ویڈیوز" },
+  vi: { home: "Trang chủ", shorts: "Shorts", videos: "Video", go: "Tìm", dmca: "DMCA", developer: "Lập trình viên", search: "Tìm trên Vumora", ready: "Sẵn sàng", settings: "Cài đặt", language: "Ngôn ngữ", theme: "Chủ đề", forYou: "Dành cho bạn", nowPlaying: "Đang phát", nearYou: "gần bạn", loading: "Đang tải…", videosWord: "video", scrollMore: "cuộn để xem thêm", feedBusy: "Bảng tin bận — nhấn ↻", region: "Khu vực", autoRegion: "Tự động (vị trí của tôi)", regionNote: "Trang chủ theo vị trí của bạn, tìm kiếm theo truy vấn.", bigScreen: "Màn hình lớn", smallScreen: "Trình phát nhỏ", closePlayer: "Đóng trình phát", searchIn: "Kết quả cho", notFound: "Không tìm thấy video. Thử từ khác.", openYt: "Mở trên YouTube", related: "Video liên quan" },
+  zh: { home: "首页", shorts: "短片", videos: "视频", go: "搜索", dmca: "DMCA", developer: "开发者", search: "搜索 Vumora", ready: "就绪", settings: "设置", language: "语言", theme: "主题", forYou: "为你推荐", nowPlaying: "正在播放", nearYou: "你附近", loading: "加载中…", videosWord: "个视频", scrollMore: "滚动加载更多", feedBusy: "加载繁忙 — 点 ↻", region: "地区", autoRegion: "自动（我的位置）", regionNote: "首页推荐基于你的位置，搜索基于你的关键词。", bigScreen: "大屏幕", smallScreen: "小播放器", closePlayer: "关闭播放器", searchIn: "搜索结果：", notFound: "未找到视频，请换个词试试。", openYt: "在 YouTube 打开", related: "相关视频" }
+};
+(function () {
+  /* I18N_FULL ke complete packs I18N me merge karo (en/hi untouched — wo pehle se full) */
+  for (var code in I18N_FULL) {
+    if (!I18N[code]) I18N[code] = {};
+    for (var k in I18N_FULL[code]) I18N[code][k] = I18N_FULL[code][k];
+  }
+})();
 
 const SHORTS_HINT = /#shorts?\b|\/shorts\b|\bshorts\b|\breels?\b/i;
 const LIVE_HINT = /\bis live\b|\blive\b|\blivestream\b|🔴|\bpremiere\b|\bupcoming\b|लाइव|ライブ|생방송|مباشر|\ben vivo\b|\bao vivo\b|\bEN DIRECTO\b|\b直播\b|\b24\/7\b/i;
@@ -241,6 +282,11 @@ const state = {
   videos: [], seen: Object.create(null),
   filter: "all",
   query: "",            // search mode query
+  homeQ: "",            // is home-feed session ki locked fresh query (har load par nayi)
+  relId: "",            // related feed kis video ki
+  relQuery: "",         // related continuation ki current query
+  relQueries: [],       // related queries ki line (ek khatam → agli = UNLIMITED scroll)
+  relQIdx: 0,
   category: "T",
   mode: "home",         // home | cat | search
   page: 1,              // agla search page (1-based)
@@ -548,6 +594,94 @@ function apiTrending(cc) {
 }
 
 /* ------------------------------------------------------------------ *
+ * 5.5 Related videos APIs — chalti hui video ke related lane ke liye
+ * ------------------------------------------------------------------ */
+function ivRelated(src, id, opts) {
+  var url = src.base + "/api/v1/related/" + encodeURIComponent(id) + "?x=1";
+  if (opts.cc) url += "&region=" + encodeURIComponent(opts.cc);
+  if (opts.hl) url += "&hl=" + encodeURIComponent(opts.hl);
+  return fetchTimeout(url, 7000).then(function (data) {
+    var arr = Array.isArray(data) ? data : [];
+    var list = [];
+    for (var i = 0; i < arr.length; i++) { var v = mapIvItem(arr[i]); if (v) list.push(v); }
+    /* FIX: empty result ya {"error":...} body = FAILURE — agla source try karo */
+    if (!list.length) throw new Error("empty-related");
+    return list;
+  });
+}
+
+function pipedRelated(src, id) {
+  return fetchTimeout(src.base + "/streams/" + encodeURIComponent(id), 8000).then(function (data) {
+    var arr = (data && data.relatedStreams) || [];
+    var list = [];
+    for (var i = 0; i < arr.length; i++) { var v = mapPipedItem(arr[i]); if (v) list.push(v); }
+    /* FIX: empty result = FAILURE — agla source try karo */
+    if (!list.length) throw new Error("empty-related");
+    return list;
+  });
+}
+
+function apiRelated(id) {
+  var opts = { cc: state.geo.cc || "", hl: state.region.hl || "" };
+  return withSource(function (src) {
+    if (src.kind === "iv") return ivRelated(src, id, opts);
+    return pipedRelated(src, id);
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ * 5.6 FRESH FEED system — har visit par nayi videos, purani kabhi repeat nahi
+ *  - localStorage me dikhai gayi videos ki IDs rakhta hai (max 2000)
+ *  - home/category feed banate waqt history wali videos hata deta hai
+ *  - har load par random query + random sort + random start page
+ * ------------------------------------------------------------------ */
+var HIST_KEY = "vl-hist";
+var HIST_MAX = 2000;
+var histObj = Object.create(null);
+
+(function histInit() {
+  try {
+    var a = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+    if (Array.isArray(a)) for (var i = 0; i < a.length; i++) histObj[a[i]] = true;
+  } catch (e) {}
+})();
+
+function addToHist(ids) {
+  if (!ids || !ids.length) return;
+  var a = [];
+  try { a = JSON.parse(localStorage.getItem(HIST_KEY) || "[]") || []; } catch (e) {}
+  for (var i = 0; i < ids.length; i++) {
+    if (!histObj[ids[i]]) { histObj[ids[i]] = true; a.push(ids[i]); }
+  }
+  if (a.length > HIST_MAX) a = a.slice(a.length - HIST_MAX);
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(a)); } catch (e) {}
+}
+
+/* pehle dikhai gayi videos hatado (sirf home/category feed par — search/related untouched) */
+function dropSeen(list) {
+  if (state.mode !== "home" && state.mode !== "cat") return list;
+  var out = [];
+  for (var i = 0; i < list.length; i++) if (!histObj[list[i].id]) out.push(list[i]);
+  return out;
+}
+
+/* har home load par ALAG query — regional base, spice words, ya random category combo */
+function freshHomeQuery() {
+  var base = state.region.q || "trending videos today";
+  var r = Math.random();
+  if (r < 0.45) {
+    var spice = ["new", "latest", "viral", "best", "top", "must watch", "fresh", "this week"];
+    return base + " " + spice[Math.floor(Math.random() * spice.length)];
+  }
+  if (r < 0.8) {
+    var a = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+    var b = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+    return a.q + " " + b.q;
+  }
+  return base;
+}
+
+/* ------------------------------------------------------------------ *
  * 6. Cards / rendering (incremental — scroll par feed jump nahi karti)
  * ------------------------------------------------------------------ */
 var renderedFilter = null;
@@ -631,13 +765,17 @@ function findVideo(id) {
 
 function mergeVideos(list) {
   var n = 0;
+  var newIds = [];
   for (var i = 0; i < list.length; i++) {
     var v = list[i];
     if (!v || state.seen[v.id]) continue;
     state.seen[v.id] = true;
     state.videos.push(v);
+    newIds.push(v.id);
     n++;
   }
+  /* home/category feed me dikhai gayi videos history me likh do — agli baar repeat nahi hongi */
+  if (n > 0 && (state.mode === "home" || state.mode === "cat")) addToHist(newIds);
   return n;
 }
 
@@ -657,6 +795,7 @@ function updateStatus(prefix) {
   var bits = [];
   if (state.mode === "home" && state.region && state.region.cc) bits.push("📍 " + state.region.name + " · " + t("nearYou"));
   else if (state.mode === "search" && state.query) bits.push(t("searchIn") + " “" + state.query + "”");
+  else if (state.mode === "related") bits.push("▶ " + t("related"));
   if (prefix) bits.push(prefix);
   bits.push(visibleVideos().length + " " + t("videosWord"));
   if (state.more) bits.push(t("scrollMore"));
@@ -670,7 +809,9 @@ function updateStatus(prefix) {
 function embedSrc(id, autoplay) {
   var origin = "";
   try { if (location.origin && location.origin !== "null") origin = "&origin=" + encodeURIComponent(location.origin); } catch (e) {}
-  return "https://www.youtube.com/embed/" + encodeURIComponent(id) +
+  /* PRIVACY: youtube-nocookie.com = YouTube ka official privacy-enhanced mode.
+   * Player bilkul same chalta hai, bas tab tak tracking cookies set nahi hoti jab tak user play na dabaye. */
+  return "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
     "?autoplay=" + (autoplay ? "1" : "0") +
     "&rel=0&modestbranding=1&playsinline=1&fs=1&enablejsapi=1" + origin;
 }
@@ -744,6 +885,8 @@ function playNow(id) {
   if (isSmallScreen() && (wasHidden || !same) && window.scrollY > 0) {
     try { window.scrollTo(0, 0); } catch (e) {}
   }
+  // is video ki asli RELATED videos neeche (title + author dono bhejo smart fallback ke liye)
+  if (!same) loadRelated(id, v.title && v.title !== "Video" ? v.title : "", v.author || "");
 }
 
 function closeDock() {
@@ -757,6 +900,123 @@ function closeDock() {
 }
 window.playNow = playNow;
 window.closeDock = closeDock;
+
+/* ------------------------------------------------------------------ *
+ * 7.5 Related feed — jo video chal rahi hai, uski RELATED videos neeche
+ * (header/search/categories waise hi rehte hain — sirf feed ka content badalta hai)
+ * ------------------------------------------------------------------ */
+var relGen = 0;
+
+function setFilterUI(f) {
+  state.filter = f;
+  document.querySelectorAll(".nav-btn[data-filter]").forEach(function (x) {
+    x.classList.toggle("is-active", x.getAttribute("data-filter") === f);
+  });
+}
+
+/* SMART fallback query: poora title NAHI (usse same song/movie dubara aa jati hai — GALAT).
+   Stopwords hatao (song/official/new/2026/hd...) → bache real keywords + artist
+   = wahi MOOD/genre/artist ki ALAG-ALAG videos (jaisa YouTube ka related hota hai) */
+var REL_STOP = /^(official|vid(eo|eos)?|songs?|new|full|hd|4k|8k|lyrics?|lyrical|audio|music|mv|ost|ft\.?|feat\.?|featuring|vs|x|remix|status|shorts?|reels?|latest|best|top|hits?|jukebox|trailer|teaser|the|a|an|of|to|in|on|at|de|le|la|el|ke|ki|ka|hai|hoti|hota|में|है|के|की|का|से|और|गाना|गाने|वीडियो|सॉन्ग|\d{4})$/i;
+
+/* SMART related keywords: poora title NAHI (usse same song/movie dubara aa jati hai — GALAT).
+   Stopwords hatao (song/official/new/2026/hd...) → bache real keywords + artist
+   = wahi MOOD/genre/artist ki ALAG-ALAG videos (jaisa YouTube ka related hota hai) */
+var REL_STOP = /^(official|vid(eo|eos)?|songs?|new|full|hd|4k|8k|lyrics?|lyrical|audio|music|mv|ost|ft\.?|feat\.?|featuring|vs|x|remix|status|shorts?|reels?|latest|best|top|hits?|jukebox|trailer|teaser|the|a|an|of|to|in|on|at|de|le|la|el|ke|ki|ka|hai|hoti|hota|में|है|के|की|का|से|और|गाना|गाने|वीडियो|सॉन्ग|\d{4})$/i;
+
+function relatedKeywords(title) {
+  var t = String(title || "").replace(/[^\p{L}\p{N} ]+/gu, " ").replace(/\s+/g, " ").trim();
+  var words = t.split(" ");
+  var kw = [];
+  for (var i = 0; i < words.length; i++) {
+    if (words[i] && !REL_STOP.test(words[i])) kw.push(words[i]);
+    if (kw.length >= 5) break;                 /* max 5 keywords — zyada specific nahi */
+  }
+  return kw.join(" ").trim();
+}
+
+/* playing video ki related queries ki LINE (sabse specific → broad).
+   Scroll karte jao — ek query khatam → khud agli query → page 1,2,3... = UNLIMITED videos,
+   scroll karte raho, kabhi "khatam" feel nahi hogi. */
+function relatedQueryQueue(title, author) {
+  var qs = [];
+  var kw = relatedKeywords(title);
+  var a = author ? String(author).trim() : "";
+  if (!a || /^youtube$/i.test(a)) a = "";
+  var w = kw ? kw.split(" ") : [];
+  if (kw && a) qs.push(kw + " " + a);                                /* topic + artist (sabse close) */
+  if (kw) qs.push(kw);                                               /* topic / mood */
+  if (a) qs.push(a);                                                 /* usi creator ki aur videos */
+  if (w.length > 2) qs.push(w.slice(0, 2).join(" ") + (a ? " " + a : ""));  /* core topic (+ artist) */
+  if (!qs.length && kw) qs.push(kw);
+  return qs;
+}
+
+/* ek query ke results khatam → agli related query par jump (true nahi, par wapas true) */
+function advanceRelatedQuery() {
+  emptySkips = 0;
+  state.relQIdx++;
+  if (state.relQIdx < state.relQueries.length) {
+    state.relQuery = state.relQueries[state.relQIdx];
+    state.page = 1;
+    state.more = true;
+    return true;
+  }
+  state.more = false;
+  return false;
+}
+
+function loadRelated(id, title, author) {
+  if (!id) return;
+  relGen++;
+  var gen = relGen;
+  state.gen++;                        /* pichhli related session ke pending fetches cancel */
+  /* feed ko related-mode par set karo. User "For You"/category/search daba de
+     toh normal feed wapas aa jayegi — kuch tootta nahi. */
+  state.mode = "related";
+  state.query = "";
+  if (search) search.value = "";
+  state.category = "";
+  state.relId = id;
+  state.relQueries = relatedQueryQueue(title, author);
+  state.relQIdx = 0;
+  state.relQuery = state.relQueries[0] || "";
+  state.videos = [];
+  state.seen = Object.create(null);
+  state.seen[id] = true;              /* chalti video related me repeat na ho */
+  state.page = 1;
+  /* UNLIMITED: real related ke baad bhi continuation pages aati rahengi (queries hain toh) */
+  state.more = state.relQueries.length > 0;
+  state.loading = true;
+  emptySkips = 0;
+  renderedFilter = null;
+  renderedCount = 0;
+  grid.innerHTML = "";
+  setFilterUI("all");
+  renderAz();                         /* koi chip active nahi dikhegi — sahi hai */
+  updateStatus();
+  apiRelated(id).then(function (list) {
+    if (gen !== relGen || state.mode !== "related") return;  /* user ne beech me kuch aur khol liya */
+    /* NOTE: yaha dropLive NAHI — Piped related me duration -1 (unknown) aata hai,
+       dropLive lagao toh saari related videos filter ho jayengi. */
+    mergeVideos(list);
+    state.loading = false;
+    appendCards();
+    updateStatus();
+    /* list khaali rahi (rare) toh continuation queries se bharo */
+    if (!state.videos.length) {
+      if (state.more) nextPage(false);
+      else loadHome();
+    }
+  }).catch(function () {
+    if (gen !== relGen || state.mode !== "related") return;
+    /* real related endpoint fail → seedha UNLIMITED continuation queries se shuru.
+       Search endpoint alag hota hai aur chal raha hota hai — feed kabhi khali nahi. */
+    state.loading = false;
+    if (state.more) nextPage(false);
+    else loadHome();
+  });
+}
 
 window.openSettings = function () {
   var sheet = document.getElementById("settingsSheet");
@@ -872,12 +1132,27 @@ function renderAz() {
 function contextQuery() {
   if (state.mode === "search") return state.query.trim();
   if (state.mode === "cat") return catByKey(state.category).q;
-  return state.region.q || "trending videos today";     // home
+  if (state.mode === "related") return state.relQuery || "";      // related continuation query
+  /* home: is session ki fresh query ek baar banao aur lock karo (pagination consistent rahe) */
+  if (!state.homeQ) state.homeQ = freshHomeQuery();
+  return state.homeQ;
 }
 
 function contextOpts(searchPage) {
   var opts = { cc: state.geo.cc || "", hl: state.mode === "home" ? (state.region.hl || "") : "" };
-  if (state.mode === "home" && searchPage === 1) { opts.sort = "view_count"; opts.date = "week"; }
+  /* FRESH: har home feed ka sort/date combo alag — results ka order har baar badle */
+  if (state.mode === "home" && searchPage === 1) {
+    var plans = [
+      { sort: "view_count", date: "week" },
+      { sort: "upload_date" },
+      { sort: "rating", date: "month" },
+      { sort: "view_count", date: "today" },
+      {}
+    ];
+    var p = plans[Math.floor(Math.random() * plans.length)];
+    if (p.sort) opts.sort = p.sort;
+    if (p.date) opts.date = p.date;
+  }
   return opts;
 }
 
@@ -890,6 +1165,7 @@ function pageQuery(base) {
 function resetFeed(mode) {
   state.gen++;
   state.mode = mode;
+  state.homeQ = "";               /* agli home feed ke liye nayi fresh query banegi */
   state.videos = [];
   state.seen = Object.create(null);
   state.page = 1;
@@ -915,18 +1191,26 @@ function nextPage(fromReel) {
   apiSearch(q, page, opts).then(function (res) {
     if (gen !== state.gen) return;
     var list = state.mode === "search" ? res.items : dropLive(res.items);
+    list = dropSeen(list);            /* FRESH: pehle dikhai gayi videos yahi se hata do */
     var added = mergeVideos(list);
     state.page = page + 1;
     state.loading = false;
-    if (!res.hasMore || (added === 0 && res.items.length < 5)) state.more = false;
+    if (state.mode === "related") {
+      /* UNLIMITED related: ek query khatam → advanceRelatedQuery() agli query shuru (page 1).
+         Feed tabhi rukti hai jab SAARI related queries khatam ho jayein — practically kabhi nahi. */
+      if (!res.hasMore || (added === 0 && res.items.length < 5)) advanceRelatedQuery();
+    } else if (!res.hasMore || (added === 0 && res.items.length < 5)) state.more = false;
     else state.more = true;
     appendCards();
     syncReel();
     updateStatus();
-    if (!fromReel && added === 0 && state.more && emptySkips < 2) { emptySkips++; nextPage(false); }
+    /* history filter ke baad page khaali ho gaya ho toh aur andar tak khodo (naya content laao) */
+    if (!fromReel && added === 0 && state.more && emptySkips < 3) { emptySkips++; nextPage(false); }
   }).catch(function () {
     if (gen !== state.gen) return;
     state.loading = false;
+    /* related mode me API fail → agli related query try karo, feed aise hi band mat karo */
+    if (state.mode === "related" && advanceRelatedQuery()) { updateStatus(); return; }
     state.more = false;
     updateStatus(t("feedBusy"));
     if (!state.videos.length) showSeed(); else appendCards();
@@ -935,13 +1219,14 @@ function nextPage(fromReel) {
 
 function loadHome(keepScroll) {
   resetFeed("home");
+  state.page = 1 + Math.floor(Math.random() * 3);   /* FRESH: har baar results ke alag page se shuru */
   var region = regionFor(state.geo.cc);
   state.region = region;
   statusBar.textContent = "📍 " + (region.cc ? region.name : "") + " · " + t("loading");
   var gen = state.gen;
   apiTrending(state.geo.cc).then(function (items) {
     if (gen !== state.gen) return;
-    var clean = dropLive(items);          // sirf real videos, live stream nahi
+    var clean = dropSeen(dropLive(items));   // real videos, live nahi — aur pehle dikhai gayi bhi nahi
     if (clean.length >= 4) { mergeVideos(clean); appendCards(); }
     state.more = true;
     updateStatus();
@@ -1056,6 +1341,15 @@ document.addEventListener("keydown", function (e) {
 window.addEventListener("resize", function () {
   if (isSmallScreen() && state.dockMode === "mini") setDockMode("top", false);
   syncDockSpace();
+});
+
+/* FRESH: user site chhodkar 10+ min baad wapas aaye → home feed khud refresh (naya content) */
+var lastHiddenAt = 0;
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) { lastHiddenAt = Date.now(); return; }
+  if (lastHiddenAt && Date.now() - lastHiddenAt > 10 * 60 * 1000 && state.mode === "home" && !state.loading) {
+    loadHome();
+  }
 });
 
 new IntersectionObserver(function (entries) {

@@ -5,13 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0f0f0f" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta name="description" content="VidLoom — watch like YouTube. Instant play. Location ke hisaab se feed." />
-  <title>VidLoom</title>
+  <!-- SECURITY: Content Security Policy — sirf apni (self) scripts/styles allow.
+       Sirf wahi 3rd-party connections allow hain jo app ko chahiye:
+       YouTube iframe player, YouTube thumbnails, Invidious/Piped feeds, geo lookup.
+       Iske bahar ka koi bhi script/frame/connection browser khud block kar dega. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://i.ytimg.com data:; font-src 'self'; connect-src 'self' https://api.piped.private.coffee https://invidious.flokinet.to https://pipedapi.ducks.party https://get.geojs.io https://ipwho.is https://api.country.is; frame-src https://www.youtube-nocookie.com https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests" />
+  <!-- SECURITY: Camera/mic/geolocation/payment APIs is app ko chahiye hi nahi — band kar diye -->
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()" />
+  <meta name="description" content="Vumora — watch like YouTube. Instant play. Location ke hisaab se feed." />
+  <title>Vumora</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
+  <link rel="preconnect" href="https://www.youtube-nocookie.com" />
   <link rel="preconnect" href="https://www.youtube.com" />
   <link rel="preconnect" href="https://s.ytimg.com" />
   <link rel="dns-prefetch" href="https://invidious.flokinet.to" />
@@ -19,14 +27,9 @@
   <link rel="dns-prefetch" href="https://pipedapi.ducks.party" />
   <link rel="dns-prefetch" href="https://get.geojs.io" />
   <link rel="dns-prefetch" href="https://ipwho.is" />
-  <script>
-    (function () {
-      var t = "dark";
-      try { t = localStorage.getItem("vl-theme") || t; } catch (e) {}
-      document.documentElement.className = t === "light" ? "light" : "dark";
-    })();
-  </script>
-  <link rel="stylesheet" href="style.css?v=3" />
+  <!-- SECURITY: inline script hata kar external file me move kiya (strict CSP: script-src 'self') -->
+  <script src="theme-init.js"></script>
+  <link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
   <div id="ptr" class="ptr" aria-hidden="true">Release to refresh</div>
@@ -34,9 +37,10 @@
     <div class="header-inner">
       <a class="brand" href="index.html">
         <img class="brand-logo" src="icon-192.png" width="36" height="36" alt="" />
-        <span class="brand-name">VidLoom</span>
+        <span class="brand-name">Vumora</span>
       </a>
-      <button type="button" class="settings-btn" id="settingsBtn" aria-label="Settings" onclick="window.openSettings&&window.openSettings()">⚙</button>
+      <!-- SECURITY: inline onclick hataya — script.js pehle se isi button par addEventListener se bound hai -->
+      <button type="button" class="settings-btn" id="settingsBtn" aria-label="Settings">⚙</button>
     </div>
     <nav class="header-nav" aria-label="Format">
       <button type="button" class="nav-btn is-active" data-filter="all" data-i18n="home">Home</button>
@@ -46,7 +50,7 @@
     </nav>
     <form class="search-row" id="searchForm" action="#" autocomplete="off">
       <label class="sr-only" for="search">Search</label>
-      <input id="search" type="search" placeholder="Search VidLoom" enterkeyhint="search" />
+      <input id="search" type="search" placeholder="Search Vumora" enterkeyhint="search" />
       <button type="submit" class="search-go" aria-label="Search" data-i18n="go">Go</button>
     </form>
     <div id="azBar" class="az-bar" aria-label="Categories"></div>
@@ -57,7 +61,7 @@
     <div class="settings-card">
       <div class="settings-head">
         <strong data-i18n="settings">Settings</strong>
-        <button type="button" class="dock-close" id="settingsClose" onclick="window.closeSettings&&window.closeSettings()">Close</button>
+        <button type="button" class="dock-close" id="settingsClose">Close</button>
       </div>
       <label class="set-label" data-i18n="language">Language</label>
       <select id="langSwitch" class="lang-switch" aria-label="Language"></select>
@@ -106,7 +110,7 @@
 
   <footer class="site-footer">
     <p class="disclaimer">
-      VidLoom is a video embedding platform. All video content, views, and ad revenues belong entirely to the respective YouTube channel owners via standard YouTube Iframe Player embedding.
+      Vumora is a video embedding platform. All video content, views, and ad revenues belong entirely to the respective YouTube channel owners via standard YouTube Iframe Player embedding.
     </p>
     <p class="footer-links">
       <a href="terms.html">Terms</a>
@@ -114,8 +118,8 @@
       <a href="dmca.html">DMCA</a>
       <a href="developer.html">Developer</a>
     </p>
-    <p class="copy">© <span id="year"></span> VidLoom · Developed by <strong>Pawan Verma</strong> · <strong>PAWANGAMINGSTUDIO</strong></p>
+    <p class="copy">© <span id="year"></span> Vumora · Developed by <strong>Pawan Verma</strong> · <strong>PAWANGAMINGSTUDIO</strong></p>
   </footer>
-  <script src="script.js?v=3" defer></script>
+  <script src="script.js?v=9" defer></script>
 </body>
 </html>

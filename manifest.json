@@ -1,6 +1,6 @@
 {
-  "name": "VidLoom",
-  "short_name": "VidLoom",
+  "name": "Vumora",
+  "short_name": "Vumora",
   "description": "Watch embedded YouTube videos. By Pawan Verma / PAWANGAMINGSTUDIO.",
   "start_url": "./index.html",
   "scope": "./",
