@@ -695,3 +695,68 @@ html.light .theme-switch::after {
   border-radius: var(--radius);
   padding: 1rem;
 }
+
+/* ================================================================== *
+ * Amazon Smart Affiliate Bar (Tag: vumora-21)
+ * ================================================================== */
+.amz-bar-wrap {
+  margin: 10px 0 6px 0;
+  display: block;
+  animation: fadeInAmz 0.3s ease;
+}
+@keyframes fadeInAmz {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.amz-card-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #181d24;
+  border: 1px solid #ff9900;
+  border-radius: 9px;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.amz-card-link:hover, .amz-card-link:active {
+  background: #232a35;
+  border-color: #febd69;
+  transform: translateY(-1px);
+}
+.amz-card-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+.amz-card-icon {
+  font-size: 17px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.amz-card-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f3f4f6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.amz-badge-btn {
+  background: linear-gradient(135deg, #ff9900, #e67a00);
+  color: #000;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  letter-spacing: 0.3px;
+}

@@ -869,6 +869,7 @@ function playNow(id) {
   if (openLink) openLink.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(id);
   if (dockTitle) dockTitle.textContent = v.title;
   if (dockMeta) dockMeta.textContent = v.author + (v.published ? " · " + formatDate(v.published) : "");
+  try { renderAffiliateBar(v.title); } catch (e) {}
   if (!same && dockPlayer) {
     dockPlayer.className = "dock-player " + (v.short ? "ratio-9x16" : "ratio-16x9");
     dockPlayer.style.backgroundImage = "url(" + thumb(v.id) + ")";
@@ -1461,3 +1462,85 @@ if ("serviceWorker" in navigator) {
     if (dy > 72 && window.scrollY <= 8) loadHome();
   });
 })();
+
+
+/* ================================================================== *
+ * 7.2 Amazon Smart Dynamic Affiliate Engine (Tag: vumora-21)
+ * ================================================================== */
+var AMZ_ASSOCIATE_ID = "vumora-21";
+
+function getSmartProductRecommendation(title) {
+  var t = (title || "").toLowerCase();
+  
+  if (/tech|phone|mobile|smartphone|unboxing|gadget|review|specs|camera|iphone|samsung|redmi|oneplus|realme|laptop/i.test(t)) {
+    return {
+      query: "trending mobile accessories gadgets",
+      label: "Top Mobile & Tech Accessories on Amazon",
+      icon: "📱"
+    };
+  }
+  if (/game|gaming|bgmi|free fire|gta|playstation|xbox|pc gaming|streamer|minecraft/i.test(t)) {
+    return {
+      query: "gaming headphones keyboard mouse",
+      label: "Pro Gaming Gear & Headphones Deals",
+      icon: "🎮"
+    };
+  }
+  if (/song|music|audio|lyric|album|dj|remix|singing|guitar|piano|concert|bass/i.test(t)) {
+    return {
+      query: "wireless bluetooth earbuds headphones",
+      label: "Best Wireless Earbuds & Speakers",
+      icon: "🎧"
+    };
+  }
+  if (/shorts|reel|vlog|tik|creator|how to make|setup|studio/i.test(t)) {
+    return {
+      query: "mobile tripod ring light wireless mic",
+      label: "Best Creator Tripod & Mic Starter Kit",
+      icon: "🎥"
+    };
+  }
+  if (/fitness|gym|workout|exercise|bodybuilding|yoga|diet|health/i.test(t)) {
+    return {
+      query: "fitness smart watch gym accessories",
+      label: "Fitness Trackers & Gym Essentials",
+      icon: "⚡"
+    };
+  }
+  if (/study|learn|book|course|motivation|business|startup|upsc|exam/i.test(t)) {
+    return {
+      query: "bestselling books study table lamp",
+      label: "Bestselling Books & Study Tools",
+      icon: "📚"
+    };
+  }
+  return {
+    query: "todays deals best offers",
+    label: "Today Top Trending Deals on Amazon",
+    icon: "🛒"
+  };
+}
+
+function renderAffiliateBar(title) {
+  var existing = document.getElementById("vumoraAmzBar");
+  if (existing) existing.remove();
+  
+  var rec = getSmartProductRecommendation(title);
+  var targetUrl = "https://www.amazon.in/s?k=" + encodeURIComponent(rec.query) + "&tag=" + AMZ_ASSOCIATE_ID;
+  
+  var bar = document.createElement("div");
+  bar.id = "vumoraAmzBar";
+  bar.className = "amz-bar-wrap";
+  bar.innerHTML = '<a class="amz-card-link" href="' + targetUrl + '" target="_blank" rel="nofollow noopener noreferrer" title="View on Amazon">' +
+    '<div class="amz-card-left">' +
+      '<span class="amz-card-icon">' + rec.icon + '</span>' +
+      '<span class="amz-card-text">' + escapeHtml(rec.label) + '</span>' +
+    '</div>' +
+    '<span class="amz-badge-btn">Amazon ↗</span>' +
+  '</a>';
+  
+  var dockInfo = document.querySelector(".dock-info");
+  if (dockInfo) {
+    dockInfo.appendChild(bar);
+  }
+}
