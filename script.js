@@ -1539,8 +1539,11 @@ function renderAffiliateBar(title) {
     '<span class="amz-badge-btn">Amazon ↗</span>' +
   '</a>';
   
-  var dockInfo = document.querySelector(".dock-info");
-  if (dockInfo) {
-    dockInfo.appendChild(bar);
+  var player = document.getElementById("dockPlayer");
+  if (player && player.parentNode) {
+    player.parentNode.insertBefore(bar, player.nextSibling);
+  } else {
+    var main = document.querySelector("main");
+    if (main) main.insertBefore(bar, main.firstChild);
   }
 }

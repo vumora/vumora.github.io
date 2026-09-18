@@ -760,3 +760,14 @@ html.light .theme-switch::after {
   gap: 3px;
   letter-spacing: 0.3px;
 }
+
+/* Always show Amazon Bar under player */
+.watch-dock .amz-bar-wrap {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  padding: 6px 10px;
+  background: var(--elev, #181d24);
+  border-top: 1px solid rgba(255, 153, 0, 0.3);
+  border-bottom: 1px solid var(--line, #2a2a2a);
+}
