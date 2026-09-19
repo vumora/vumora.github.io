@@ -29,7 +29,7 @@
   <link rel="dns-prefetch" href="https://ipwho.is" />
   <!-- SECURITY: inline script hata kar external file me move kiya (strict CSP: script-src 'self') -->
   <script src="theme-init.js"></script>
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=14" />
 </head>
 <body>
   <div id="ptr" class="ptr" aria-hidden="true">Release to refresh</div>
@@ -70,10 +70,29 @@
       <p class="set-note" data-i18n="regionNote"></p>
       <label class="set-label" data-i18n="theme">Theme</label>
       <button type="button" class="theme-switch" id="themeSwitch" aria-label="Dark or light mode"></button>
+      <button type="button" id="btnMenuInstall" class="set-link-btn">📲 Install App / Add to Home Screen</button>
       <a class="set-link" href="dmca.html" data-i18n="dmca">DMCA</a>
       <a class="set-link" href="terms.html">Terms of Use</a>
       <a class="set-link" href="privacy.html">Privacy Policy</a>
       <a class="set-link" href="developer.html" data-i18n="developer">Developer</a>
+    </div>
+  </div>
+
+  
+  <!-- INSTALL APP & ADD TO HOME SCREEN MODAL -->
+  <div id="installBanner" class="install-banner hidden">
+    <div class="install-inner">
+      <div class="install-info">
+        <img src="icon-192.png" width="40" height="40" class="install-icon" alt="Vumora" />
+        <div>
+          <strong class="install-title">Vumora App</strong>
+          <p class="install-desc">Install for fast, ad-free video experience</p>
+        </div>
+      </div>
+      <div class="install-actions">
+        <button type="button" id="btnInstallPwa" class="btn-install-pwa">📲 Install App</button>
+        <button type="button" id="btnInstallClose" class="btn-install-close" aria-label="Close">✕</button>
+      </div>
     </div>
   </div>
 

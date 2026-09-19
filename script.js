@@ -1484,7 +1484,11 @@ function extractSmartKeywords(title, author) {
     "full":1, "hd":1, "4k":1, "8k":1, "teaser":1, "trailer":1, "new":1, "latest":1, "hits":1, "jukebox":1,
     "remix":1, "status":1, "short":1, "shorts":1, "reels":1, "part":1, "episode":1, "ep":1, "feat":1, "ft":1,
     "vs":1, "chapter":1, "season":1, "hindi":1, "punjabi":1, "bhojpuri":1, "tamil":1, "telugu":1,
-    "2023":1, "2024":1, "2025":1, "2026":1, "today":1, "ke":1, "ki":1, "ka":1, "mein":1, "hai":1
+    "2023":1, "2024":1, "2025":1, "2026":1, "today":1, "ke":1, "ki":1, "ka":1, "mein":1, "hai":1,
+    "easy":1, "easier":1, "than":1, "this":1, "that":1, "with":1, "from":1, "test":1, "review":1, "unboxing":1,
+    "how":1, "what":1, "when":1, "where":1, "who":1, "why":1, "very":1, "most":1, "best":1, "top":1,
+    "indian":1, "canada":1, "delhi":1, "mumbai":1, "live":1, "aaj":1, "kal":1, "kare":1, "dekho":1,
+    "super":1, "real":1, "high":1, "speed":1, "mini":1, "big":1, "first":1, "ever":1
   };
   
   var words = t.split(/\s+/).filter(function(w) {
@@ -1507,62 +1511,309 @@ function getExactProductForVideo(title, author) {
   var dynamicTagline = "";
   var searchKeywords = "";
 
-  if (/car|rc|toy|remote|drone|truck|vehicle|racing|stunt|helicopter/i.test(t)) {
-    category = "RC Toys & Models";
+  // 1. NEWS / CRIME / CONTROVERSY / VIRAL INCIDENTS (Aunty arrest, police, hungama, scam, court)
+  if (/arrest|police|crime|court|case|incident|news|khabar|samachar|breaking|viral|aunty|uncle|ladai|fight|hungama|modi|rahul|bjp|congress|election|update|scam|fraud|murder|accident|padtal/i.test(t)) {
+    category = "Trending Deals";
+    icon = "🔥";
+    badge = "Deal of the Day";
+    dynamicTitle = "Today's Mega Deals & Top Trending Offers on Amazon";
+    dynamicTagline = "Gadgets, Fashion & Daily Essentials • Up to 70% Off • Prime";
+    searchKeywords = "todays deals trending products best offers";
+  }
+  // 2. CRICKET & SPORTS (IPL, World Cup, Virat Kohli, Football, Badminton)
+  else if (/cricket|match|ipl|t20|world cup|highlights|wicket|century|sixes|virat|kohli|rohit|dhoni|football|badminton|fifa|tennis|kabaddi/i.test(t)) {
+    category = "Sports & Cricket";
+    icon = "🏏";
+    badge = "Sports Pick";
+    dynamicTitle = "Pro Cricket Gear, English Willow Bats & Sports Kits";
+    dynamicTagline = "Heavy Duty Willow • Full Protection Kits • Prime Delivery";
+    searchKeywords = "cricket bat english willow kit accessories";
+  }
+  // 3. MOVIES / TRAILERS / COMEDY / WEB SERIES
+  else if (/trailer|movie|film|cinema|teaser|scene|comedy|kapil sharma|standup|hasya|roast|drama|web series|episode/i.test(t)) {
+    category = "Home Entertainment";
+    icon = "🍿";
+    badge = "Home Cinema";
+    dynamicTitle = "Home Theater 4K Streaming Sticks & Soundbars";
+    dynamicTagline = "Dolby Audio • 4K HDR Streaming • Cinematic Bass";
+    searchKeywords = "4k streaming fire stick soundbar for tv";
+  }
+  // 4. STUDY / UPSC / EXAMS / MOTIVATION / CODING / BOOKS
+  else if (/upsc|ias|ips|ssc|cgl|exam|study|class|lecture|syllabus|gk|gs|khan sir|neet|jee|coding|python|javascript|learn|course/i.test(t)) {
+    category = "Books & Study Tools";
+    icon = "📚";
+    badge = "Toppers Choice";
+    dynamicTitle = "Bestselling Exam Books & Smart Study Table Lamps";
+    dynamicTagline = "Eye Care LED • High Yield Question Banks • Top Rated";
+    searchKeywords = "upsc study table lamp digital writing pad books";
+  }
+  // 5. BEAUTY / MAKEUP / SKINCARE / HAIR
+  else if (/makeup|beauty|skincare|serum|lipstick|bridal|glow|fairness|haircut|hairstyle|shampoo|mehndi|salon|face wash/i.test(t)) {
+    category = "Beauty & Grooming";
+    icon = "💄";
+    badge = "Top Beauty Deal";
+    dynamicTitle = "Professional Makeup Kits & Dermatologist Skincare";
+    dynamicTagline = "100% Genuine • Chemical Free • Fast Prime Delivery";
+    searchKeywords = "professional makeup kit skincare face serum";
+  }
+  // 6. FASHION & CLOTHING (Kurti, Saree, Shoes, Jeans)
+  else if (/kurti|saree|lehenga|fashion|dress|haul|suit|shirt|tshirt|jeans|jacket|wear/i.test(t)) {
+    category = "Fashion & Apparel";
+    icon = "👗";
+    badge = "Trending Style";
+    dynamicTitle = "Latest Ethnic Wear & Trendy Fashion Collections";
+    dynamicTagline = "Premium Fabric • Huge Festive Discounts • Easy Returns";
+    searchKeywords = "latest women kurti ethnic wear men casual shirt";
+  }
+  // 7. FOOTWEAR / SHOES / SNEAKERS
+  else if (/shoes|sneakers|loafers|crocs|slippers|sandals|boots|footwear/i.test(t)) {
+    category = "Footwear & Shoes";
+    icon = "👟";
+    badge = "Top Footwear";
+    dynamicTitle = "Running Shoes, Casual Sneakers & Sports Footwear";
+    dynamicTagline = "Memory Foam Cushion • Breathable Mesh • Prime Delivery";
+    searchKeywords = "running shoes for men women sneakers";
+  }
+  // 8. WATCHES & SMARTWATCHES
+  else if (/watch|smartwatch|rolex|casio|titan|fossil|fastrack/i.test(t)) {
+    category = "Watches & Smartbands";
+    icon = "⌚";
+    badge = "Prime Time";
+    dynamicTitle = "Bluetooth Calling Smartwatches & Luxury Chronographs";
+    dynamicTagline = "AMOLED Display • Stainless Steel • 7 Days Battery";
+    searchKeywords = "smart watch bluetooth calling amoled display";
+  }
+  // 9. PERFUMES & FRAGRANCES
+  else if (/perfume|fragrance|deodorant|attar|cologne|scent|body spray/i.test(t)) {
+    category = "Perfumes & Scents";
+    icon = "✨";
+    badge = "Luxury Fragrance";
+    dynamicTitle = "Long-Lasting Luxury Eau De Parfum & Body Sprays";
+    dynamicTagline = "French Essential Oils • All Day Freshness • 100ml EDP";
+    searchKeywords = "long lasting luxury perfume for men women edp";
+  }
+  // 10. PETS / DOGS / CATS / BIRDS / AQUARIUM
+  else if (/dog|cat|puppy|kitten|pet|aquarium|fish|parrot|birds|animal/i.test(t)) {
+    category = "Pet Supplies & Care";
+    icon = "🐾";
+    badge = "Pet Lover Pick";
+    dynamicTitle = "Healthy Pet Food, Grooming Kits & Aquarium Accessories";
+    dynamicTagline = "Veterinarian Approved • High Nutrition • Prime Delivery";
+    searchKeywords = "dog food pedigree cat treats pet grooming kit";
+  }
+  // 11. HARDWARE / DIY TOOLS / DRILL MACHINE
+  else if (/drill|toolkit|screw|repair|welding|mechanic|hardware|carpenter|pliers|wrench|diy/i.test(t)) {
+    category = "Hardware & Power Tools";
+    icon = "🔧";
+    badge = "Pro Hardware";
+    dynamicTitle = "Cordless Electric Drill Machines & Universal Tool Kits";
+    dynamicTagline = "Heavy Duty Motor • Multi-Bit Accessories • Carry Box";
+    searchKeywords = "cordless electric drill machine tool kit for home";
+  }
+  // 12. MEDICAL / HEALTHCARE / BP MONITOR
+  else if (/health|medical|bp monitor|sugar|diabetes|thermometer|oximeter|pain relief|medicine/i.test(t)) {
+    category = "Healthcare Devices";
+    icon = "🩺";
+    badge = "Medical Certified";
+    dynamicTitle = "Digital Blood Pressure Monitors & Health Trackers";
+    dynamicTagline = "Clinical Accuracy • Fast Readings • Memory Storage";
+    searchKeywords = "digital blood pressure bp monitor machine home";
+  }
+  // 13. TRAVEL / LUGGAGE / TROLLEY BAGS
+  else if (/travel|trip|tourist|vlog|flight|airport|hotel|packing|vacation/i.test(t) && /bag|luggage|suitcase|trolley/i.test(t)) {
+    category = "Travel & Luggage";
+    icon = "🧳";
+    badge = "Travel Gear";
+    dynamicTitle = "Cabin Trolley Bags, Hard Shell Luggage & Travel Kits";
+    dynamicTagline = "Scratch Resistant • 360 Wheels • TSA Lock Included";
+    searchKeywords = "cabin luggage trolley bag scratch resistant";
+  }
+  // 14. ASTROLOGY / HOROSCOPE / GEMSTONES
+  else if (/kundli|rashi|astrology|horoscope|jyotish|gemstone|rashifal|rudraksha|zodiac/i.test(t)) {
+    category = "Spiritual & Astrology";
+    icon = "🔮";
+    badge = "Astrology Special";
+    dynamicTitle = "Natural Certified Rudraksha & Astrology Gemstones";
+    dynamicTagline = "100% Lab Certified • Energized • Spiritual Harmony";
+    searchKeywords = "certified rudraksha mala energized gemstones";
+  }
+  // 15. KIDS & CARTOONS
+  else if (/kids|rhymes|chuchu|cocomelon|cartoon|motu patlu|baby|infant|nursery|kindergarten/i.test(t)) {
+    category = "Baby & Kids Care";
+    icon = "🧸";
+    badge = "Safe for Kids";
+    dynamicTitle = "Educational Toys, Learning Kits & Kids Essentials";
+    dynamicTagline = "Non-Toxic Material • Brain Development • Prime Delivery";
+    searchKeywords = "kids educational learning toys montessori";
+  }
+  // 16. REAL AUTOMOBILE / CAR / BIKE
+  else if (/thar|scorpio|creta|swift|nexon|innova|fortuner|bullet|royal enfield|splendor|pulsar|mileage test|drive review/i.test(t)) {
+    category = "Car & Bike Care";
+    icon = "🚘";
+    badge = "Auto Top Pick";
+    dynamicTitle = "High-Pressure Car Washers, Polish & Accessories";
+    dynamicTagline = "High Pressure Foam Gun • Dashboard Polish • Top Rated";
+    searchKeywords = "car wash pressure washer machine vacuum cleaner";
+  }
+  // 17. RC TOYS (Helicopters, Planes, JCB, Tractors, Drones, Boats, Tanks, Trains, Cars)
+  else if (/helicopter|heli/i.test(t)) {
+    category = "RC Helicopter";
+    icon = "🚁";
+    badge = "Air Flying RC";
+    dynamicTitle = "Buy " + topic + " & Gyro RC Helicopters";
+    dynamicTagline = "Altitude Hover • Crash Resistant Alloy • Rechargeable";
+    searchKeywords = topic + " rc helicopter remote control gyro";
+  } else if (/plane|airplane|aeroplane|jet|fighter|glider|cessna|airbus|boeing/i.test(t)) {
+    category = "RC Airplane & Jet";
+    icon = "✈️";
+    badge = "High Speed Flight";
+    dynamicTitle = "Buy " + topic + " & Remote Control RC Planes";
+    dynamicTagline = "EPP Foam Durable • Ready To Fly • 2.4GHz High Range";
+    searchKeywords = topic + " rc plane remote control jet";
+  } else if (/drone|quadcopter|fpv|mavic/i.test(t)) {
+    category = "Camera Drone";
+    icon = "🛸";
+    badge = "Aerial Drone";
+    dynamicTitle = "Buy " + topic + " & WiFi FPV Camera Drones";
+    dynamicTagline = "HD Wide Angle Camera • Auto Return • 360 Flips";
+    searchKeywords = topic + " drone with camera remote control";
+  } else if (/jcb|excavator|crane|digger|bulldozer|loader/i.test(t)) {
+    category = "RC Construction JCB";
+    icon = "🚜";
+    badge = "Heavy Metal RC";
+    dynamicTitle = "Buy " + topic + " & Heavy RC JCB Excavators";
+    dynamicTagline = "Hydraulic Realistic Arm • Alloy Die-Cast • Sound & Lights";
+    searchKeywords = topic + " rc jcb excavator truck remote control";
+  } else if (/tractor|farming|trolley|harvester/i.test(t)) {
+    category = "RC Farm Tractor";
+    icon = "🚜";
+    badge = "Farming Toy";
+    dynamicTitle = "Buy " + topic + " & Remote Control RC Tractors";
+    dynamicTagline = "With Detachable Trolley • High Torque • Rubber Tires";
+    searchKeywords = topic + " rc tractor with trolley remote control";
+  } else if (/boat|ship|submarine|yacht|watercraft/i.test(t)) {
+    category = "RC Speed Boat";
+    icon = "🚤";
+    badge = "Water Racing";
+    dynamicTitle = "Buy " + topic + " & High Speed RC Boats";
+    dynamicTagline = "Waterproof Hull • Water-Cooled Motor • 30+ km/h";
+    searchKeywords = topic + " rc speed boat waterproof remote control";
+  } else if (/tank|military|army|missile/i.test(t)) {
+    category = "RC Military Tank";
+    icon = "🛡️";
+    badge = "Battle RC";
+    dynamicTitle = "Buy " + topic + " & Remote Control Army Tanks";
+    dynamicTagline = "Shooting BB Pellets • Recoil Action • Sound Effects";
+    searchKeywords = topic + " rc military tank remote control";
+  } else if (/train|railway|locomotive|metro/i.test(t)) {
+    category = "RC Toy Train";
+    icon = "🚂";
+    badge = "Track Train";
+    dynamicTitle = "Buy " + topic + " & Electric RC Trains";
+    dynamicTagline = "Real Smoke & Lights • Modular Track Set • Sound";
+    searchKeywords = topic + " electric train set remote control";
+  } else if (/robot|android|transformer/i.test(t)) {
+    category = "Smart RC Robot";
+    icon = "🤖";
+    badge = "Smart Toy";
+    dynamicTitle = "Buy " + topic + " & Interactive RC Robots";
+    dynamicTagline = "Voice Control • Gesture Sensor • Programmable";
+    searchKeywords = topic + " smart interactive robot remote control";
+  } else if (/bike|motorcycle|scooter/i.test(t) && /rc|toy|remote/i.test(t)) {
+    category = "RC Motorcycle";
+    icon = "🏍️";
+    badge = "Speed Drift";
+    dynamicTitle = "Buy " + topic + " & High Speed RC Bikes";
+    dynamicTagline = "Self Balancing Gyro • Stunt Drift • Rechargeable";
+    searchKeywords = topic + " rc motorcycle bike remote control";
+  } else if (/car|truck|crawler|buggy|monster|racing|drift/i.test(t) || /rc|toy|remote/i.test(t)) {
+    category = "RC Car & Truck";
     icon = "🏎️";
-    badge = "Trending Toy";
-    dynamicTitle = "Buy " + topic + " & Remote Control RC Toys";
-    dynamicTagline = "Rechargeable Battery • High Speed 4WD • Prime Offers";
-    searchKeywords = topic + " remote control car toy";
-  } else if (/phone|mobile|smartphone|unboxing|gadget|review|specs|camera|iphone|samsung|redmi|oneplus|laptop/i.test(t)) {
+    badge = "High Speed RC";
+    dynamicTitle = "Buy " + topic + " & High Speed 4WD RC Cars";
+    dynamicTagline = "Off-Road All Terrain • Fast Speed • Shock Absorbers";
+    searchKeywords = topic + " rc car 4wd high speed remote control";
+  }
+  // 18. TECH & MOBILES
+  else if (/phone|mobile|smartphone|unboxing|gadget|specs|camera|iphone|samsung|redmi|oneplus|laptop/i.test(t)) {
     category = "Mobiles & Tech";
     icon = "📱";
     badge = "Best Tech Deal";
     dynamicTitle = topic + " — Lowest Price, Offers & Accessories";
     dynamicTagline = "Verified Sellers • Exchange Discounts • Fast Delivery";
     searchKeywords = topic + " smartphone mobile accessories";
-  } else if (/game|gaming|bgmi|free fire|gta|pc gaming|streamer|playstation|xbox/i.test(t)) {
+  }
+  // 19. GAMING
+  else if (/game|gaming|bgmi|free fire|gta|pc gaming|streamer|playstation|xbox/i.test(t)) {
     category = "Gaming Gear";
     icon = "🎮";
     badge = "Pro Gaming";
     dynamicTitle = topic + " Pro Gaming Accessories & Gear";
     dynamicTagline = "RGB Backlit • Ultra-Low Latency • Surround Sound";
     searchKeywords = topic + " gaming headphones keyboard";
-  } else if (/shorts|reel|vlog|tik|creator|how to make|setup|studio|shoot|recording/i.test(t)) {
+  }
+  // 20. CREATOR / VLOG
+  else if (/shorts|reel|vlog|tik|creator|how to make|setup|studio|shoot|recording/i.test(t)) {
     category = "Creator Studio";
     icon = "🎥";
     badge = "Creator Pick";
     dynamicTitle = "Creator Kit for " + topic + " (Mic, Tripod & Lights)";
     dynamicTagline = "Noise Reduction Mic • 360 Degree Stand • Portable";
     searchKeywords = "vlogging tripod wireless mic ring light";
-  } else if (/song|music|audio|lyric|remix|singer|beat|album|guitar|dhol/i.test(t)) {
+  }
+  // 21. MUSIC & SONGS
+  else if (/song|music|audio|lyric|remix|singer|beat|album|guitar|dhol/i.test(t)) {
     category = "Audio & Music";
     icon = "🎧";
     badge = "Top Sound";
     dynamicTitle = "Best Sound Gear for (" + topic + ") Earbuds & Speakers";
     dynamicTagline = "Extra Deep Bass • Active Noise Cancelling • Long Battery";
     searchKeywords = topic + " wireless earbuds bluetooth speaker";
-  } else if (/recipe|cooking|kitchen|food|restaurant|masala|cook/i.test(t)) {
+  }
+  // 22. FOOD & KITCHEN
+  else if (/recipe|cooking|kitchen|food|restaurant|masala|cook/i.test(t)) {
     category = "Kitchen & Home";
     icon = "🍳";
     badge = "Kitchen Pick";
     dynamicTitle = "Kitchen Tools & Appliances for " + topic;
     dynamicTagline = "Non-Stick Cookware • Premium Stainless Steel • Deals";
     searchKeywords = topic + " kitchen cooking cookware";
-  } else if (/fitness|gym|workout|exercise|bodybuilding|yoga|diet/i.test(t)) {
+  }
+  // 23. FITNESS & GYM
+  else if (/fitness|gym|workout|exercise|bodybuilding|yoga|diet/i.test(t)) {
     category = "Fitness & Sports";
     icon = "⚡";
     badge = "Fitness Deal";
     dynamicTitle = "Workout Gear & Accessories for " + topic;
     dynamicTagline = "Sweat Resistant • Heavy Duty • Top Rated";
     searchKeywords = topic + " fitness gym accessories";
-  } else {
-    category = "Special Deal";
-    icon = "📦";
-    badge = "Amazon Special";
-    dynamicTitle = "Shop (" + topic + ") on Amazon — Best Deals & Offers";
-    dynamicTagline = "Customer Top Rated • Verified Sellers • Prime Delivery";
-    searchKeywords = topic + " deals";
+  }
+  // 24. BHAKTI / DEVOTIONAL / PUJA
+  else if (/aarti|bhajan|chalisa|katha|mandir|puja|bhakti|shree|god|krishna|ram|shiva|hanuman/i.test(t)) {
+    category = "Puja & Spiritual";
+    icon = "🪔";
+    badge = "Devotional Pick";
+    dynamicTitle = "Brass Puja Thali Sets, Agarbatti & Spiritual Essentials";
+    dynamicTagline = "Pure Brass • Divine Fragrance • Prime Home Delivery";
+    searchKeywords = "puja brass thali set agarbatti dhoop";
+  }
+  // 25. GARDENING & HOME DECOR
+  else if (/garden|plants|flower|nursery|decor|craft|painting|diy/i.test(t)) {
+    category = "Home & Garden";
+    icon = "🪴";
+    badge = "Home Decor";
+    dynamicTitle = "Indoor Plant Pots, Seed Kits & Home Decor Lighting";
+    dynamicTagline = "Eco-Friendly Ceramic • Self-Watering • Warm Lights";
+    searchKeywords = "indoor plants pots seeds home decor lights";
+  }
+  // 26. SMART HIGH-CONVERTING GENERAL FALLBACK
+  else {
+    category = "Trending Specials";
+    icon = "🛍️";
+    badge = "Top Rated";
+    dynamicTitle = "Best Selling Products & Today's Top Offers on Amazon";
+    dynamicTagline = "Top Customer Ratings • Verified Sellers • Prime Delivery";
+    searchKeywords = "trending products best offers deals";
   }
 
   return {
@@ -1630,3 +1881,61 @@ function renderAffiliateBar(videoTitle, videoAuthor) {
 
   bar.style.display = "block";
 }
+
+
+/* ================================================================== *
+ * PWA Install & Add to Home Screen Manager
+ * ================================================================== */
+var deferredPrompt = null;
+var installBanner = document.getElementById("installBanner");
+var btnInstallPwa = document.getElementById("btnInstallPwa");
+var btnInstallClose = document.getElementById("btnInstallClose");
+var btnMenuInstall = document.getElementById("btnMenuInstall");
+
+window.addEventListener("beforeinstallprompt", function (e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show banner after 3 seconds if not dismissed
+  setTimeout(function() {
+    if (installBanner && !localStorage.getItem("vumora-install-dismissed")) {
+      installBanner.classList.remove("hidden");
+    }
+  }, 3000);
+});
+
+function triggerInstallPrompt() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function (choice) {
+      if (choice.outcome === "accepted") {
+        if (installBanner) installBanner.classList.add("hidden");
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    // If browser prompt is not ready, guide the user directly
+    alert("To install Vumora: Tap Chrome Menu (3 dots) on top right, then tap Install App or Add to Home screen.")
+  }
+}
+
+if (btnInstallPwa) {
+  btnInstallPwa.addEventListener("click", triggerInstallPrompt);
+}
+if (btnMenuInstall) {
+  btnMenuInstall.addEventListener("click", function() {
+    var sheet = document.getElementById("settingsSheet");
+    if (sheet) sheet.classList.add("hidden");
+    triggerInstallPrompt();
+  });
+}
+if (btnInstallClose) {
+  btnInstallClose.addEventListener("click", function () {
+    if (installBanner) installBanner.classList.add("hidden");
+    localStorage.setItem("vumora-install-dismissed", "1");
+  });
+}
+
+window.addEventListener("appinstalled", function () {
+  if (installBanner) installBanner.classList.add("hidden");
+  deferredPrompt = null;
+});
