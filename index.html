@@ -9,7 +9,7 @@
        Sirf wahi 3rd-party connections allow hain jo app ko chahiye:
        YouTube iframe player, YouTube thumbnails, Invidious/Piped feeds, geo lookup.
        Iske bahar ka koi bhi script/frame/connection browser khud block kar dega. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://i.ytimg.com data:; font-src 'self'; connect-src 'self' https://api.piped.private.coffee https://invidious.flokinet.to https://pipedapi.ducks.party https://get.geojs.io https://ipwho.is https://api.country.is; frame-src https://www.youtube-nocookie.com https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://i.ytimg.com data:; font-src 'self'; connect-src 'self' https://api.piped.private.coffee https://invidious.flokinet.to https://pipedapi.ducks.party https://yewtu.be https://get.geojs.io https://ipwho.is https://api.country.is; frame-src https://www.youtube-nocookie.com https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests" />
   <!-- SECURITY: Camera/mic/geolocation/payment APIs is app ko chahiye hi nahi — band kar diye -->
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()" />
   <meta name="description" content="Vumora — watch like YouTube. Instant play. Location ke hisaab se feed." />
@@ -29,7 +29,7 @@
   <link rel="dns-prefetch" href="https://ipwho.is" />
   <!-- SECURITY: inline script hata kar external file me move kiya (strict CSP: script-src 'self') -->
   <script src="theme-init.js"></script>
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=7" />
 </head>
 <body>
   <div id="ptr" class="ptr" aria-hidden="true">Release to refresh</div>
@@ -97,6 +97,7 @@
   </div>
 
   <main>
+    <div id="vumoraAmzBar" class="amz-bar-wrap" style="display:none;"></div>
     <p class="status-bar" id="statusBar">Ready</p>
     <section id="videoGrid" class="video-grid" aria-label="Feed"></section>
     <p id="emptyState" class="empty-state hidden">No results.</p>

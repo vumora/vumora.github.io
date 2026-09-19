@@ -8,8 +8,9 @@
 /* Browser (CORS) me test kiye gaye working sources — jo fail ho jaye usse agla try hota hai. */
 const SOURCES = [
   { id: "piped.private.coffee", kind: "piped", base: "https://api.piped.private.coffee" },
-  { id: "invidious.flokinet.to", kind: "iv", base: "https://invidious.flokinet.to" },
-  { id: "pipedapi.ducks.party", kind: "piped", base: "https://pipedapi.ducks.party" }
+  { id: "pipedapi.ducks.party", kind: "piped", base: "https://pipedapi.ducks.party" },
+  { id: "yewtu.be", kind: "iv", base: "https://yewtu.be" },
+  { id: "invidious.flokinet.to", kind: "iv", base: "https://invidious.flokinet.to" }
 ];
 
 const CATEGORIES = [
@@ -171,7 +172,7 @@ const SEED = [
   ["fJ9rUzIMcZQ", "Queen — Bohemian Rhapsody", "Queen Official", 355],
   ["YQHsXMglC9A", "Adele — Hello", "Adele", 366]
 ].map(function (r) {
-  return { id: r[0], title: r[1], author: r[2], published: "", thumb: "https://i.ytimg.com/vi/" + r[0] + "/mqdefault.jpg", short: false, seconds: r[3], live: false };
+  return { id: r[0], title: r[1], author: r[2], published: "", thumb: "https://i.ytimg.com/vi/" + r[0] + "/hqdefault.jpg", short: false, seconds: r[3], live: false };
 });
 
 const LANGS = [
@@ -451,7 +452,7 @@ function detectGeo(force) {
 /* ------------------------------------------------------------------ *
  * 5. Network — Invidious + Piped adapters (same output shape)
  * ------------------------------------------------------------------ */
-const FETCH_MS = 8000;
+const FETCH_MS = 3200;
 
 function fetchTimeout(url, ms) {
   var c = typeof AbortController !== "undefined" ? new AbortController() : null;
@@ -465,7 +466,7 @@ function fetchTimeout(url, ms) {
   }, function (e) { clearTimeout(timer); throw e; });
 }
 
-function thumb(id) { return "https://i.ytimg.com/vi/" + id + "/mqdefault.jpg"; }
+function thumb(id) { return "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg"; }
 
 function isShortItem(item) {
   var len = Number(item.lengthSeconds) || 0;
@@ -869,7 +870,7 @@ function playNow(id) {
   if (openLink) openLink.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(id);
   if (dockTitle) dockTitle.textContent = v.title;
   if (dockMeta) dockMeta.textContent = v.author + (v.published ? " · " + formatDate(v.published) : "");
-  try { renderAffiliateBar(v.title); } catch (e) {}
+  try { renderAffiliateBar(v.title, v.author); } catch (e) {}
   if (!same && dockPlayer) {
     dockPlayer.className = "dock-player " + (v.short ? "ratio-9x16" : "ratio-16x9");
     dockPlayer.style.backgroundImage = "url(" + thumb(v.id) + ")";
@@ -892,6 +893,8 @@ function playNow(id) {
 
 function closeDock() {
   if (!watchDock) return;
+  var amz = document.getElementById("vumoraAmzBar");
+  if (amz) amz.style.display = "none";
   watchDock.classList.add("hidden");
   document.body.classList.remove("has-dock");
   if (dockPlayer) { dockPlayer.innerHTML = ""; dockPlayer.style.backgroundImage = ""; }
@@ -1464,86 +1467,158 @@ if ("serviceWorker" in navigator) {
 })();
 
 
+
 /* ================================================================== *
- * 7.2 Amazon Smart Dynamic Affiliate Engine (Tag: vumora-21)
+ * 7.3 UNLIMITED VIDEOS -> UNLIMITED PRODUCTS DYNAMIC AMAZON ENGINE
+ * 100% Connected to Associate Tag: vumora-21
  * ================================================================== */
 var AMZ_ASSOCIATE_ID = "vumora-21";
 
-function getSmartProductRecommendation(title) {
+function extractSmartKeywords(title, author) {
+  var t = (title || "");
+  t = t.replace(/[\(\[\{][^\)\]\}]*[\)\]\}]/g, " ");
+  t = t.replace(/[^a-zA-Z0-9ऀ-ॿ\s]/g, " ");
+  
+  var stopWords = {
+    "official":1, "video":1, "videos":1, "song":1, "songs":1, "audio":1, "lyric":1, "lyrics":1, "lyrical":1,
+    "full":1, "hd":1, "4k":1, "8k":1, "teaser":1, "trailer":1, "new":1, "latest":1, "hits":1, "jukebox":1,
+    "remix":1, "status":1, "short":1, "shorts":1, "reels":1, "part":1, "episode":1, "ep":1, "feat":1, "ft":1,
+    "vs":1, "chapter":1, "season":1, "hindi":1, "punjabi":1, "bhojpuri":1, "tamil":1, "telugu":1,
+    "2023":1, "2024":1, "2025":1, "2026":1, "today":1, "ke":1, "ki":1, "ka":1, "mein":1, "hai":1
+  };
+  
+  var words = t.split(/\s+/).filter(function(w) {
+    return w.length > 2 && !stopWords[w.toLowerCase()];
+  });
+  return words;
+}
+
+function getExactProductForVideo(title, author) {
+  var words = extractSmartKeywords(title, author);
   var t = (title || "").toLowerCase();
   
-  if (/tech|phone|mobile|smartphone|unboxing|gadget|review|specs|camera|iphone|samsung|redmi|oneplus|realme|laptop/i.test(t)) {
-    return {
-      query: "trending mobile accessories gadgets",
-      label: "Top Mobile & Tech Accessories on Amazon",
-      icon: "📱"
-    };
+  var topic = words.slice(0, 3).join(" ");
+  if (!topic) topic = (author || "Trending Product");
+
+  var category = "Matched to Video";
+  var icon = "🛍️";
+  var badge = "Amazon Choice";
+  var dynamicTitle = "";
+  var dynamicTagline = "";
+  var searchKeywords = "";
+
+  if (/car|rc|toy|remote|drone|truck|vehicle|racing|stunt|helicopter/i.test(t)) {
+    category = "RC Toys & Models";
+    icon = "🏎️";
+    badge = "Trending Toy";
+    dynamicTitle = "Buy " + topic + " & Remote Control RC Toys";
+    dynamicTagline = "Rechargeable Battery • High Speed 4WD • Prime Offers";
+    searchKeywords = topic + " remote control car toy";
+  } else if (/phone|mobile|smartphone|unboxing|gadget|review|specs|camera|iphone|samsung|redmi|oneplus|laptop/i.test(t)) {
+    category = "Mobiles & Tech";
+    icon = "📱";
+    badge = "Best Tech Deal";
+    dynamicTitle = topic + " — Lowest Price, Offers & Accessories";
+    dynamicTagline = "Verified Sellers • Exchange Discounts • Fast Delivery";
+    searchKeywords = topic + " smartphone mobile accessories";
+  } else if (/game|gaming|bgmi|free fire|gta|pc gaming|streamer|playstation|xbox/i.test(t)) {
+    category = "Gaming Gear";
+    icon = "🎮";
+    badge = "Pro Gaming";
+    dynamicTitle = topic + " Pro Gaming Accessories & Gear";
+    dynamicTagline = "RGB Backlit • Ultra-Low Latency • Surround Sound";
+    searchKeywords = topic + " gaming headphones keyboard";
+  } else if (/shorts|reel|vlog|tik|creator|how to make|setup|studio|shoot|recording/i.test(t)) {
+    category = "Creator Studio";
+    icon = "🎥";
+    badge = "Creator Pick";
+    dynamicTitle = "Creator Kit for " + topic + " (Mic, Tripod & Lights)";
+    dynamicTagline = "Noise Reduction Mic • 360 Degree Stand • Portable";
+    searchKeywords = "vlogging tripod wireless mic ring light";
+  } else if (/song|music|audio|lyric|remix|singer|beat|album|guitar|dhol/i.test(t)) {
+    category = "Audio & Music";
+    icon = "🎧";
+    badge = "Top Sound";
+    dynamicTitle = "Best Sound Gear for (" + topic + ") Earbuds & Speakers";
+    dynamicTagline = "Extra Deep Bass • Active Noise Cancelling • Long Battery";
+    searchKeywords = topic + " wireless earbuds bluetooth speaker";
+  } else if (/recipe|cooking|kitchen|food|restaurant|masala|cook/i.test(t)) {
+    category = "Kitchen & Home";
+    icon = "🍳";
+    badge = "Kitchen Pick";
+    dynamicTitle = "Kitchen Tools & Appliances for " + topic;
+    dynamicTagline = "Non-Stick Cookware • Premium Stainless Steel • Deals";
+    searchKeywords = topic + " kitchen cooking cookware";
+  } else if (/fitness|gym|workout|exercise|bodybuilding|yoga|diet/i.test(t)) {
+    category = "Fitness & Sports";
+    icon = "⚡";
+    badge = "Fitness Deal";
+    dynamicTitle = "Workout Gear & Accessories for " + topic;
+    dynamicTagline = "Sweat Resistant • Heavy Duty • Top Rated";
+    searchKeywords = topic + " fitness gym accessories";
+  } else {
+    category = "Special Deal";
+    icon = "📦";
+    badge = "Amazon Special";
+    dynamicTitle = "Shop (" + topic + ") on Amazon — Best Deals & Offers";
+    dynamicTagline = "Customer Top Rated • Verified Sellers • Prime Delivery";
+    searchKeywords = topic + " deals";
   }
-  if (/game|gaming|bgmi|free fire|gta|playstation|xbox|pc gaming|streamer|minecraft/i.test(t)) {
-    return {
-      query: "gaming headphones keyboard mouse",
-      label: "Pro Gaming Gear & Headphones Deals",
-      icon: "🎮"
-    };
-  }
-  if (/song|music|audio|lyric|album|dj|remix|singing|guitar|piano|concert|bass/i.test(t)) {
-    return {
-      query: "wireless bluetooth earbuds headphones",
-      label: "Best Wireless Earbuds & Speakers",
-      icon: "🎧"
-    };
-  }
-  if (/shorts|reel|vlog|tik|creator|how to make|setup|studio/i.test(t)) {
-    return {
-      query: "mobile tripod ring light wireless mic",
-      label: "Best Creator Tripod & Mic Starter Kit",
-      icon: "🎥"
-    };
-  }
-  if (/fitness|gym|workout|exercise|bodybuilding|yoga|diet|health/i.test(t)) {
-    return {
-      query: "fitness smart watch gym accessories",
-      label: "Fitness Trackers & Gym Essentials",
-      icon: "⚡"
-    };
-  }
-  if (/study|learn|book|course|motivation|business|startup|upsc|exam/i.test(t)) {
-    return {
-      query: "bestselling books study table lamp",
-      label: "Bestselling Books & Study Tools",
-      icon: "📚"
-    };
-  }
+
   return {
-    query: "todays deals best offers",
-    label: "Today Top Trending Deals on Amazon",
-    icon: "🛒"
+    title: dynamicTitle,
+    tagline: dynamicTagline,
+    category: category,
+    badge: badge,
+    icon: icon,
+    query: searchKeywords
   };
 }
 
-function renderAffiliateBar(title) {
-  var existing = document.getElementById("vumoraAmzBar");
-  if (existing) existing.remove();
-  
-  var rec = getSmartProductRecommendation(title);
-  var targetUrl = "https://www.amazon.in/s?k=" + encodeURIComponent(rec.query) + "&tag=" + AMZ_ASSOCIATE_ID;
-  
-  var bar = document.createElement("div");
-  bar.id = "vumoraAmzBar";
-  bar.className = "amz-bar-wrap";
-  bar.innerHTML = '<a class="amz-card-link" href="' + targetUrl + '" target="_blank" rel="nofollow noopener noreferrer" title="View on Amazon">' +
-    '<div class="amz-card-left">' +
-      '<span class="amz-card-icon">' + rec.icon + '</span>' +
-      '<span class="amz-card-text">' + escapeHtml(rec.label) + '</span>' +
-    '</div>' +
-    '<span class="amz-badge-btn">Amazon ↗</span>' +
-  '</a>';
-  
-  var player = document.getElementById("dockPlayer");
-  if (player && player.parentNode) {
-    player.parentNode.insertBefore(bar, player.nextSibling);
-  } else {
-    var main = document.querySelector("main");
-    if (main) main.insertBefore(bar, main.firstChild);
+function renderAffiliateBar(videoTitle, videoAuthor) {
+  var bar = document.getElementById("vumoraAmzBar");
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.id = "vumoraAmzBar";
+    bar.className = "amz-showcase-wrap";
+    var sb = document.getElementById("statusBar");
+    if (sb && sb.parentNode) sb.parentNode.insertBefore(bar, sb);
   }
+
+  // SIRF VIDEO PLAY HONE PAR HI DIKHEGA
+  if (!state.playingId) {
+    bar.style.display = "none";
+    return;
+  }
+
+  var item = getExactProductForVideo(videoTitle, videoAuthor);
+  var amzUrl = "https://www.amazon.in/s?k=" + encodeURIComponent(item.query) + "&tag=" + AMZ_ASSOCIATE_ID;
+
+  bar.innerHTML = 
+    '<div class="amz-card-box">' +
+      '<div class="amz-header-row">' +
+        '<div class="amz-brand-tag"><span class="amz-prime-logo">📦 amazon</span> <span class="amz-badge-text">' + escapeHtml(item.badge) + '</span></div>' +
+        '<span class="amz-category-chip">' + escapeHtml(item.category) + '</span>' +
+      '</div>' +
+      '<div class="amz-body-row">' +
+        '<div class="amz-product-icon">' + item.icon + '</div>' +
+        '<div class="amz-details">' +
+          '<h4 class="amz-prod-title">' + escapeHtml(item.title) + '</h4>' +
+          '<p class="amz-prod-tagline">' + escapeHtml(item.tagline) + '</p>' +
+          '<div class="amz-meta-rating">' +
+            '<span class="amz-stars">⭐⭐⭐⭐⭐</span>' +
+            '<span class="amz-rating-num">4.6 ★ (Verified Deals)</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="amz-action-row">' +
+        '<a class="amz-buy-btn" href="' + amzUrl + '" target="_blank" rel="nofollow noopener noreferrer">' +
+          '<span>Check Lowest Price & Offers</span>' +
+          '<span class="amz-arrow">Buy on Amazon ➔</span>' +
+        '</a>' +
+      '</div>' +
+      '<div class="amz-disclaimer-note">As an Amazon Associate, Vumora earns from qualifying purchases.</div>' +
+    '</div>';
+
+  bar.style.display = "block";
 }
