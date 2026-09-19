@@ -1592,7 +1592,15 @@ function renderAffiliateBar(videoTitle, videoAuthor) {
   }
 
   var item = getExactProductForVideo(videoTitle, videoAuthor);
-  var amzUrl = "https://www.amazon.in/s?k=" + encodeURIComponent(item.query) + "&tag=" + AMZ_ASSOCIATE_ID;
+  var webUrl = "https://www.amazon.in/s?k=" + encodeURIComponent(item.query) + "&tag=" + AMZ_ASSOCIATE_ID;
+  // 100% TRUSTED APP + BROWSER FALLBACK INTENT
+  // Agar user ke paas Amazon App hai to direct app khulegi.
+  // Agar app nahi hai to Google Play Store par bhejkar force karne ki bajaye seedha BROWSER me webUrl khulega!
+  var isAndroid = /Android/i.test(navigator.userAgent || "");
+  var amzUrl = webUrl;
+  if (isAndroid) {
+    amzUrl = "intent://www.amazon.in/s?k=" + encodeURIComponent(item.query) + "&tag=" + AMZ_ASSOCIATE_ID + "#Intent;scheme=https;S.browser_fallback_url=" + encodeURIComponent(webUrl) + ";end";
+  }
 
   bar.innerHTML = 
     '<div class="amz-card-box">' +
