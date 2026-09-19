@@ -17,7 +17,7 @@ Lightweight, modern video discovery web interface powered by the official **YouT
 
 ## 🌟 Features Included
 
-- **Official YouTube Iframe Embeds:** Privacy-enhanced mode (`youtube-nocookie.com`), ensuring 100% video creator views and ad monetization.
+- **Official YouTube Iframe Embeds:** Standard YouTube Iframe Player mode (`youtube.com`), ensuring 100% video creator views and ad monetization.
 - **Location-Aware Smart Feeds:** Automatically loads trending content tailored to user country and region.
 - **Sticky Mini-Player Dock:** Video keeps playing seamlessly while scrolling feeds on both mobile and desktop.
 - **Full-Screen 9:16 Shorts Reel:** Responsive vertical swipe experience for shorts.

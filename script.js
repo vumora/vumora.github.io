@@ -809,11 +809,12 @@ function updateStatus(prefix) {
 function embedSrc(id, autoplay) {
   var origin = "";
   try { if (location.origin && location.origin !== "null") origin = "&origin=" + encodeURIComponent(location.origin); } catch (e) {}
-  /* PRIVACY: youtube-nocookie.com = YouTube ka official privacy-enhanced mode.
-   * Player bilkul same chalta hai, bas tab tak tracking cookies set nahi hoti jab tak user play na dabaye. */
-  return "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
+  /* OFFICIAL STANDARD YOUTUBE PLAYER EMBED:
+   * Uses standard www.youtube.com/embed so all official YouTube creator ads,
+   * channel views, and monetization run normally without any suppression. */
+  return "https://www.youtube.com/embed/" + encodeURIComponent(id) +
     "?autoplay=" + (autoplay ? "1" : "0") +
-    "&rel=0&modestbranding=1&playsinline=1&fs=1&enablejsapi=1" + origin;
+    "&rel=0&playsinline=1&fs=1&enablejsapi=1" + origin;
 }
 function iframeHtml(id, title, autoplay) {
   return '<iframe src="' + embedSrc(id, autoplay) + '" title="' + escapeHtml(title) +
