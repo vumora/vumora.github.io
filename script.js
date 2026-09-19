@@ -9,8 +9,7 @@
 const SOURCES = [
   { id: "piped.private.coffee", kind: "piped", base: "https://api.piped.private.coffee" },
   { id: "pipedapi.ducks.party", kind: "piped", base: "https://pipedapi.ducks.party" },
-  { id: "yewtu.be", kind: "iv", base: "https://yewtu.be" },
-  { id: "invidious.flokinet.to", kind: "iv", base: "https://invidious.flokinet.to" }
+  { id: "invidious.f5.si", kind: "iv", base: "https://invidious.f5.si" }
 ];
 
 const CATEGORIES = [
@@ -870,6 +869,15 @@ function playNow(id) {
   if (openLink) openLink.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(id);
   if (dockTitle) dockTitle.textContent = v.title;
   if (dockMeta) dockMeta.textContent = v.author + (v.published ? " · " + formatDate(v.published) : "");
+  try {
+    var shareBar = document.getElementById("vumoraShareBar");
+    var btnQuickShare = document.getElementById("btnQuickShareWa");
+    if (shareBar && btnQuickShare) {
+      var shareMsg = "🔥 Dekho yeh mast video: " + (v.title || "") + "\n👉 https://vumora.github.io/#v=" + encodeURIComponent(id);
+      btnQuickShare.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareMsg);
+      shareBar.style.display = "block";
+    }
+  } catch (e) {}
   try { renderAffiliateBar(v.title, v.author); } catch (e) {}
   if (!same && dockPlayer) {
     dockPlayer.className = "dock-player " + (v.short ? "ratio-9x16" : "ratio-16x9");
@@ -888,11 +896,22 @@ function playNow(id) {
     try { window.scrollTo(0, 0); } catch (e) {}
   }
   // is video ki asli RELATED videos neeche (title + author dono bhejo smart fallback ke liye)
+    // WhatsApp share links dynamic update
+  try {
+    var shareWa = $("dockShareWa");
+    var dockWaLink = $("dockWaLink");
+    var shareMsg = "🔥 Dekho yeh mast video: " + (v.title || "") + "\n👉 https://vumora.github.io/#v=" + encodeURIComponent(id);
+    var waUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareMsg);
+    if (shareWa) shareWa.href = waUrl;
+    if (dockWaLink) dockWaLink.href = waUrl;
+  } catch (e) {}
   if (!same) loadRelated(id, v.title && v.title !== "Video" ? v.title : "", v.author || "");
 }
 
 function closeDock() {
   if (!watchDock) return;
+  var sb = document.getElementById("vumoraShareBar");
+  if (sb) sb.style.display = "none";
   var amz = document.getElementById("vumoraAmzBar");
   if (amz) amz.style.display = "none";
   watchDock.classList.add("hidden");
@@ -1502,22 +1521,22 @@ function getExactProductForVideo(title, author) {
   var t = (title || "").toLowerCase();
   
   var topic = words.slice(0, 3).join(" ");
-  if (!topic) topic = (author || "Trending Product");
+  if (!topic) topic = (author || "Trending Products");
 
   var category = "Matched to Video";
   var icon = "🛍️";
-  var badge = "Amazon Choice";
+  var badge = "Top Pick";
   var dynamicTitle = "";
   var dynamicTagline = "";
   var searchKeywords = "";
 
-  // 1. NEWS / CRIME / CONTROVERSY / VIRAL INCIDENTS (Aunty arrest, police, hungama, scam, court)
-  if (/arrest|police|crime|court|case|incident|news|khabar|samachar|breaking|viral|aunty|uncle|ladai|fight|hungama|modi|rahul|bjp|congress|election|update|scam|fraud|murder|accident|padtal/i.test(t)) {
+  // 1. NEWS / CRIME / CONTROVERSY / VIRAL INCIDENTS
+  if (/\barrest\b|\bpolice\b|\bcrime\b|\bcourt\b|court case|police case|\bincident\b|\bnews\b|\bkhabar\b|\bsamachar\b|\bbreaking\b|\baunty\b|\buncle\b|\bladai\b|\bfight\b|\bhungama\b|\bmodi\b|\brahul\b|\bbjp\b|\bcongress\b|\belection\b|\bscam\b|\bfraud\b|\bmurder\b|\baccident\b|\bpadtal\b/i.test(t)) {
     category = "Trending Deals";
     icon = "🔥";
-    badge = "Deal of the Day";
-    dynamicTitle = "Today's Mega Deals & Top Trending Offers on Amazon";
-    dynamicTagline = "Gadgets, Fashion & Daily Essentials • Up to 70% Off • Prime";
+    badge = "Trending Offer";
+    dynamicTitle = "Today's Trending Deals & Top Offers on Amazon";
+    dynamicTagline = "Explore popular electronics, home & daily essentials on Amazon.in";
     searchKeywords = "todays deals trending products best offers";
   }
   // 2. CRICKET & SPORTS (IPL, World Cup, Virat Kohli, Football, Badminton)
@@ -1525,98 +1544,98 @@ function getExactProductForVideo(title, author) {
     category = "Sports & Cricket";
     icon = "🏏";
     badge = "Sports Pick";
-    dynamicTitle = "Pro Cricket Gear, English Willow Bats & Sports Kits";
-    dynamicTagline = "Heavy Duty Willow • Full Protection Kits • Prime Delivery";
-    searchKeywords = "cricket bat english willow kit accessories";
+    dynamicTitle = "Cricket Bats, Balls & Athletic Sports Gear";
+    dynamicTagline = "Explore top cricket equipment & sports gear on Amazon.in";
+    searchKeywords = "cricket bat english willow kit sports accessories";
   }
   // 3. MOVIES / TRAILERS / COMEDY / WEB SERIES
   else if (/trailer|movie|film|cinema|teaser|scene|comedy|kapil sharma|standup|hasya|roast|drama|web series|episode/i.test(t)) {
     category = "Home Entertainment";
     icon = "🍿";
-    badge = "Home Cinema";
-    dynamicTitle = "Home Theater 4K Streaming Sticks & Soundbars";
-    dynamicTagline = "Dolby Audio • 4K HDR Streaming • Cinematic Bass";
+    badge = "Entertainment";
+    dynamicTitle = "4K Streaming Devices, Soundbars & Home Audio";
+    dynamicTagline = "Explore TV streaming sticks, soundbars & headphones on Amazon.in";
     searchKeywords = "4k streaming fire stick soundbar for tv";
   }
   // 4. STUDY / UPSC / EXAMS / MOTIVATION / CODING / BOOKS
-  else if (/upsc|ias|ips|ssc|cgl|exam|study|class|lecture|syllabus|gk|gs|khan sir|neet|jee|coding|python|javascript|learn|course/i.test(t)) {
+  else if (/\bupsc\b|\bias\b|\bips\b|\bssc\b|\bcgl\b|\bexam\b|\bstudy\b|\bclass\b|\blecture\b|\bsyllabus\b|\bgk\b|\bgs\b|khan sir|\bneet\b|\bjee\b|\bcoding\b|\bpython\b|\bjavascript\b|\blearn\b|\bcourse\b/i.test(t)) {
     category = "Books & Study Tools";
     icon = "📚";
-    badge = "Toppers Choice";
-    dynamicTitle = "Bestselling Exam Books & Smart Study Table Lamps";
-    dynamicTagline = "Eye Care LED • High Yield Question Banks • Top Rated";
+    badge = "Study Pick";
+    dynamicTitle = "Exam Prep Books, Smart Desk Lamps & Digital Pads";
+    dynamicTagline = "Explore top student essentials & study tools on Amazon.in";
     searchKeywords = "upsc study table lamp digital writing pad books";
   }
   // 5. BEAUTY / MAKEUP / SKINCARE / HAIR
   else if (/makeup|beauty|skincare|serum|lipstick|bridal|glow|fairness|haircut|hairstyle|shampoo|mehndi|salon|face wash/i.test(t)) {
     category = "Beauty & Grooming";
     icon = "💄";
-    badge = "Top Beauty Deal";
-    dynamicTitle = "Professional Makeup Kits & Dermatologist Skincare";
-    dynamicTagline = "100% Genuine • Chemical Free • Fast Prime Delivery";
+    badge = "Beauty Pick";
+    dynamicTitle = "Skincare Essentials, Makeup Kits & Personal Care";
+    dynamicTagline = "Explore popular cosmetics & daily skincare on Amazon.in";
     searchKeywords = "professional makeup kit skincare face serum";
   }
   // 6. FASHION & CLOTHING (Kurti, Saree, Shoes, Jeans)
-  else if (/kurti|saree|lehenga|fashion|dress|haul|suit|shirt|tshirt|jeans|jacket|wear/i.test(t)) {
+  else if (/kurti|saree|lehenga|fashion|dress|haul|\bsuit\b|\bshirt\b|\btshirt\b|\bjeans\b|\bjacket\b|\bwear\b/i.test(t)) {
     category = "Fashion & Apparel";
     icon = "👗";
-    badge = "Trending Style";
-    dynamicTitle = "Latest Ethnic Wear & Trendy Fashion Collections";
-    dynamicTagline = "Premium Fabric • Huge Festive Discounts • Easy Returns";
+    badge = "Fashion Pick";
+    dynamicTitle = "Ethnic Wear, Casual Outfits & Trending Fashion";
+    dynamicTagline = "Explore latest kurtis, shirts & fashion collections on Amazon.in";
     searchKeywords = "latest women kurti ethnic wear men casual shirt";
   }
   // 7. FOOTWEAR / SHOES / SNEAKERS
   else if (/shoes|sneakers|loafers|crocs|slippers|sandals|boots|footwear/i.test(t)) {
     category = "Footwear & Shoes";
     icon = "👟";
-    badge = "Top Footwear";
-    dynamicTitle = "Running Shoes, Casual Sneakers & Sports Footwear";
-    dynamicTagline = "Memory Foam Cushion • Breathable Mesh • Prime Delivery";
+    badge = "Footwear";
+    dynamicTitle = "Running Shoes, Sneakers & Casual Footwear";
+    dynamicTagline = "Explore comfortable sports shoes & sneakers on Amazon.in";
     searchKeywords = "running shoes for men women sneakers";
   }
   // 8. WATCHES & SMARTWATCHES
   else if (/watch|smartwatch|rolex|casio|titan|fossil|fastrack/i.test(t)) {
     category = "Watches & Smartbands";
     icon = "⌚";
-    badge = "Prime Time";
-    dynamicTitle = "Bluetooth Calling Smartwatches & Luxury Chronographs";
-    dynamicTagline = "AMOLED Display • Stainless Steel • 7 Days Battery";
+    badge = "Smart Watches";
+    dynamicTitle = "Bluetooth Calling Smartwatches & Wristwatches";
+    dynamicTagline = "Explore smart fitness bands & wristwatches on Amazon.in";
     searchKeywords = "smart watch bluetooth calling amoled display";
   }
   // 9. PERFUMES & FRAGRANCES
   else if (/perfume|fragrance|deodorant|attar|cologne|scent|body spray/i.test(t)) {
     category = "Perfumes & Scents";
     icon = "✨";
-    badge = "Luxury Fragrance";
-    dynamicTitle = "Long-Lasting Luxury Eau De Parfum & Body Sprays";
-    dynamicTagline = "French Essential Oils • All Day Freshness • 100ml EDP";
+    badge = "Fragrances";
+    dynamicTitle = "Long-Lasting Perfumes, Colognes & Body Sprays";
+    dynamicTagline = "Explore luxury fragrances & daily deos on Amazon.in";
     searchKeywords = "long lasting luxury perfume for men women edp";
   }
   // 10. PETS / DOGS / CATS / BIRDS / AQUARIUM
-  else if (/dog|cat|puppy|kitten|pet|aquarium|fish|parrot|birds|animal/i.test(t)) {
+  else if (/\bdog\b|\bdogs\b|\bcat\b|\bcats\b|puppy|kitten|\bpet\b|\bpets\b|aquarium|\bfish\b|parrot|birds|animal/i.test(t)) {
     category = "Pet Supplies & Care";
     icon = "🐾";
-    badge = "Pet Lover Pick";
-    dynamicTitle = "Healthy Pet Food, Grooming Kits & Aquarium Accessories";
-    dynamicTagline = "Veterinarian Approved • High Nutrition • Prime Delivery";
+    badge = "Pet Supplies";
+    dynamicTitle = "Nutritious Pet Food, Grooming Kits & Pet Care";
+    dynamicTagline = "Explore pet food, toys & grooming accessories on Amazon.in";
     searchKeywords = "dog food pedigree cat treats pet grooming kit";
   }
   // 11. HARDWARE / DIY TOOLS / DRILL MACHINE
   else if (/drill|toolkit|screw|repair|welding|mechanic|hardware|carpenter|pliers|wrench|diy/i.test(t)) {
     category = "Hardware & Power Tools";
     icon = "🔧";
-    badge = "Pro Hardware";
-    dynamicTitle = "Cordless Electric Drill Machines & Universal Tool Kits";
-    dynamicTagline = "Heavy Duty Motor • Multi-Bit Accessories • Carry Box";
+    badge = "Power Tools";
+    dynamicTitle = "Cordless Drill Machines & Universal Tool Kits";
+    dynamicTagline = "Explore DIY toolkits & home improvement tools on Amazon.in";
     searchKeywords = "cordless electric drill machine tool kit for home";
   }
   // 12. MEDICAL / HEALTHCARE / BP MONITOR
   else if (/health|medical|bp monitor|sugar|diabetes|thermometer|oximeter|pain relief|medicine/i.test(t)) {
     category = "Healthcare Devices";
     icon = "🩺";
-    badge = "Medical Certified";
-    dynamicTitle = "Digital Blood Pressure Monitors & Health Trackers";
-    dynamicTagline = "Clinical Accuracy • Fast Readings • Memory Storage";
+    badge = "Health Devices";
+    dynamicTitle = "Digital Blood Pressure Monitors & Health Devices";
+    dynamicTagline = "Explore home healthcare monitors & devices on Amazon.in";
     searchKeywords = "digital blood pressure bp monitor machine home";
   }
   // 13. TRAVEL / LUGGAGE / TROLLEY BAGS
@@ -1625,176 +1644,176 @@ function getExactProductForVideo(title, author) {
     icon = "🧳";
     badge = "Travel Gear";
     dynamicTitle = "Cabin Trolley Bags, Hard Shell Luggage & Travel Kits";
-    dynamicTagline = "Scratch Resistant • 360 Wheels • TSA Lock Included";
+    dynamicTagline = "Explore durable luggage bags & travel accessories on Amazon.in";
     searchKeywords = "cabin luggage trolley bag scratch resistant";
   }
   // 14. ASTROLOGY / HOROSCOPE / GEMSTONES
   else if (/kundli|rashi|astrology|horoscope|jyotish|gemstone|rashifal|rudraksha|zodiac/i.test(t)) {
     category = "Spiritual & Astrology";
     icon = "🔮";
-    badge = "Astrology Special";
-    dynamicTitle = "Natural Certified Rudraksha & Astrology Gemstones";
-    dynamicTagline = "100% Lab Certified • Energized • Spiritual Harmony";
+    badge = "Spiritual Picks";
+    dynamicTitle = "Natural Rudraksha Beads, Malas & Gemstones";
+    dynamicTagline = "Explore spiritual meditation malas & accessories on Amazon.in";
     searchKeywords = "certified rudraksha mala energized gemstones";
   }
   // 15. KIDS & CARTOONS
   else if (/kids|rhymes|chuchu|cocomelon|cartoon|motu patlu|baby|infant|nursery|kindergarten/i.test(t)) {
     category = "Baby & Kids Care";
     icon = "🧸";
-    badge = "Safe for Kids";
-    dynamicTitle = "Educational Toys, Learning Kits & Kids Essentials";
-    dynamicTagline = "Non-Toxic Material • Brain Development • Prime Delivery";
+    badge = "Kids Learning";
+    dynamicTitle = "Educational Toys, Board Games & Learning Kits";
+    dynamicTagline = "Explore kids learning toys & games on Amazon.in";
     searchKeywords = "kids educational learning toys montessori";
   }
   // 16. REAL AUTOMOBILE / CAR / BIKE
-  else if (/thar|scorpio|creta|swift|nexon|innova|fortuner|bullet|royal enfield|splendor|pulsar|mileage test|drive review/i.test(t)) {
+  else if (/\bcar\b|\bcars\b|\bbike\b|\bbikes\b|\bautomobile\b|motorcycle|scooter|vehicle|thar|scorpio|creta|swift|nexon|innova|fortuner|bullet|royal enfield|splendor|pulsar|mileage test|drive review|modification/i.test(t)) {
     category = "Car & Bike Care";
     icon = "🚘";
-    badge = "Auto Top Pick";
-    dynamicTitle = "High-Pressure Car Washers, Polish & Accessories";
-    dynamicTagline = "High Pressure Foam Gun • Dashboard Polish • Top Rated";
+    badge = "Auto Gear";
+    dynamicTitle = "Car Pressure Washers, Cleaners & Auto Accessories";
+    dynamicTagline = "Explore car cleaning kits & auto accessories on Amazon.in";
     searchKeywords = "car wash pressure washer machine vacuum cleaner";
   }
-  // 17. RC TOYS (Helicopters, Planes, JCB, Tractors, Drones, Boats, Tanks, Trains, Cars)
+  // 17. RC TOYS & REMOTE MODELS
   else if (/helicopter|heli/i.test(t)) {
     category = "RC Helicopter";
     icon = "🚁";
-    badge = "Air Flying RC";
-    dynamicTitle = "Buy " + topic + " & Gyro RC Helicopters";
-    dynamicTagline = "Altitude Hover • Crash Resistant Alloy • Rechargeable";
+    badge = "RC Models";
+    dynamicTitle = "RC Helicopters & Flying Toys";
+    dynamicTagline = "Explore remote control gyro helicopters on Amazon.in";
     searchKeywords = topic + " rc helicopter remote control gyro";
   } else if (/plane|airplane|aeroplane|jet|fighter|glider|cessna|airbus|boeing/i.test(t)) {
     category = "RC Airplane & Jet";
     icon = "✈️";
-    badge = "High Speed Flight";
-    dynamicTitle = "Buy " + topic + " & Remote Control RC Planes";
-    dynamicTagline = "EPP Foam Durable • Ready To Fly • 2.4GHz High Range";
+    badge = "RC Models";
+    dynamicTitle = "Remote Control Airplanes & Gliders";
+    dynamicTagline = "Explore RC airplanes & flying models on Amazon.in";
     searchKeywords = topic + " rc plane remote control jet";
   } else if (/drone|quadcopter|fpv|mavic/i.test(t)) {
     category = "Camera Drone";
     icon = "🛸";
-    badge = "Aerial Drone";
-    dynamicTitle = "Buy " + topic + " & WiFi FPV Camera Drones";
-    dynamicTagline = "HD Wide Angle Camera • Auto Return • 360 Flips";
+    badge = "Camera Drones";
+    dynamicTitle = "WiFi FPV Camera Drones & Quadcopters";
+    dynamicTagline = "Explore camera drones & accessories on Amazon.in";
     searchKeywords = topic + " drone with camera remote control";
   } else if (/jcb|excavator|crane|digger|bulldozer|loader/i.test(t)) {
     category = "RC Construction JCB";
     icon = "🚜";
-    badge = "Heavy Metal RC";
-    dynamicTitle = "Buy " + topic + " & Heavy RC JCB Excavators";
-    dynamicTagline = "Hydraulic Realistic Arm • Alloy Die-Cast • Sound & Lights";
+    badge = "RC Construction";
+    dynamicTitle = "RC JCB Excavators & Construction Toys";
+    dynamicTagline = "Explore remote control construction models on Amazon.in";
     searchKeywords = topic + " rc jcb excavator truck remote control";
   } else if (/tractor|farming|trolley|harvester/i.test(t)) {
     category = "RC Farm Tractor";
     icon = "🚜";
-    badge = "Farming Toy";
-    dynamicTitle = "Buy " + topic + " & Remote Control RC Tractors";
-    dynamicTagline = "With Detachable Trolley • High Torque • Rubber Tires";
+    badge = "RC Toys";
+    dynamicTitle = "RC Farm Tractors with Trolley";
+    dynamicTagline = "Explore remote control farm tractors on Amazon.in";
     searchKeywords = topic + " rc tractor with trolley remote control";
   } else if (/boat|ship|submarine|yacht|watercraft/i.test(t)) {
     category = "RC Speed Boat";
     icon = "🚤";
-    badge = "Water Racing";
-    dynamicTitle = "Buy " + topic + " & High Speed RC Boats";
-    dynamicTagline = "Waterproof Hull • Water-Cooled Motor • 30+ km/h";
+    badge = "RC Speed Boat";
+    dynamicTitle = "High Speed RC Boats & Watercraft";
+    dynamicTagline = "Explore remote control speed boats on Amazon.in";
     searchKeywords = topic + " rc speed boat waterproof remote control";
   } else if (/tank|military|army|missile/i.test(t)) {
     category = "RC Military Tank";
     icon = "🛡️";
-    badge = "Battle RC";
-    dynamicTitle = "Buy " + topic + " & Remote Control Army Tanks";
-    dynamicTagline = "Shooting BB Pellets • Recoil Action • Sound Effects";
+    badge = "RC Models";
+    dynamicTitle = "Remote Control Military Tanks";
+    dynamicTagline = "Explore RC model tanks on Amazon.in";
     searchKeywords = topic + " rc military tank remote control";
   } else if (/train|railway|locomotive|metro/i.test(t)) {
     category = "RC Toy Train";
     icon = "🚂";
-    badge = "Track Train";
-    dynamicTitle = "Buy " + topic + " & Electric RC Trains";
-    dynamicTagline = "Real Smoke & Lights • Modular Track Set • Sound";
+    badge = "Model Trains";
+    dynamicTitle = "Electric Model Train Sets & Tracks";
+    dynamicTagline = "Explore toy train track sets on Amazon.in";
     searchKeywords = topic + " electric train set remote control";
   } else if (/robot|android|transformer/i.test(t)) {
     category = "Smart RC Robot";
     icon = "🤖";
-    badge = "Smart Toy";
-    dynamicTitle = "Buy " + topic + " & Interactive RC Robots";
-    dynamicTagline = "Voice Control • Gesture Sensor • Programmable";
+    badge = "Smart Toys";
+    dynamicTitle = "Interactive Smart Robots & Toy Sets";
+    dynamicTagline = "Explore interactive programmable robots on Amazon.in";
     searchKeywords = topic + " smart interactive robot remote control";
   } else if (/bike|motorcycle|scooter/i.test(t) && /rc|toy|remote/i.test(t)) {
     category = "RC Motorcycle";
     icon = "🏍️";
-    badge = "Speed Drift";
-    dynamicTitle = "Buy " + topic + " & High Speed RC Bikes";
-    dynamicTagline = "Self Balancing Gyro • Stunt Drift • Rechargeable";
+    badge = "RC Bikes";
+    dynamicTitle = "Remote Control Stunt Bikes & Motorcycles";
+    dynamicTagline = "Explore stunt drift RC bikes on Amazon.in";
     searchKeywords = topic + " rc motorcycle bike remote control";
   } else if (/car|truck|crawler|buggy|monster|racing|drift/i.test(t) || /rc|toy|remote/i.test(t)) {
     category = "RC Car & Truck";
     icon = "🏎️";
-    badge = "High Speed RC";
-    dynamicTitle = "Buy " + topic + " & High Speed 4WD RC Cars";
-    dynamicTagline = "Off-Road All Terrain • Fast Speed • Shock Absorbers";
+    badge = "RC Cars";
+    dynamicTitle = "High-Speed 4WD RC Cars & Monster Trucks";
+    dynamicTagline = "Explore remote control racing cars on Amazon.in";
     searchKeywords = topic + " rc car 4wd high speed remote control";
   }
   // 18. TECH & MOBILES
   else if (/phone|mobile|smartphone|unboxing|gadget|specs|camera|iphone|samsung|redmi|oneplus|laptop/i.test(t)) {
     category = "Mobiles & Tech";
     icon = "📱";
-    badge = "Best Tech Deal";
-    dynamicTitle = topic + " — Lowest Price, Offers & Accessories";
-    dynamicTagline = "Verified Sellers • Exchange Discounts • Fast Delivery";
+    badge = "Tech & Mobile";
+    dynamicTitle = topic + " — Phone Accessories & Deals";
+    dynamicTagline = "Explore mobile accessories, chargers & cases on Amazon.in";
     searchKeywords = topic + " smartphone mobile accessories";
   }
   // 19. GAMING
   else if (/game|gaming|bgmi|free fire|gta|pc gaming|streamer|playstation|xbox/i.test(t)) {
     category = "Gaming Gear";
     icon = "🎮";
-    badge = "Pro Gaming";
-    dynamicTitle = topic + " Pro Gaming Accessories & Gear";
-    dynamicTagline = "RGB Backlit • Ultra-Low Latency • Surround Sound";
+    badge = "Gaming Gear";
+    dynamicTitle = topic + " — Gaming Headsets, Keyboards & Gear";
+    dynamicTagline = "Explore surround sound headsets & gaming gear on Amazon.in";
     searchKeywords = topic + " gaming headphones keyboard";
   }
   // 20. CREATOR / VLOG
   else if (/shorts|reel|vlog|tik|creator|how to make|setup|studio|shoot|recording/i.test(t)) {
     category = "Creator Studio";
     icon = "🎥";
-    badge = "Creator Pick";
-    dynamicTitle = "Creator Kit for " + topic + " (Mic, Tripod & Lights)";
-    dynamicTagline = "Noise Reduction Mic • 360 Degree Stand • Portable";
-    searchKeywords = "vlogging tripod wireless mic ring light";
+    badge = "Creator Kits";
+    dynamicTitle = "Vlogging Creator Kits (Tripods, Mics & Lights)";
+    dynamicTagline = "Explore ring lights, wireless mics & tripods on Amazon.in";
+    searchKeywords = "vlogging tripod wireless mic ring light studio";
   }
   // 21. MUSIC & SONGS
   else if (/song|music|audio|lyric|remix|singer|beat|album|guitar|dhol/i.test(t)) {
     category = "Audio & Music";
     icon = "🎧";
-    badge = "Top Sound";
-    dynamicTitle = "Best Sound Gear for (" + topic + ") Earbuds & Speakers";
-    dynamicTagline = "Extra Deep Bass • Active Noise Cancelling • Long Battery";
-    searchKeywords = topic + " wireless earbuds bluetooth speaker";
+    badge = "Audio Gear";
+    dynamicTitle = "Wireless Earbuds, Headphones & Bluetooth Speakers";
+    dynamicTagline = "Explore high-bass earbuds & portable speakers on Amazon.in";
+    searchKeywords = topic + " wireless earbuds bluetooth speaker deep bass";
   }
   // 22. FOOD & KITCHEN
   else if (/recipe|cooking|kitchen|food|restaurant|masala|cook/i.test(t)) {
     category = "Kitchen & Home";
     icon = "🍳";
-    badge = "Kitchen Pick";
-    dynamicTitle = "Kitchen Tools & Appliances for " + topic;
-    dynamicTagline = "Non-Stick Cookware • Premium Stainless Steel • Deals";
-    searchKeywords = topic + " kitchen cooking cookware";
+    badge = "Kitchen Tools";
+    dynamicTitle = "Cookware Sets, Mixers & Kitchen Appliances";
+    dynamicTagline = "Explore non-stick cookware & kitchen appliances on Amazon.in";
+    searchKeywords = topic + " kitchen cookware appliances non stick set";
   }
   // 23. FITNESS & GYM
   else if (/fitness|gym|workout|exercise|bodybuilding|yoga|diet/i.test(t)) {
     category = "Fitness & Sports";
     icon = "⚡";
-    badge = "Fitness Deal";
-    dynamicTitle = "Workout Gear & Accessories for " + topic;
-    dynamicTagline = "Sweat Resistant • Heavy Duty • Top Rated";
+    badge = "Fitness Picks";
+    dynamicTitle = "Workout Gear, Dumbbells & Fitness Essentials";
+    dynamicTagline = "Explore home workout gear & fitness items on Amazon.in";
     searchKeywords = topic + " fitness gym accessories";
   }
   // 24. BHAKTI / DEVOTIONAL / PUJA
   else if (/aarti|bhajan|chalisa|katha|mandir|puja|bhakti|shree|god|krishna|ram|shiva|hanuman/i.test(t)) {
     category = "Puja & Spiritual";
     icon = "🪔";
-    badge = "Devotional Pick";
-    dynamicTitle = "Brass Puja Thali Sets, Agarbatti & Spiritual Essentials";
-    dynamicTagline = "Pure Brass • Divine Fragrance • Prime Home Delivery";
+    badge = "Devotional";
+    dynamicTitle = "Brass Puja Thali Sets, Agarbatti & Puja Items";
+    dynamicTagline = "Explore devotional puja items & thali sets on Amazon.in";
     searchKeywords = "puja brass thali set agarbatti dhoop";
   }
   // 25. GARDENING & HOME DECOR
@@ -1802,17 +1821,17 @@ function getExactProductForVideo(title, author) {
     category = "Home & Garden";
     icon = "🪴";
     badge = "Home Decor";
-    dynamicTitle = "Indoor Plant Pots, Seed Kits & Home Decor Lighting";
-    dynamicTagline = "Eco-Friendly Ceramic • Self-Watering • Warm Lights";
+    dynamicTitle = "Indoor Plant Pots, Gardening Kits & Ambient Lights";
+    dynamicTagline = "Explore decorative pots & ambient lighting on Amazon.in";
     searchKeywords = "indoor plants pots seeds home decor lights";
   }
   // 26. SMART HIGH-CONVERTING GENERAL FALLBACK
   else {
     category = "Trending Specials";
     icon = "🛍️";
-    badge = "Top Rated";
-    dynamicTitle = "Best Selling Products & Today's Top Offers on Amazon";
-    dynamicTagline = "Top Customer Ratings • Verified Sellers • Prime Delivery";
+    badge = "Trending Deals";
+    dynamicTitle = "Best Selling Products & Trending Offers on Amazon.in";
+    dynamicTagline = "Explore popular electronics, home & fashion picks on Amazon.in";
     searchKeywords = "trending products best offers deals";
   }
 
@@ -1842,21 +1861,22 @@ function renderAffiliateBar(videoTitle, videoAuthor) {
     return;
   }
 
-  var item = getExactProductForVideo(videoTitle, videoAuthor);
-  var webUrl = "https://www.amazon.in/s?k=" + encodeURIComponent(item.query) + "&tag=" + AMZ_ASSOCIATE_ID;
-  // 100% TRUSTED APP + BROWSER FALLBACK INTENT
-  // Agar user ke paas Amazon App hai to direct app khulegi.
-  // Agar app nahi hai to Google Play Store par bhejkar force karne ki bajaye seedha BROWSER me webUrl khulega!
-  var isAndroid = /Android/i.test(navigator.userAgent || "");
-  var amzUrl = webUrl;
-  if (isAndroid) {
-    amzUrl = "intent://www.amazon.in/s?k=" + encodeURIComponent(item.query) + "&tag=" + AMZ_ASSOCIATE_ID + "#Intent;scheme=https;S.browser_fallback_url=" + encodeURIComponent(webUrl) + ";end";
+  // SAFETY & COMPLIANCE: Kids & Nursery rhymes videos par commercial affiliate card nahi chalana
+  var vt = ((videoTitle || "") + " " + (videoAuthor || "")).toLowerCase();
+  if (state.activeCategory === "K" || /kids|rhymes|baby|cartoon|lori|chuchu|cocomelon|kindergarten|lullaby/i.test(vt)) {
+    bar.style.display = "none";
+    return;
   }
+
+  var item = getExactProductForVideo(videoTitle, videoAuthor);
+  // CLEAN STANDARD HTTPS AMAZON ASSOCIATES LINK
+  // (Android App Links will natively open the Amazon app if installed, without violating Rule #7)
+  var amzUrl = "https://www.amazon.in/s?k=" + encodeURIComponent(item.query) + "&tag=" + AMZ_ASSOCIATE_ID;
 
   bar.innerHTML = 
     '<div class="amz-card-box">' +
       '<div class="amz-header-row">' +
-        '<div class="amz-brand-tag"><span class="amz-prime-logo">📦 amazon</span> <span class="amz-badge-text">' + escapeHtml(item.badge) + '</span></div>' +
+        '<div class="amz-brand-tag"><span class="amz-brand-label">🛍️ TOP PICKS</span> <span class="amz-badge-text">' + escapeHtml(item.badge) + '</span></div>' +
         '<span class="amz-category-chip">' + escapeHtml(item.category) + '</span>' +
       '</div>' +
       '<div class="amz-body-row">' +
@@ -1865,18 +1885,18 @@ function renderAffiliateBar(videoTitle, videoAuthor) {
           '<h4 class="amz-prod-title">' + escapeHtml(item.title) + '</h4>' +
           '<p class="amz-prod-tagline">' + escapeHtml(item.tagline) + '</p>' +
           '<div class="amz-meta-rating">' +
-            '<span class="amz-stars">⭐⭐⭐⭐⭐</span>' +
-            '<span class="amz-rating-num">4.6 ★ (Verified Deals)</span>' +
+            '<span class="amz-trust-pill">⚡ Curated Selection</span>' +
+            '<span class="amz-rating-num">Check Real-Time Price & Customer Reviews on Amazon.in</span>' +
           '</div>' +
         '</div>' +
       '</div>' +
       '<div class="amz-action-row">' +
-        '<a class="amz-buy-btn" href="' + amzUrl + '" target="_blank" rel="nofollow noopener noreferrer">' +
-          '<span>Check Lowest Price & Offers</span>' +
-          '<span class="amz-arrow">Buy on Amazon ➔</span>' +
+        '<a class="amz-buy-btn" href="' + amzUrl + '" target="_blank" rel="nofollow sponsored noopener">' +
+          '<span>See Offers on Amazon.in</span>' +
+          '<span class="amz-arrow">Check Price ➔</span>' +
         '</a>' +
       '</div>' +
-      '<div class="amz-disclaimer-note">As an Amazon Associate, Vumora earns from qualifying purchases.</div>' +
+      '<div class="amz-disclaimer-note">As an Amazon Associate, Vumora earns from qualifying purchases. Pricing and availability subject to change on Amazon.in.</div>' +
     '</div>';
 
   bar.style.display = "block";

@@ -859,29 +859,36 @@ html.light .theme-switch::after {
   display: flex !important;
   align-items: center !important;
   gap: 6px !important;
+  flex-wrap: nowrap !important;
 }
-.amz-prime-logo {
+.amz-brand-label {
   font-weight: 900 !important;
-  font-size: 13px !important;
+  font-size: 11.5px !important;
   color: #ff9900 !important;
   letter-spacing: 0.5px !important;
   text-transform: uppercase !important;
+  white-space: nowrap !important;
 }
 .amz-badge-text {
   background: #ff9900 !important;
   color: #111 !important;
-  font-size: 10px !important;
+  font-size: 9.5px !important;
   font-weight: 800 !important;
   padding: 1px 6px !important;
   border-radius: 4px !important;
   text-transform: uppercase !important;
+  white-space: nowrap !important;
 }
 .amz-category-chip {
-  font-size: 11px !important;
+  font-size: 10.5px !important;
   color: #9ca3af !important;
   background: rgba(255, 255, 255, 0.05) !important;
-  padding: 2px 8px !important;
+  padding: 2px 7px !important;
   border-radius: 20px !important;
+  white-space: nowrap !important;
+}
+@media (max-width: 380px) {
+  .amz-category-chip { display: none !important; }
 }
 .amz-body-row {
   display: flex !important;
@@ -965,4 +972,105 @@ html.light .theme-switch::after {
   color: #6b7280 !important;
   text-align: center !important;
   line-height: 1.2 !important;
+}
+
+
+/* ================================================================== *
+ * Vumora Viral WhatsApp Share & Top Nav Deals (100% Legal & Safe)
+ * ================================================================== */
+.nav-deals-btn {
+  appearance: none;
+  border: 1px solid rgba(255, 153, 0, 0.4);
+  background: linear-gradient(135deg, #ff9900, #f08804);
+  color: #111111 !important;
+  font-weight: 800;
+  font-size: .82rem;
+  padding: .35rem .8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(240, 136, 4, 0.35);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.nav-deals-btn:hover, .nav-deals-btn:active {
+  transform: scale(0.97);
+  opacity: 0.95;
+}
+
+.dock-wa {
+  color: #25D366 !important;
+  text-decoration: none;
+  font-size: .95rem;
+}
+.dock-share-bar {
+  margin-top: 8px;
+}
+.dock-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #25D366;
+  color: #ffffff !important;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.dock-wa-btn:hover, .dock-wa-btn:active {
+  transform: translateY(-1px);
+  background: #20ba5a;
+}
+
+.amz-trust-pill {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 153, 0, 0.15) !important;
+  color: #febd69 !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(255, 153, 0, 0.3) !important;
+  letter-spacing: 0.3px !important;
+  text-transform: uppercase !important;
+}
+
+.amz-disclosure {
+  font-size: .7rem;
+  color: #71717a;
+  max-width: 640px;
+  margin: 6px auto 0;
+  line-height: 1.35;
+  text-align: center;
+}
+
+/* Quick WhatsApp Share Bar */
+.share-bar-wrap {
+  margin: 10px 14px 2px 14px !important;
+  clear: both;
+}
+.btn-quick-share-wa {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #25D366 !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  text-decoration: none !important;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.35) !important;
+  transition: transform 0.15s ease, background 0.15s ease !important;
+}
+.btn-quick-share-wa:hover, .btn-quick-share-wa:active {
+  transform: translateY(-1px) !important;
+  background: #20ba5a !important;
 }

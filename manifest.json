@@ -1,7 +1,7 @@
 {
-  "name": "Vumora",
+  "name": "Vumora — Watch Trending Videos & Shorts",
   "short_name": "Vumora",
-  "description": "Watch embedded YouTube videos. By Pawan Verma / PAWANGAMINGSTUDIO.",
+  "description": "Watch trending videos and shorts with official YouTube player.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

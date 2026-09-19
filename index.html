@@ -5,15 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0f0f0f" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <!-- SECURITY: Content Security Policy — sirf apni (self) scripts/styles allow.
-       Sirf wahi 3rd-party connections allow hain jo app ko chahiye:
-       YouTube iframe player, YouTube thumbnails, Invidious/Piped feeds, geo lookup.
-       Iske bahar ka koi bhi script/frame/connection browser khud block kar dega. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://i.ytimg.com data:; font-src 'self'; connect-src 'self' https://api.piped.private.coffee https://invidious.flokinet.to https://pipedapi.ducks.party https://yewtu.be https://get.geojs.io https://ipwho.is https://api.country.is; frame-src https://www.youtube-nocookie.com https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests" />
-  <!-- SECURITY: Camera/mic/geolocation/payment APIs is app ko chahiye hi nahi — band kar diye -->
+  <!-- SECURITY: Content Security Policy — strict self scripts/styles + allowed 3rd party connections -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://i.ytimg.com data:; font-src 'self'; connect-src 'self' https://api.piped.private.coffee https://invidious.flokinet.to https://pipedapi.ducks.party https://yewtu.be https://invidious.f5.si https://get.geojs.io https://ipwho.is https://api.country.is; frame-src https://www.youtube-nocookie.com https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests" />
+  <!-- SECURITY: Permissions Policy -->
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()" />
-  <meta name="description" content="Vumora — watch like YouTube. Instant play. Location ke hisaab se feed." />
-  <title>Vumora</title>
+  
+  <!-- SEO & Social Sharing Meta Tags -->
+  <title>Vumora — Watch Trending Videos & Shorts Online Free</title>
+  <meta name="description" content="Watch trending videos, shorts, music, and comedy on Vumora. Responsive, fast, location-aware video explorer with smart recommendations." />
+  <meta name="keywords" content="vumora, trending videos, youtube shorts, hindi songs, cricket highlights, comedy clips, entertainment, viral videos" />
+  <link rel="canonical" href="https://vumora.github.io/" />
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Vumora" />
+  <meta property="og:title" content="Vumora — Watch Trending Videos & Shorts Online" />
+  <meta property="og:description" content="Fast, seamless video explorer for trending videos, viral shorts, and music." />
+  <meta property="og:url" content="https://vumora.github.io/" />
+  <meta property="og:image" content="https://vumora.github.io/icon-512.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Vumora — Watch Trending Videos & Shorts Online" />
+  <meta name="twitter:description" content="Fast, seamless video explorer for trending videos, viral shorts, and music." />
+  <meta name="twitter:image" content="https://vumora.github.io/icon-512.png" />
+
+  <!-- JSON-LD Structured Data for Google Search -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Vumora",
+    "url": "https://vumora.github.io/",
+    "description": "Watch trending videos, shorts, and music online.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://vumora.github.io/#q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -22,24 +54,23 @@
   <link rel="preconnect" href="https://www.youtube-nocookie.com" />
   <link rel="preconnect" href="https://www.youtube.com" />
   <link rel="preconnect" href="https://s.ytimg.com" />
-  <link rel="dns-prefetch" href="https://invidious.flokinet.to" />
   <link rel="dns-prefetch" href="https://api.piped.private.coffee" />
   <link rel="dns-prefetch" href="https://pipedapi.ducks.party" />
+  <link rel="dns-prefetch" href="https://invidious.f5.si" />
   <link rel="dns-prefetch" href="https://get.geojs.io" />
   <link rel="dns-prefetch" href="https://ipwho.is" />
-  <!-- SECURITY: inline script hata kar external file me move kiya (strict CSP: script-src 'self') -->
+
   <script src="theme-init.js"></script>
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="stylesheet" href="style.css?v=25" />
 </head>
 <body>
   <div id="ptr" class="ptr" aria-hidden="true">Release to refresh</div>
   <header class="site-header" id="top">
     <div class="header-inner">
       <a class="brand" href="index.html">
-        <img class="brand-logo" src="icon-192.png" width="36" height="36" alt="" />
+        <img class="brand-logo" src="icon-192.png" width="36" height="36" alt="Vumora" />
         <span class="brand-name">Vumora</span>
       </a>
-      <!-- SECURITY: inline onclick hataya — script.js pehle se isi button par addEventListener se bound hai -->
       <button type="button" class="settings-btn" id="settingsBtn" aria-label="Settings">⚙</button>
     </div>
     <nav class="header-nav" aria-label="Format">
@@ -71,6 +102,7 @@
       <label class="set-label" data-i18n="theme">Theme</label>
       <button type="button" class="theme-switch" id="themeSwitch" aria-label="Dark or light mode"></button>
       <button type="button" id="btnMenuInstall" class="set-link-btn">📲 Install App / Add to Home Screen</button>
+      <a class="set-link" href="guides.html" style="color: #ff9900; font-weight: bold;">📝 Shopping Guides & Deals</a>
       <a class="set-link" href="dmca.html" data-i18n="dmca">DMCA</a>
       <a class="set-link" href="terms.html">Terms of Use</a>
       <a class="set-link" href="privacy.html">Privacy Policy</a>
@@ -78,7 +110,6 @@
     </div>
   </div>
 
-  
   <!-- INSTALL APP & ADD TO HOME SCREEN MODAL -->
   <div id="installBanner" class="install-banner hidden">
     <div class="install-inner">
@@ -86,7 +117,7 @@
         <img src="icon-192.png" width="40" height="40" class="install-icon" alt="Vumora" />
         <div>
           <strong class="install-title">Vumora App</strong>
-          <p class="install-desc">Install for fast, ad-free video experience</p>
+          <p class="install-desc">Install Vumora Web App for fast, smooth video experience</p>
         </div>
       </div>
       <div class="install-actions">
@@ -103,6 +134,7 @@
       <span class="dock-now" data-i18n="nowPlaying">Now playing</span>
       <span class="dock-nowtitle" id="dockNowTitle"></span>
       <span class="dock-actions">
+        <a class="dock-btn dock-wa" id="dockShareWa" href="#" target="_blank" rel="noopener" data-i18n-label="shareWa" aria-label="Share on WhatsApp" title="Share on WhatsApp">💬</a>
         <a class="dock-btn dock-open" id="dockOpen" href="https://www.youtube.com/" target="_blank" rel="noopener" data-i18n-label="openYt" aria-label="Open on YouTube" title="Open on YouTube">↗</a>
         <button type="button" class="dock-btn" id="dockSize" data-i18n-label="bigScreen" aria-label="Big screen" title="Big screen">⤢</button>
         <button type="button" class="dock-btn" id="dockClose" data-i18n-label="closePlayer" aria-label="Close player" title="Close player">✕</button>
@@ -112,10 +144,18 @@
     <div class="dock-info">
       <h2 id="dockTitle" class="dock-title"></h2>
       <p id="dockMeta" class="dock-meta"></p>
+      <div class="dock-share-bar">
+        <a id="dockWaLink" class="dock-wa-btn" href="#" target="_blank" rel="noopener">🟢 WhatsApp Pe Share Karein</a>
+      </div>
     </div>
   </div>
 
   <main>
+    <div id="vumoraShareBar" class="share-bar-wrap" style="display:none;">
+      <a id="btnQuickShareWa" class="btn-quick-share-wa" href="#" target="_blank" rel="noopener">
+        <span>🟢 Share Video on WhatsApp</span>
+      </a>
+    </div>
     <div id="vumoraAmzBar" class="amz-bar-wrap" style="display:none;"></div>
     <p class="status-bar" id="statusBar">Ready</p>
     <section id="videoGrid" class="video-grid" aria-label="Feed"></section>
@@ -132,7 +172,11 @@
     <p class="disclaimer">
       Vumora is a video embedding platform. All video content, views, and ad revenues belong entirely to the respective YouTube channel owners via standard YouTube Iframe Player embedding.
     </p>
+    <p class="amz-disclosure">
+      Vumora is a participant in the Amazon Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.in (Tag: vumora-21).
+    </p>
     <p class="footer-links">
+      <a href="guides.html">Guides</a>
       <a href="terms.html">Terms</a>
       <a href="privacy.html">Privacy</a>
       <a href="dmca.html">DMCA</a>
@@ -140,6 +184,6 @@
     </p>
     <p class="copy">© <span id="year"></span> Vumora · Developed by <strong>Pawan Verma</strong> · <strong>PAWANGAMINGSTUDIO</strong></p>
   </footer>
-  <script src="script.js?v=9" defer></script>
+  <script src="script.js?v=25" defer></script>
 </body>
 </html>
