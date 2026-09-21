@@ -1074,3 +1074,22 @@ html.light .theme-switch::after {
   transform: translateY(-1px) !important;
   background: #20ba5a !important;
 }
+
+/* ==================================================================
+   LIGHT MODE ACTIVE-CHIP FIX (21 सितम्बर 2026)
+   पहले .nav-btn.is-active / .az-chip.is-active / .az-for-you.is-active का
+   background #fff hardcoded था → light mode में सफ़ेद-on-सफ़ेद (contrast 1.0:1),
+   चुनी हुई कैटेगरी दिखती ही नहीं थी। अब light mode में चुनी हुई chip/Tab काली।
+   Dark mode बिल्कुल अछूता (नियम सिर्फ़ html.light पर हैं)।
+   ================================================================== */
+html.light .nav-btn.is-active,
+html.light .az-chip.is-active,
+html.light .az-for-you.is-active {
+  background: #18181b;
+  color: #ffffff;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .28);
+}
+html.light .az-chip:not(.is-active):not(.az-for-you),
+html.light .nav-btn:not(.is-active) {
+  border: 1px solid var(--line);
+}

@@ -92,6 +92,27 @@
     html.light .watch-dock .dock-nowtitle { color: #18181b; }
     /* Settings शीट का Close बटन भी light mode में सफ़ेद-on-सफ़ेद था */
     html.light .dock-close { color: #18181b; background: #f4f4f5; }
+
+    /* ── LIGHT MODE ACTIVE-CHIP FIX (21 सितम्बर 2026) ──
+       दिक्कत: style.css में चुनी हुई कैटेगरी/टैब का रंग सफ़ेद (background:#fff)
+       hardcoded था — .nav-btn.is-active, .az-chip.is-active, .az-for-you.is-active
+       Dark mode में सफ़ेद pill काली पट्टी पर चमक जाता था, पर LIGHT mode में
+       सफ़ेद-on-सफ़ेद = पता ही नहीं चलता कि कौन-सी चुनी है (contrast 1.0:1).
+       इलाज: light mode में चुनी हुई chip/Tab को काला (उलटा) — जैसे dark mode
+       में सफ़ेद होती है। Dark mode बिल्कुल अछूता रहेगा (नियम सिर्फ़ html.light पर)। */
+    html.light .nav-btn.is-active,
+    html.light .az-chip.is-active,
+    html.light .az-for-you.is-active {
+      background: #18181b;
+      color: #ffffff;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, .28);
+    }
+    /* जो chips चुनी नहीं हैं, उन्हें light mode में हल्की border — ताकि सफ़ेद
+       chip सफ़ेद background पर धुँधली न लगे (dark mode अछूता)। */
+    html.light .az-chip:not(.is-active):not(.az-for-you),
+    html.light .nav-btn:not(.is-active) {
+      border: 1px solid var(--line);
+    }
   </style>
 </head>
 <body>
