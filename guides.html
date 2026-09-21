@@ -156,6 +156,20 @@
     .lang-section.active {
       display: block;
     }
+  
+    /* ── FOOTER FIX (21 सितम्बर 2026) ──
+       मोबाइल पर लिंक की लाइन स्क्रीन से बाहर निकल रही थी।
+       अब लिंक अपने-आप नीचे की लाइन में चले जाएँगे (wrap)। */
+    .footer-links { flex-wrap: wrap; row-gap: .45rem; }
+    .footer-links a { white-space: nowrap; }
+    .site-footer { padding-left: .8rem; padding-right: .8rem; overflow-x: hidden; }
+    html.dark .amz-disclosure { color: #a1a1aa; }
+  
+    @media (max-width: 480px) {
+      .footer-links { gap: .5rem .85rem; font-size: .8rem; }
+      .site-footer .disclaimer { font-size: .76rem; }
+      .amz-disclosure { font-size: .68rem; }
+    }
   </style>
 </head>
 <body>
@@ -425,7 +439,7 @@
     <p class="footer-links">
       <a href="index.html">Videos</a>
       <a href="guides.html">Guides</a>
-      <a href="terms.html">Terms</a>
+      <a href="about.html">About</a> <a href="contact.html">Contact</a> <a href="disclosure.html">Disclosure</a> <a href="terms.html">Terms</a>
       <a href="privacy.html">Privacy</a>
       <a href="dmca.html">DMCA</a>
       <a href="developer.html">Developer</a>

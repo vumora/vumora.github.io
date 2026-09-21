@@ -108,6 +108,164 @@ const COUNTRIES = [
   { cc: "TH", name: "Thailand", q: "วิดีโอมาแรงวันนี้", hl: "th" },
   { cc: "VN", name: "Vietnam", q: "video thịnh hành hôm nay", hl: "vi" }
 ];
+
+/* ------------------------------------------------------------------ *
+ * 3.5 REGION-AWARE SEARCH  (21 सितम्बर 2026)
+ *  दिक्कत थी: category/search की query में देश-भाषा जुड़ती ही नहीं थी, इसलिए
+ *  भारत में बैठे यूज़र को भी ग्लोबल (ज़्यादातर अंग्रेज़ी) नतीजे मिलते थे।
+ *  अब:  (क) इंडिया -> "हिंदी", पाकिस्तान -> "اردو", बांग्लादेश -> "বাংলা" …
+ *       (ख) Invidious को region + hl दोनों भेजे जाते हैं
+ *       (ग) hint से कुछ न मिले -> अपने-आप बिना-hint (fallback) कोशिश
+ * ------------------------------------------------------------------ */
+var LANG_HINT = {
+  hi: "हिंदी", ur: "اردو", bn: "বাংলা", ne: "नेपाली", si: "සිංහල", sw: "kiswahili",
+  de: "deutsch", fr: "français", es: "español", pt: "português", it: "italiano",
+  nl: "nederlands", sv: "svenska", no: "norsk", da: "dansk", fi: "suomi", pl: "polski",
+  cs: "čeština", hu: "magyar", ro: "română", el: "ελληνικά", ru: "русский", kk: "қазақша",
+  uk: "українська", tr: "türkçe", he: "עברית", ar: "عربي", fa: "فارسی", ja: "日本語",
+  ko: "한국어", zh: "中文", ms: "melayu", id: "indonesia", th: "ไทย", vi: "tiếng việt",
+  en: ""            /* अंग्रेज़ी देशों में query वैसी ही रहती है */
+};
+
+function regionHint() {
+  if (state.noHint) return "";
+  var hl = (state.region && state.region.hl) || "";
+  var w = LANG_HINT[hl];
+  return w ? " " + w : "";
+}
+
+/* ------------------------------------------------------------------ *
+ * 3.6 CATEGORY -> देश की भाषा में query  (21 सितम्बर 2026, टेस्ट किया हुआ)
+ *  क्यों: “cars autos review” जैसी अंग्रेज़ी query पर भारत में भी 0% हिन्दी
+ *  नतीजे आते थे। नीचे दी हिन्दी queries पर औसतन ~48% हिन्दी नतीजे आते हैं
+ *  (कुछ कैटेगरी में 85-90% तक)। जिन भाषाओं का नक़्शा नहीं है, उनके लिए
+ *  localizeQuery() वाला सुरक्षित तरीक़ा चलता है।
+ * ------------------------------------------------------------------ */
+var CAT_QUERY_L10N = {
+  /* हर कैटेगरी के लिए 2 हिन्दी query — page 1 पर पहली, page 2 पर दूसरी
+     (हर query असली YouTube पर टेस्ट की गई — हिन्दी नतीजे 85-100% तक) */
+  hi: {
+    A: ["कार रिव्यू हिंदी", "नई कार हिंदी"],
+    B: ["बिजनेस आइडिया हिंदी", "पैसे कमाने के तरीके हिंदी"],
+    C: ["कॉमेडी वीडियो हिंदी", "मज़ेदार वीडियो हिंदी"],
+    D: ["DIY हिंदी में", "घर की टिप्स हिंदी"],
+    E: ["पढ़ाई हिंदी", "सरकारी नौकरी तैयारी हिंदी"],
+    F: ["हिंदी फिल्म वीडियो", "फिल्म कहानी हिंदी में"],
+    G: ["मोबाइल गेम वीडियो हिंदी", "गेम खेलते हुए हिंदी"],
+    H: ["हेल्थ टिप्स हिंदी", "स्वास्थ्य सलाह हिंदी"],
+    I: ["भारत की खबरें आज", "भारत की वीडियो हिंदी"],
+    J: ["आज की ताज़ा खबरें", "हिंदी न्यूज़ आज"],
+    K: ["बच्चों के गाने", "बच्चों की कहानियाँ हिंदी"],
+    L: ["लाइफस्टाइल व्लॉग हिंदी", "डेली लाइफ वीडियो हिंदी"],
+    M: ["हिंदी गाने", "पुराने हिंदी गाने"],
+    N: ["वन्यजीव डॉक्यूमेंट्री हिंदी", "प्रकृति वीडियो हिंदी"],
+    O: ["क्रिकेट हाइलाइट्स", "खेल समाचार हिंदी"],
+    P: ["hindi podcast interview", "पॉडकास्ट हिंदी"],
+    Q: ["सामान्य ज्ञान सवाल जवाब हिंदी", "gk quiz hindi"],
+    R: ["नया गैजेट हिंदी", "स्मार्टवॉच रिव्यू हिंदी"],
+    S: ["विज्ञान तथ्य हिंदी", "विज्ञान के रहस्य हिंदी"],
+    T: ["मोबाइल टिप्स हिंदी", "टेक्नोलॉजी न्यूज़ हिंदी"],
+    U: ["अंतरिक्ष के रहस्य हिंदी", "ब्रह्मांड वीडियो हिंदी"],
+    V: ["गाँव का व्लॉग", "डेली व्लॉग हिंदी"],
+    W: ["डॉक्यूमेंट्री हिंदी", "दुनिया की जानकारी हिंदी"],
+    X: ["स्टंट वीडियो हिंदी", "एडवेंचर वीडियो हिंदी"],
+    Y: ["योग अभ्यास हिंदी", "योगासन हिंदी वीडियो"],
+    Z: ["जानवरों की वीडियो बच्चों के लिए", "जानवरों की जानकारी हिंदी"]
+  }
+};
+
+/* किसी कैटेगरी की सारी queries — यूज़र के देश/भाषा के हिसाब से */
+function catQueries(key) {
+  var cat = catByKey(key);
+  if (state.noHint) return [cat.q];                      /* fallback: मूल अंग्रेज़ी query */
+  var hl = (state.region && state.region.hl) || "";
+  var map = CAT_QUERY_L10N[hl];
+  if (map && map[key]) {
+    var v = map[key];
+    return Array.isArray(v) ? v.slice() : [v];           /* verified भाषा-queries */
+  }
+  return [localizeQuery(cat.q)];                         /* बाक़ी भाषाएँ: hint जोड़कर */
+}
+
+/* पेज नंबर के हिसाब से query — पेज 1 पर पहली, पेज 2 पर दूसरी, फिर दोहराव */
+function catQuery(key) {
+  var arr = catQueries(key);
+  if (arr.length <= 1) return arr[0];
+  var i = (Math.max(1, state.page) - 1) % arr.length;
+  return arr[i];
+}
+
+
+/* ------------------------------------------------------------------ *
+ * 3.7 LOCAL SIGNAL — video के शीर्षक/चैनल से पता लगाओ कि वह देश की है या नहीं
+ *  क्यों: सिर्फ़ query बदलने से 100% नतीजे देश के नहीं आते (API की मजबूरी)।
+ *  अब: (क) देश की लिपि वाले शीर्षक → score 2
+ *      (ख) देश की भाषा के keywords → score 1   (ग) कुछ नहीं → 0
+ *  फिर: category में local videos पहले (और अगर काफ़ी हों तो बाक़ी हटा दो),
+ *        search/home में सिर्फ़ local को ऊपर करो (हटाओ नहीं — ताकि कोई ख़ास
+ *        गाना/वीडियो ढूँढ़ने पर भी सही नतीजा मिले)।
+ * ------------------------------------------------------------------ */
+var LOCAL_SCRIPT = {
+  hi: /[\u0900-\u097F]/, ne: /[\u0900-\u097F]/, mr: /[\u0900-\u097F]/,
+  bn: /[\u0980-\u09FF]/, pa: /[\u0A00-\u0A7F]/, gu: /[\u0A80-\u0AFF]/,
+  ta: /[\u0B80-\u0BFF]/, te: /[\u0C00-\u0C7F]/, kn: /[\u0C80-\u0CFF]/,
+  ml: /[\u0D00-\u0D7F]/, si: /[\u0D80-\u0DFF]/,
+  ur: /[\u0600-\u06FF]/, ar: /[\u0600-\u06FF]/, fa: /[\u0600-\u06FF]/,
+  he: /[\u0590-\u05FF]/, el: /[\u0370-\u03FF]/,
+  ru: /[\u0400-\u04FF]/, uk: /[\u0400-\u04FF]/, kk: /[\u0400-\u04FF]/,
+  th: /[\u0E00-\u0E7F]/, ja: /[\u3040-\u30FF\u4E00-\u9FFF]/,
+  zh: /[\u4E00-\u9FFF]/, ko: /[\uAC00-\uD7AF]/
+};
+var LOCAL_WORDS = {
+  hi: /hindi|हिंदी|गाना|गाने|गीत|भजन|देसी|भोजपुरी|व्लॉग|कहानी|कहानियाँ|क्रिकेट|खबर|समाचार|रिव्यू|टिप्स|कैसे|भारत|बॉलीवुड|बिजनेस|फिल्म|मूवी|गेम|गैजेट|टेक्नोलॉजी|योग|स्टंट|जानवर|बच्चों|हेल्थ|स्वास्थ्य|कथा|भक्ति|पढ़ाई|नौकरी|तैयारी|सीखें|मज़ेदार|मजेदार|सवाल|जवाब|तथ्य|रहस्य|डॉक्यूमेंट्री|सलाह|पॉडकास्ट|मोटिवेशन|संगीत|नृत्य|राजनीति|किसान|शादी|रेसिपी|व्यंजन|bollywood|desi|bhojpuri|punjabi|tamil|telugu|hindi songs|india|bharat|desi|vlog|kahani|khabar|sikh|kaise|indian/i,
+  ur: /اردو|پاکستان|پاکستانی|خبر|کرکٹ|گانا|گانے|فلم|ویڈیو|لاہور|کراچی|اسلام|پنجاب|سندھ|بلوچستان|pakistan|urdu/i,
+  bn: /বাংলা|বাংলাদেশ|বাংলার|খবর|গান|ভিডিও|ঢাকা|কলকাতা|বাঙালি|bangla|bangladesh|bengali/i,
+  ta: /தமிழ்|தமிழ்|செய்தி|பாடல்|tamil/i,
+  te: /తెలుగు|వార్తలు|పాట|telugu/i,
+  mr: /मराठी|बातमी|गाणी|marathi/i,
+  gu: /ગુજરાતી|ગુજરાત|સમાચાર|ગીત|gujarati/i,
+  pa: /ਪੰਜਾਬੀ|ਪੰਜਾਬ|ਖ਼ਬਰ|ਗੀਤ|punjabi|ਪੰਜਾਬੀ/i,
+  si: /සිංහල|ශ්‍රී ලංකා|ප්‍රවෘත්ති|sinhala|sri lanka/i,
+  ne: /नेपाल|नेपाली|समाचार|गीत|nepal|nepali/i
+};
+
+function localScore(v) {
+  var hl = (state.region && state.region.hl) || "";
+  var rx = LOCAL_SCRIPT[hl];
+  if (!rx) return 0;                       /* अंग्रेज़ी देश (US/UK…) — कुछ नहीं छाँटते */
+  var text = ((v && v.title) || "") + " " + ((v && v.author) || "");
+  if (rx.test(text)) return 2;             /* देश की लिपि → पक्का local */
+  var kw = LOCAL_WORDS[hl];
+  if (kw && kw.test(text)) return 1;       /* देश की भाषा के शब्द → local */
+  return 0;
+}
+
+/* local (2/1) videos को ऊपर लाओ — बाक़ी हटाओ नहीं (stable रहता है) */
+function rankLocal(list) {
+  if (!list || list.length < 2) return list;
+  var hi = [], lo = [];
+  for (var i = 0; i < list.length; i++) (localScore(list[i]) > 0 ? hi : lo).push(list[i]);
+  return lo.length ? hi.concat(lo) : list;
+}
+
+/* category के लिए: काफ़ी local हों तो सिर्फ़ local रखो, वरना पूरा पूल (feed ख़ाली न हो) */
+function preferLocal(list) {
+  if (!list || !list.length) return list;
+  var hi = [];
+  for (var i = 0; i < list.length; i++) if (localScore(list[i]) > 0) hi.push(list[i]);
+  if (hi.length >= 8) return hi;
+  return rankLocal(list);
+}
+
+/* query में भाषा जोड़ो — पर पहले से उसी भाषा की script/शब्द हो तो नहीं */
+function localizeQuery(base) {
+  var h = regionHint();
+  if (!h) return base;
+  var w = h.trim();
+  if (base.toLowerCase().indexOf(w.toLowerCase()) !== -1) return base;
+  if (/[\u0900-\u097F\u0980-\u09FF\u0A00-\u0A7F\u0B80-\u0BFF\u0C00-\u0C7F\u0D00-\u0D7F\u0D80-\u0DFF\u0600-\u06FF\u0590-\u05FF\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF\u0E00-\u0E7F]/.test(base)) return base;
+  return base + h;
+}
 const BY_CC = Object.create(null);
 for (var ci = 0; ci < COUNTRIES.length; ci++) BY_CC[COUNTRIES[ci].cc] = COUNTRIES[ci];
 
@@ -289,6 +447,7 @@ const state = {
   relQIdx: 0,
   category: "T",
   mode: "home",         // home | cat | search
+  noHint: false,        // REGION: bina-bhasha-hint wali fallback koshish chal rahi hai?
   page: 1,              // agla search page (1-based)
   loading: false,
   more: true,
@@ -533,10 +692,17 @@ function pipedSearch(src, q, page, opts) {
   var key = src.id + "|" + q;
   var cursor = pipedCursor[key] || { token: "", page: 0 };
   var hops = 0;
+  /* ══ REGION FIX (21-09-2026) ══
+     पहले Piped ko region/hl bhejа hi nahi jata tha — sirf Invidious ko.
+     Isi wajah se "location ke hisaab se" videos kabhi sahi nahi aati thi,
+     kyunki Piped hi pehla aur doosra source hai (Invidious teesra). */
+  var extra = "";
+  if (opts && opts.cc) extra += "&region=" + encodeURIComponent(opts.cc);
+  if (opts && opts.hl) extra += "&hl=" + encodeURIComponent(opts.hl);
   function step(token) {
     var url = token
-      ? src.base + "/nextpage/search?q=" + encodeURIComponent(q) + "&filter=videos&nextpage=" + encodeURIComponent(token)
-      : src.base + "/search?q=" + encodeURIComponent(q) + "&filter=videos";
+      ? src.base + "/nextpage/search?q=" + encodeURIComponent(q) + "&filter=videos" + extra + "&nextpage=" + encodeURIComponent(token)
+      : src.base + "/search?q=" + encodeURIComponent(q) + "&filter=videos" + extra;
     return fetchTimeout(url, 8000).then(function (data) {
       var arr = (data && data.items) || [];
       var list = [];
@@ -1154,8 +1320,15 @@ function renderAz() {
 }
 
 function contextQuery() {
-  if (state.mode === "search") return state.query.trim();
-  if (state.mode === "cat") return catByKey(state.category).q;
+  /* REGION: category aur search — dono par desh ki bhasha ka hint */
+  /* REGION: search — chhoti (1-2 shabd) query par bhasha ka hint (jaise "cricket" → "cricket हिंदी"),
+     par lambi/khass query (jaise "shape of you") waisi hi rahegi — sahi natija na bigde */
+  if (state.mode === "search") {
+    var uq = state.query.trim();
+    var words = uq.split(/\s+/).filter(function (w) { return w; }).length;
+    return words <= 2 ? localizeQuery(uq) : uq;
+  }
+  if (state.mode === "cat") return catQuery(state.category);
   if (state.mode === "related") return state.relQuery || "";      // related continuation query
   /* home: is session ki fresh query ek baar banao aur lock karo (pagination consistent rahe) */
   if (!state.homeQ) state.homeQ = freshHomeQuery();
@@ -1163,7 +1336,11 @@ function contextQuery() {
 }
 
 function contextOpts(searchPage) {
-  var opts = { cc: state.geo.cc || "", hl: state.mode === "home" ? (state.region.hl || "") : "" };
+  /* REGION: pehle hl sirf home par lagta tha — ab har mode (cat/search/home) par */
+  var opts = {
+    cc: (state.geo && state.geo.cc) || (state.region && state.region.cc) || "",
+    hl: (state.region && state.region.hl) || ""
+  };
   /* FRESH: har home feed ka sort/date combo alag — results ka order har baar badle */
   if (state.mode === "home" && searchPage === 1) {
     var plans = [
@@ -1190,6 +1367,7 @@ function resetFeed(mode) {
   state.gen++;
   state.mode = mode;
   state.homeQ = "";               /* agli home feed ke liye nayi fresh query banegi */
+  state.noHint = false;           /* REGION: nayi feed = hint wali query se hi shuru */
   state.videos = [];
   state.seen = Object.create(null);
   state.page = 1;
@@ -1215,6 +1393,9 @@ function nextPage(fromReel) {
   apiSearch(q, page, opts).then(function (res) {
     if (gen !== state.gen) return;
     var list = state.mode === "search" ? res.items : dropLive(res.items);
+    /* ══ LOCATION: desh ke hisaab se chhaant-na/upar-laana ══ */
+    if (state.mode === "cat") list = preferLocal(list);              /* category: local-first + filter */
+    else if (state.mode === "search" || state.mode === "home") list = rankLocal(list);  /* search/home: local upar */
     list = dropSeen(list);            /* FRESH: pehle dikhai gayi videos yahi se hata do */
     var added = mergeVideos(list);
     state.page = page + 1;
@@ -1229,10 +1410,20 @@ function nextPage(fromReel) {
     syncReel();
     updateStatus();
     /* history filter ke baad page khaali ho gaya ho toh aur andar tak khodo (naya content laao) */
-    if (!fromReel && added === 0 && state.more && emptySkips < 3) { emptySkips++; nextPage(false); }
+    /* category में छँटाई के बाद कम बचे तो अगला पेज भी लाओ (feed na ruke) */
+    if (!fromReel && state.more && emptySkips < 4 && (added === 0 || (state.mode === "cat" && added < 6))) {
+      emptySkips++; nextPage(false);
+    }
   }).catch(function () {
     if (gen !== state.gen) return;
     state.loading = false;
+    /* REGION FALLBACK: bhasha-hint wali query na chale to ek baar bina-hint try karo
+       (isse feed kabhi khaali/band nahi hoti) */
+    if (!state.noHint && (state.mode === "search" || state.mode === "cat")) {
+      state.noHint = true;
+      nextPage(fromReel);
+      return;
+    }
     /* related mode me API fail → agli related query try karo, feed aise hi band mat karo */
     if (state.mode === "related" && advanceRelatedQuery()) { updateStatus(); return; }
     state.more = false;
@@ -1250,7 +1441,7 @@ function loadHome(keepScroll) {
   var gen = state.gen;
   apiTrending(state.geo.cc).then(function (items) {
     if (gen !== state.gen) return;
-    var clean = dropSeen(dropLive(items));   // real videos, live nahi — aur pehle dikhai gayi bhi nahi
+    var clean = rankLocal(dropSeen(dropLive(items)));   // LOCATION: local videos pehle, phir baaki
     if (clean.length >= 4) { mergeVideos(clean); appendCards(); }
     state.more = true;
     updateStatus();

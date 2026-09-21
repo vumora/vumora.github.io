@@ -62,6 +62,37 @@
 
   <script src="theme-init.js"></script>
   <link rel="stylesheet" href="style.css?v=26" />
+  <style>
+    /* Amazon affiliate disclosure bar के साथ ही दिखे — bar छिपा हो तो यह भी छिपा */
+    #amzDisclosureNearBar { display: none; }
+    body:has(#vumoraAmzBar[style*="display: block"]) #amzDisclosureNearBar { display: block; }
+
+    /* ── FOOTER FIX (21 सितम्बर 2026) ──
+       मोबाइल पर लिंक की लाइन स्क्रीन से बाहर निकल रही थी।
+       अब लिंक अपने-आप नीचे की लाइन में चले जाएँगे (wrap)। */
+    .footer-links { flex-wrap: wrap; row-gap: .45rem; }
+    .footer-links a { white-space: nowrap; }
+    .site-footer { padding-left: .8rem; padding-right: .8rem; overflow-x: hidden; }
+    html.dark .amz-disclosure { color: #a1a1aa; }
+  
+    @media (max-width: 480px) {
+      .footer-links { gap: .5rem .85rem; font-size: .8rem; }
+      .site-footer .disclaimer { font-size: .76rem; }
+      .amz-disclosure { font-size: .68rem; }
+    }
+  
+    /* ── LIGHT MODE FIX (21 सितम्बर 2026) ──
+       दिक्कत: style.css में .watch-dock का background हमेशा #000 (काला) था,
+       पर title/meta का रंग theme से आता है। इसलिए LIGHT mode में काला text
+       काले dock पर ग़ायब हो जाता था (डार्क mode ठीक था)।
+       इलाज: light mode में dock सफ़ेद — dark mode बिल्कुल वैसा ही रहेगा। */
+    html.light .watch-dock { background: #ffffff; box-shadow: 0 16px 44px rgba(0, 0, 0, .18); }
+    html.light .watch-dock .dock-title { color: #18181b; }
+    html.light .watch-dock .dock-meta { color: #52525b; }
+    html.light .watch-dock .dock-nowtitle { color: #18181b; }
+    /* Settings शीट का Close बटन भी light mode में सफ़ेद-on-सफ़ेद था */
+    html.light .dock-close { color: #18181b; background: #f4f4f5; }
+  </style>
 </head>
 <body>
   <div id="ptr" class="ptr" aria-hidden="true">Release to refresh</div>
@@ -156,6 +187,9 @@
         <span>🟢 Share Video on WhatsApp</span>
       </a>
     </div>
+    <p class="amz-disclosure" id="amzDisclosureNearBar">
+      🛍️ ये Amazon.in के affiliate लिंक हैं (Tag: <strong>vumora-21</strong>) — ख़रीदने पर हमें छोटा कमीशन मिलता है, आपको कोई अतिरिक्त ख़र्च नहीं। <a href="disclosure.html">विवरण</a>
+    </p>
     <div id="vumoraAmzBar" class="amz-bar-wrap" style="display:none;"></div>
     <p class="status-bar" id="statusBar">Ready</p>
     <section id="videoGrid" class="video-grid" aria-label="Feed"></section>
@@ -177,6 +211,9 @@
     </p>
     <p class="footer-links">
       <a href="guides.html">Guides</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="disclosure.html">Disclosure</a>
       <a href="terms.html">Terms</a>
       <a href="privacy.html">Privacy</a>
       <a href="dmca.html">DMCA</a>
@@ -184,6 +221,6 @@
     </p>
     <p class="copy">© <span id="year"></span> Vumora · Developed by <strong>Pawan Verma</strong> · <strong>PAWANGAMINGSTUDIO</strong></p>
   </footer>
-  <script src="script.js?v=26" defer></script>
+  <script src="script.js?v=28" defer></script>
 </body>
 </html>

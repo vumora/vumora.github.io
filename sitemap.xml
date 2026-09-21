@@ -1,38 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Vumora sitemap — 21 सितम्बर 2026 को अपडेट किया गया।
+     इसमें 3 नए पेज जोड़े गए हैं: about.html, contact.html, disclosure.html
+     (पुरानी sitemap.xml का backup: vumora_audit/sitemap.xml में सुरक्षित रखा है) -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://vumora.github.io/</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-    <url>
+  <url>
     <loc>https://vumora.github.io/guides.html</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://vumora.github.io/about.html</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://vumora.github.io/contact.html</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vumora.github.io/disclosure.html</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://vumora.github.io/terms.html</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://vumora.github.io/privacy.html</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://vumora.github.io/dmca.html</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://vumora.github.io/developer.html</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

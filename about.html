@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f0f0f" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Vumora के बारे में (About Us) — कौन बनाता है और कैसे काम करता है</title>
+  <meta name="description" content="Vumora क्या है, कौन चलाता है, हमारे गाइड्स कैसे लिखे जाते हैं और हमारी संपादकीय नीति क्या है — पूरी जानकारी हिन्दी में।" />
+  <meta name="keywords" content="vumora about, vumora कौन है, vumora editorial policy, vumora guide लेखक" />
+  <link rel="canonical" href="https://vumora.github.io/about.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Vumora" />
+  <meta property="og:title" content="Vumora के बारे में — कौन बनाता है और कैसे काम करता है" />
+  <meta property="og:description" content="Vumora एक video discovery वेब ऐप है। सारे वीडियो official YouTube player से चलते हैं और कमाई creator की ही रहती है।" />
+  <meta property="og:url" content="https://vumora.github.io/about.html" />
+  <meta property="og:image" content="https://vumora.github.io/icon-512.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <script src="theme-init.js"></script>
+  <link rel="stylesheet" href="style.css?v=26" />
+  <style>
+    :root, html.dark { --bg:#0f0f0f; --elev:#212121; --card:#1a1a1a; --line:#303030; --text:#f1f1f1; --muted:#aaa; --header:#0f0f0f; --link:#3ea6ff; --radius:12px; }
+    html.light { --bg:#f4f4f5; --elev:#fff; --card:#fff; --line:#e4e4e7; --text:#18181b; --muted:#52525b; --header:#fff; --link:#0369a1; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Roboto,system-ui,-apple-system,"Segoe UI",Arial,sans-serif; font-size:16px; line-height:1.6; }
+    a { color: var(--link); text-decoration: none; }
+    img { border:0; max-width:100%; }
+    .site-header { position:sticky; top:0; z-index:50; background:var(--header); border-bottom:1px solid var(--line); }
+    .header-inner { display:flex; align-items:center; justify-content:space-between; gap:.5rem; flex-wrap:wrap; padding:.55rem .85rem .5rem; }
+    .brand { display:flex; align-items:center; gap:.45rem; color:var(--text); font-weight:800; letter-spacing:-.03em; }
+    .brand-logo { width:36px; height:36px; border-radius:9px; object-fit:cover; background:#12141a; }
+    .brand-name { font-size:1.25rem; }
+    .nav-btn { background:var(--elev); color:var(--muted); border:0; border-radius:999px; padding:.32rem .7rem; font-size:.78rem; font-weight:700; }
+    .nav-btn.is-active { background:#fff; color:#111; }
+    .legal-page { max-width:760px; margin:0 auto; padding:1.2rem 1rem 2rem; }
+    .legal-page .box { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:1rem; }
+    .site-footer { border-top:1px solid var(--line); padding:1.1rem .85rem 1.4rem; color:var(--muted); font-size:.8rem; }
+    .disclaimer { max-width:820px; margin:0 auto .7rem; }
+    .amz-disclosure { font-size:.7rem; color:#71717a; max-width:640px; margin:6px auto 0; line-height:1.35; text-align:center; }
+    .footer-links { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+    .copy { text-align:center; margin:0; }
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+    .vm-nav { display:flex; gap:.35rem; flex-wrap:wrap; }
+    .vm-hero { background:linear-gradient(145deg,#181d24,#11151b); border:1px solid rgba(255,153,0,.25); border-radius:14px; padding:22px 16px; text-align:center; margin:0 0 18px; }
+    .vm-hero h1 { margin:0 0 8px; font-size:1.45rem; line-height:1.35; color:#fff; }
+    .vm-hero p { margin:0; color:#9ca3af; font-size:.92rem; }
+    .vm-box { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin:0 0 14px; }
+    .vm-box h2 { font-size:1.1rem; margin:0 0 .5rem; color:#ff9900; }
+    .vm-box h3 { font-size:1rem; margin:.9rem 0 .3rem; }
+    .vm-list { margin:.3rem 0 .3rem 1.1rem; padding:0; }
+    .vm-list li { margin:.3rem 0; }
+    .vm-note { font-size:.82rem; color:#9ca3af; }
+    .vm-en { border-top:1px dashed var(--line); margin-top:1.8rem; padding-top:1rem; }
+    .vm-en h2 { font-size:1rem; color:#ff9900; margin:0 0 .4rem; }
+    .vm-en p { font-size:.86rem; color:#9ca3af; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="icon-192.png" width="36" height="36" alt="Vumora" />
+        <span class="brand-name">Vumora</span>
+      </a>
+      <nav class="vm-nav" aria-label="Navigation">
+        <a class="nav-btn" href="index.html">Home</a>
+        <a class="nav-btn" href="guides.html">Guides</a>
+        <a class="nav-btn is-active" href="about.html" aria-current="page">About</a>
+        <a class="nav-btn" href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="legal-page">
+    <div class="vm-hero">
+      <h1>Vumora के बारे में</h1>
+      <p>एक छोटा, ईमानदार video-discovery ऐप — जो हिन्दी वालों के लिए बनाया जा रहा है।</p>
+      <p class="vm-note" style="margin-top:8px;">पिछला अपडेट: सितम्बर 2026</p>
+    </div>
+
+    <section class="vm-box">
+      <h2>1. Vumora क्या है?</h2>
+      <p>
+        Vumora एक <strong>वेब ऐप</strong> है जो YouTube के सार्वजनिक वीडियो और Shorts को आपकी लोकेशन और आपकी खोज के हिसाब से
+        एक साफ़-सुथरी सूची में दिखाता है। वीडियो <strong>YouTube पर ही रहती हैं</strong> — हम कोई वीडियो अपलोड, होस्ट, डाउनलोड
+        या कॉपी नहीं करते। हर वीडियो YouTube के <strong>official iframe player</strong> से चलती है, इसलिए views, watch-time
+        और विज्ञापन की कमाई पूरी तरह उस वीडियो के creator/channel को ही मिलती है।
+      </p>
+      <ul class="vm-list">
+        <li>कोई अकाउंट, कोई पासवर्ड, कोई फ़ोन नंबर नहीं माँगा जाता।</li>
+        <li>आपकी पसंद (थीम, भाषा, शॉर्ट्स/वीडियो फ़िल्टर) सिर्फ़ आपके ब्राउज़र में सेव होती है — सेवा के तौर पर कहीं नहीं भेजी जाती।</li>
+        <li>हम वीडियो के मालिक नहीं हैं। कोई भी कॉपीराइट धारक हमें लिखकर अपनी वीडियो हटवा सकता है — <a href="dmca.html">DMCA पेज</a> देखें।</li>
+      </ul>
+    </section>
+
+    <section class="vm-box">
+      <h2>2. इसके पीछे कौन है?</h2>
+      <p>
+        Vumora को <strong>Pawan Verma</strong> बनाते और चलाते हैं, जो <strong>PAWANGAMINGSTUDIO</strong> (जयपुर, राजस्थान, भारत)
+        के इंडिपेंडेंट डेवलपर हैं। यह एक छोटा, स्वतंत्र प्रोजेक्ट है — कोई कंपनी, कोई निवेशक और कोई विज्ञापन एजेंसी नहीं।
+        वीडियो-डिस्कवरी टूल और हिन्दी में लिखे जाने वाले शॉपिंग/प्रोडक्ट गाइड — दोनों का मक़सद एक ही है:
+        हिन्दी भाषी यूज़र को बिना भटके, साफ़ जानकारी मिले।
+      </p>
+      <p class="vm-note">
+        संपर्क: <a href="mailto:vumora.official@gmail.com">vumora.official@gmail.com</a> ·
+        <a href="contact.html">Contact पेज</a>
+      </p>
+    </section>
+
+    <section class="vm-box">
+      <h2>3. हमारे गाइड्स कैसे लिखे जाते हैं? (संपादकीय नीति)</h2>
+      <p class="vm-note">
+        यह सेक्शन जान-बूझकर साफ़ लिखा गया है — क्योंकि Google की “E-E-A-T” गाइडलाइन और पाठकों का भरोसा, दोनों के लिए
+        यह ज़रूरी है कि पता रहे लेख कौन लिख रहा है और किस आधार पर।
+      </p>
+      <h3>हम क्या करते हैं</h3>
+      <ul class="vm-list">
+        <li><strong>असली इस्तेमाल का अनुभव:</strong> जहाँ संभव है, प्रोडक्ट की स्पेसिफ़िकेशन, बाज़ार की क़ीमतें और मौजूदा यूज़र फ़ीडबैक की तुलना करके लिखा जाता है — कॉपी-पेस्ट नहीं।</li>
+        <li><strong>कमियाँ भी पहले:</strong> अगर किसी प्रोडक्ट का माइक कमज़ोर है या बैटरी समय पर नहीं चलती, वह लेख में साफ़ लिखा जाता है।</li>
+        <li><strong>क़ीमतें हम नहीं लिखते:</strong> क़ीमतें और ऑफ़र Amazon.in पर हर दिन बदलते हैं, इसलिए हम “Check Price on Amazon” बटन देते हैं — कोई पुरानी क़ीमत बताकर गुमराह नहीं करते।</li>
+        <li><strong>तारीख़ और लेखक का नाम:</strong> हर लेख के ऊपर लेखक का नाम और “अपडेट” की तारीख़ दी जाती है।</li>
+        <li><strong>कोई पेड रिव्यू नहीं:</strong> किसी ब्रांड से पैसे लेकर तारीफ़ वाला लेख नहीं लिखा जाता। अगर भविष्य में कोई स्पॉन्सर्ड सामग्री होगी, तो उस पर साफ़ “Sponsored” लिखा होगा।</li>
+        <li><strong>AI का इस्तेमाल:</strong> टूल्स का उपयोग सिर्फ़ रिसर्च, बुलेट-पॉइंट जमा करने और भाषा सुधारने में होता है। अंतिम लेख की ज़िम्मेदारी और निर्णय इंसान (लेखक) का होता है।</li>
+      </ul>
+      <p class="vm-note">नेटवर्क मॉनिटाइज़ेशन की गाइडलाइन (Google की E-E-A-T और ‘people-first content’ नीति) के मुताबिक हम लेख ऐसे लिखने की कोशिश करते हैं कि वे सच में किसी ख़रीदार की मदद करें, केवल रैंक करने के लिए नहीं।</p>
+    </section>
+
+    <section class="vm-box">
+      <h2>4. पैसा कैसे आता है? (साफ़-साफ़ जवाब)</h2>
+      <ul class="vm-list">
+        <li>कुछ गाइड्स में Amazon.in के लिंक होते हैं। अगर आप उन लिंक से ख़रीदारी करते हैं, तो Amazon हमें छोटा कमीशन देता है — <strong>आपको कोई अतिरिक्त ख़र्च नहीं</strong> होता (Associate Tag: vumora-21)।</li>
+        <li>भविष्य में लेखों पर display विज्ञापन (Google AdSense आदि) लगाए जा सकते हैं। वे सिर्फ़ हमारे अपने लिखे लेखों वाले पेज पर होंगे — वीडियो-फ़ीड पर नहीं, क्योंकि वह जगह creators की है।</li>
+        <li>पूरी जानकारी: <a href="disclosure.html">Affiliate &amp; Advertising Disclosure</a></li>
+      </ul>
+    </section>
+
+    <section class="vm-box">
+      <h2>5. साफ़ बात — सीमाएँ (Limitations)</h2>
+      <ul class="vm-list">
+        <li>वीडियो फ़ीड सार्वजनिक डेटा स्रोतों से आती है, इसलिए कभी-कभी वह धीमी या ख़ाली दिख सकती है।</li>
+        <li>हम वीडियो की सामग्री के लिए ज़िम्मेदार नहीं हैं — वह YouTube और उसके creators की होती है।</li>
+        <li>कोई भी शिकायत, कॉपीराइट या तकनीकी समस्या हो तो घबराइए नहीं — <a href="contact.html">संपर्क करें</a>, हम ठीक करने की कोशिश करेंगे।</li>
+      </ul>
+    </section>
+
+    <section class="vm-box vm-en" lang="en">
+      <h2>About Vumora (English)</h2>
+      <p>
+        Vumora is an independent web app built by <strong>Pawan Verma (PAWANGAMINGSTUDIO)</strong>, based in Jaipur, Rajasthan, India.
+        It is a discovery interface that lists public YouTube videos and Shorts and plays them through YouTube's official
+        iframe player. We do not host, upload, download or re-stream any video. Views, watch time and advertising revenue on
+        every video belong to its creator. Some guide articles contain Amazon.in affiliate links (Associate Tag:
+        <strong>vumora-21</strong>), which earn us a small commission at no extra cost to you. Editorial policy: each guide lists its
+        author and update date, mentions the product's weaknesses as well as its strengths, and no paid or sponsored reviews are
+        published without a clear “Sponsored” label. For notices, copyright issues or business enquiries, write to
+        <a href="mailto:vumora.official@gmail.com">vumora.official@gmail.com</a>.
+      </p>
+    </section>
+
+    <p><a href="index.html">← Vumora पर वापस जाएँ</a></p>
+  </main>
+
+  <footer class="site-footer">
+    <p class="disclaimer">
+      Vumora is a video embedding platform. All video content, views, and ad revenues belong entirely to the respective YouTube channel owners via standard YouTube Iframe Player embedding.
+    </p>
+    <p class="amz-disclosure">
+      Vumora is a participant in the Amazon Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.in (Tag: vumora-21).
+    </p>
+    <p class="footer-links">
+      <a href="guides.html">Guides</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="disclosure.html">Disclosure</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="dmca.html">DMCA</a>
+    </p>
+    <p class="copy">© 2026 Vumora · Developed by <strong>Pawan Verma</strong> · <strong>PAWANGAMINGSTUDIO</strong></p>
+  </footer>
+</body>
+</html>
