@@ -61,11 +61,27 @@
   <link rel="dns-prefetch" href="https://ipwho.is" />
 
   <script src="theme-init.js"></script>
-  <link rel="stylesheet" href="style.css?v=26" />
+  <link rel="stylesheet" href="style.css?v=29" />
   <style>
-    /* Amazon affiliate disclosure bar के साथ ही दिखे — bar छिपा हो तो यह भी छिपा */
-    #amzDisclosureNearBar { display: none; }
-    body:has(#vumoraAmzBar[style*="display: block"]) #amzDisclosureNearBar { display: block; }
+    /* Amazon affiliate disclosure — sirf jab card .is-on ho (close par dono hide) */
+    #amzDisclosureNearBar { display: none; margin: 8px 14px 0; font-size: .78rem; line-height: 1.35; }
+    #amzDisclosureNearBar.is-on { display: block; }
+    #amzDisclosureNearBar a { text-decoration: underline; }
+    .amz-paid-tag {
+      margin: 0 0 8px 0;
+      font-size: 11px;
+      font-weight: 700;
+      color: #febd69;
+      letter-spacing: 0.2px;
+    }
+    html.light .amz-paid-tag { color: #b45309; }
+    html.light .amz-card-box {
+      background: linear-gradient(145deg, #ffffff, #f8fafc) !important;
+      border-color: #f59e0b !important;
+    }
+    html.light .amz-prod-title { color: #18181b !important; }
+    html.light .amz-prod-tagline { color: #52525b !important; }
+    html.light .amz-disclaimer-note { color: #71717a !important; }
 
     /* ── FOOTER FIX (21 सितम्बर 2026) ──
        मोबाइल पर लिंक की लाइन स्क्रीन से बाहर निकल रही थी।
@@ -208,10 +224,9 @@
         <span>🟢 Share Video on WhatsApp</span>
       </a>
     </div>
-    <p class="amz-disclosure" id="amzDisclosureNearBar">
-      🛍️ ये Amazon.in के affiliate लिंक हैं (Tag: <strong>vumora-21</strong>) — ख़रीदने पर हमें छोटा कमीशन मिलता है, आपको कोई अतिरिक्त ख़र्च नहीं। <a href="disclosure.html">विवरण</a>
-    </p>
-    <div id="vumoraAmzBar" class="amz-bar-wrap" style="display:none;"></div>
+    <!-- Near-bar duplicate disclosure hata diya: poora statement Amazon card ke andar pehle se hai.
+         Footer + card + guides pe Associate line rehti hai (Amazon requirement). -->
+    <div id="vumoraAmzBar" class="amz-showcase-wrap" style="display:none;" aria-hidden="true"></div>
     <p class="status-bar" id="statusBar">Ready</p>
     <section id="videoGrid" class="video-grid" aria-label="Feed"></section>
     <p id="emptyState" class="empty-state hidden">No results.</p>
@@ -228,7 +243,9 @@
       Vumora is a video embedding platform. All video content, views, and ad revenues belong entirely to the respective YouTube channel owners via standard YouTube Iframe Player embedding.
     </p>
     <p class="amz-disclosure">
-      Vumora is a participant in the Amazon Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.in (Tag: vumora-21).
+      <strong>As an Amazon Associate I earn from qualifying purchases.</strong>
+      Vumora is a participant in the Amazon Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.in (Associate Tag: vumora-21).
+      Amazon and the Amazon logo are trademarks of Amazon.com, Inc. or its affiliates.
     </p>
     <p class="footer-links">
       <a href="guides.html">Guides</a>
@@ -242,6 +259,6 @@
     </p>
     <p class="copy">© <span id="year"></span> Vumora · Developed by <strong>Pawan Verma</strong> · <strong>PAWANGAMINGSTUDIO</strong></p>
   </footer>
-  <script src="script.js?v=28" defer></script>
+  <script src="script.js?v=31" defer></script>
 </body>
 </html>

@@ -975,16 +975,21 @@ function updateStatus(prefix) {
 function embedSrc(id, autoplay) {
   var origin = "";
   try { if (location.origin && location.origin !== "null") origin = "&origin=" + encodeURIComponent(location.origin); } catch (e) {}
-  /* OFFICIAL STANDARD YOUTUBE PLAYER EMBED:
-   * Uses standard www.youtube.com/embed so all official YouTube creator ads,
-   * channel views, and monetization run normally without any suppression. */
+  /* OFFICIAL YouTube Embeddable Player only (YouTube ToS):
+   * - no alternate player / no download / no chrome stripping
+   * - www.youtube.com/embed keeps creator ads + watch-on-YouTube path
+   * - referrer required (Error 153); origin param for JS API
+   * - rel=0 = related from same channel when available (still official param)
+   */
   return "https://www.youtube.com/embed/" + encodeURIComponent(id) +
     "?autoplay=" + (autoplay ? "1" : "0") +
-    "&rel=0&playsinline=1&fs=1&enablejsapi=1" + origin;
+    "&rel=0&playsinline=1&fs=1&modestbranding=0&controls=1&disablekb=0&enablejsapi=1" + origin;
 }
 function iframeHtml(id, title, autoplay) {
-  return '<iframe src="' + embedSrc(id, autoplay) + '" title="' + escapeHtml(title) +
-    '" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe>';
+  return '<iframe src="' + embedSrc(id, autoplay) + '" title="' + escapeHtml(title || "YouTube video") +
+    '" referrerpolicy="strict-origin-when-cross-origin" ' +
+    'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" ' +
+    'allowfullscreen loading="lazy"></iframe>';
 }
 
 function isSmallScreen() { return window.innerWidth <= 640; }
@@ -1077,14 +1082,23 @@ function playNow(id) {
 
 function closeDock() {
   if (!watchDock) return;
-  var sb = document.getElementById("vumoraShareBar");
-  if (sb) sb.style.display = "none";
-  var amz = document.getElementById("vumoraAmzBar");
-  if (amz) amz.style.display = "none";
+  /* pehle playingId clear → koi pending renderAffiliate dubara na dikhe */
+  state.playingId = "";
+  try { hideAffiliateBar(); } catch (e) {
+    var sb = document.getElementById("vumoraShareBar");
+    if (sb) sb.style.display = "none";
+    var amz = document.getElementById("vumoraAmzBar");
+    if (amz) {
+      amz.classList.remove("is-on");
+      amz.style.display = "none";
+      amz.innerHTML = "";
+      amz.setAttribute("aria-hidden", "true");
+    }
+    /* near-bar removed */
+  }
   watchDock.classList.add("hidden");
   document.body.classList.remove("has-dock");
   if (dockPlayer) { dockPlayer.innerHTML = ""; dockPlayer.style.backgroundImage = ""; }
-  state.playingId = "";
   syncDockSpace();
   markPlayingCard();
 }
@@ -1269,6 +1283,10 @@ function closeReel() {
   shortsReel.classList.add("hidden");
   reelTrack.innerHTML = "";
   document.body.classList.remove("lock");
+  /* reel band → koi bhi leftover affiliate/share bar mat chhodo */
+  if (!state.playingId) {
+    try { hideAffiliateBar(); } catch (e) {}
+  }
 }
 
 function bindReelObserver() {
@@ -2037,62 +2055,91 @@ function getExactProductForVideo(title, author) {
   };
 }
 
+/* ── Affiliate show/hide (22-Sep-2026)
+ * CSS me pehle display:block !important tha → closeDock ka style.display="none" haar jata tha.
+ * Ab class .is-on se control: close = class hatao + innerHTML clear + aria-hidden.
+ * Amazon: no static prices; Check Price CTA; required Associate statement; rel=nofollow sponsored.
+ */
+function hideAffiliateBar() {
+  var bar = document.getElementById("vumoraAmzBar");
+  if (bar) {
+    bar.classList.remove("is-on");
+    bar.style.display = "none";
+    bar.setAttribute("aria-hidden", "true");
+    bar.innerHTML = "";
+  }
+  /* upar wala duplicate disclosure hata diya gaya — sirf card ke andar statement rehti hai */
+  var share = document.getElementById("vumoraShareBar");
+  if (share) share.style.display = "none";
+}
+
+function showAffiliateBarEl(bar) {
+  if (!bar) return;
+  bar.classList.add("is-on");
+  bar.style.display = "block";
+  bar.setAttribute("aria-hidden", "false");
+}
+
 function renderAffiliateBar(videoTitle, videoAuthor) {
   var bar = document.getElementById("vumoraAmzBar");
   if (!bar) {
     bar = document.createElement("div");
     bar.id = "vumoraAmzBar";
     bar.className = "amz-showcase-wrap";
+    bar.setAttribute("aria-hidden", "true");
     var sb = document.getElementById("statusBar");
     if (sb && sb.parentNode) sb.parentNode.insertBefore(bar, sb);
   }
 
-  // SIRF VIDEO PLAY HONE PAR HI DIKHEGA
+  // SIRF VIDEO PLAY HONE PAR HI DIKHEGA — close ke baad bilkul hide
   if (!state.playingId) {
-    bar.style.display = "none";
+    hideAffiliateBar();
     return;
   }
 
-  // SAFETY & COMPLIANCE: Kids & Nursery rhymes videos par commercial affiliate card nahi chalana
+  // SAFETY & COMPLIANCE: Kids / nursery — commercial affiliate card nahi (Amazon + child-directed care)
   var vt = ((videoTitle || "") + " " + (videoAuthor || "")).toLowerCase();
-  if (state.activeCategory === "K" || /kids|rhymes|baby|cartoon|lori|chuchu|cocomelon|kindergarten|lullaby/i.test(vt)) {
-    bar.style.display = "none";
+  if (state.activeCategory === "K" || /kids|rhymes|baby|cartoon|lori|chuchu|cocomelon|kindergarten|lullaby|nursery|peppa|doreamon|doraemon|motu patlu|shinchan/i.test(vt)) {
+    hideAffiliateBar();
     return;
   }
 
   var item = getExactProductForVideo(videoTitle, videoAuthor);
-  // CLEAN STANDARD HTTPS AMAZON ASSOCIATES LINK
-  // (Android App Links will natively open the Amazon app if installed, without violating Rule #7)
-  var amzUrl = "https://www.amazon.in/s?k=" + encodeURIComponent(item.query) + "&tag=" + AMZ_ASSOCIATE_ID;
+  // Direct Amazon.in Special Link + Associate tag (no cloaking / no redirector)
+  var amzUrl = "https://www.amazon.in/s?k=" + encodeURIComponent(item.query) + "&tag=" + encodeURIComponent(AMZ_ASSOCIATE_ID);
 
-  bar.innerHTML = 
-    '<div class="amz-card-box">' +
+  bar.className = "amz-showcase-wrap"; // keep base class; is-on added in show
+  bar.innerHTML =
+    '<div class="amz-card-box" role="complementary" aria-label="Amazon.in offers">' +
       '<div class="amz-header-row">' +
-        '<div class="amz-brand-tag"><span class="amz-brand-label">🛍️ TOP PICKS</span> <span class="amz-badge-text">' + escapeHtml(item.badge) + '</span></div>' +
+        '<div class="amz-brand-tag"><span class="amz-brand-label">TOP PICKS</span> <span class="amz-badge-text">' + escapeHtml(item.badge) + '</span></div>' +
         '<span class="amz-category-chip">' + escapeHtml(item.category) + '</span>' +
       '</div>' +
+      '<p class="amz-paid-tag">(paid link) · Amazon.in Associate</p>' +
       '<div class="amz-body-row">' +
-        '<div class="amz-product-icon">' + item.icon + '</div>' +
+        '<div class="amz-product-icon" aria-hidden="true">' + item.icon + '</div>' +
         '<div class="amz-details">' +
           '<h4 class="amz-prod-title">' + escapeHtml(item.title) + '</h4>' +
           '<p class="amz-prod-tagline">' + escapeHtml(item.tagline) + '</p>' +
           '<div class="amz-meta-rating">' +
-            '<span class="amz-trust-pill">⚡ Curated Selection</span>' +
-            '<span class="amz-rating-num">Check Real-Time Price & Customer Reviews on Amazon.in</span>' +
+            '<span class="amz-trust-pill">Curated selection</span>' +
+            '<span class="amz-rating-num">Check live price &amp; reviews on Amazon.in</span>' +
           '</div>' +
         '</div>' +
       '</div>' +
       '<div class="amz-action-row">' +
-        '<a class="amz-buy-btn" href="' + amzUrl + '" target="_blank" rel="nofollow sponsored noopener">' +
-          '<span>See Offers on Amazon.in</span>' +
-          '<span class="amz-arrow">Check Price ➔</span>' +
+        '<a class="amz-buy-btn" href="' + amzUrl + '" target="_blank" rel="nofollow sponsored noopener noreferrer" data-affiliate="amazon" data-paid-link="1">' +
+          '<span>See offers on Amazon.in</span>' +
+          '<span class="amz-arrow">Check Price →</span>' +
         '</a>' +
       '</div>' +
-      '<div class="amz-disclaimer-note">As an Amazon Associate, Vumora earns from qualifying purchases. Pricing and availability subject to change on Amazon.in.</div>' +
+      '<div class="amz-disclaimer-note"><strong>As an Amazon Associate I earn from qualifying purchases.</strong> (paid link) · Live price &amp; stock only on Amazon.in — subject to change at purchase time. <a href="disclosure.html" style="color:#febd69;">Details</a></div>' +
     '</div>';
 
-  bar.style.display = "block";
+  showAffiliateBarEl(bar);
 }
+
+window.hideAffiliateBar = hideAffiliateBar;
 
 
 /* ================================================================== *

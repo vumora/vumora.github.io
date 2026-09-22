@@ -1,4 +1,4 @@
-const CACHE = "vumora-shell-v28";
+const CACHE = "vumora-shell-v31";
 const SHELL = ["./index.html", "./style.css", "./script.js", "./theme-init.js", "./manifest.json", "./guides.html", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", function (e) {

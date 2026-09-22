@@ -701,8 +701,11 @@ html.light .theme-switch::after {
  * ================================================================== */
 .amz-bar-wrap {
   margin: 10px 0 6px 0;
-  display: block;
+  display: none; /* default hidden — only .is-on shows (closeDock fix 22-Sep-2026) */
   animation: fadeInAmz 0.3s ease;
+}
+.amz-bar-wrap.is-on {
+  display: block !important;
 }
 @keyframes fadeInAmz {
   from { opacity: 0; transform: translateY(-4px); }
@@ -761,8 +764,8 @@ html.light .theme-switch::after {
   letter-spacing: 0.3px;
 }
 
-/* Always show Amazon Bar under player */
-.watch-dock .amz-bar-wrap {
+/* Dock-scoped bar (only when player open + .is-on) */
+.watch-dock .amz-bar-wrap.is-on {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
@@ -772,10 +775,12 @@ html.light .theme-switch::after {
   border-bottom: 1px solid var(--line, #2a2a2a);
 }
 
-
-/* Top Affiliate Bar in Main Feed */
+/* Top Affiliate Bar in Main Feed — HIDDEN by default; .is-on pe dikhe */
 .amz-bar-wrap {
   margin: 8px 12px 12px 12px !important;
+  display: none;
+}
+.amz-bar-wrap.is-on {
   display: block !important;
 }
 .amz-card-link {
@@ -832,8 +837,11 @@ html.light .theme-switch::after {
  * ================================================================== */
 .amz-showcase-wrap {
   margin: 10px 14px 14px 14px !important;
-  display: block !important;
+  display: none; /* default hidden — close player = hide card (22-Sep-2026) */
   clear: both;
+}
+.amz-showcase-wrap.is-on {
+  display: block !important;
 }
 .amz-card-box {
   background: linear-gradient(145deg, #181d24, #11151b) !important;
