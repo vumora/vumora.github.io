@@ -1027,6 +1027,30 @@ function toggleDockSize() {
   else setDockMode("wide");
 }
 
+function getShareMessage(title, id) {
+  var t = (title && title !== "Video") ? title.trim() : "";
+  var shareUrl = "https://vumora.github.io/#v=" + encodeURIComponent(id);
+  if (t) {
+    return t + "\n\nWatch on Vumora: " + shareUrl;
+  }
+  return "Watch on Vumora: " + shareUrl;
+}
+
+function updateShareLinks(id, title) {
+  try {
+    var shareMsg = getShareMessage(title, id);
+    var waUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareMsg);
+    var shareWa = $("dockShareWa");
+    var dockWaLink = $("dockWaLink");
+    var btnQuickShare = $("btnQuickShareWa");
+    var shareBar = $("vumoraShareBar");
+    if (shareWa) shareWa.href = waUrl;
+    if (dockWaLink) dockWaLink.href = waUrl;
+    if (btnQuickShare) btnQuickShare.href = waUrl;
+    if (shareBar) shareBar.style.display = "block";
+  } catch (e) {}
+}
+
 function playNow(id) {
   if (!id) return;
   state.userTouched = true;
@@ -1041,15 +1065,8 @@ function playNow(id) {
   if (openLink) openLink.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(id);
   if (dockTitle) dockTitle.textContent = v.title;
   if (dockMeta) dockMeta.textContent = v.author + (v.published ? " · " + formatDate(v.published) : "");
-  try {
-    var shareBar = document.getElementById("vumoraShareBar");
-    var btnQuickShare = document.getElementById("btnQuickShareWa");
-    if (shareBar && btnQuickShare) {
-      var shareMsg = "🔥 Dekho yeh mast video: " + (v.title || "") + "\n👉 https://vumora.github.io/#v=" + encodeURIComponent(id);
-      btnQuickShare.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareMsg);
-      shareBar.style.display = "block";
-    }
-  } catch (e) {}
+  
+  updateShareLinks(v.id, v.title);
   try { renderAffiliateBar(v.title, v.author); } catch (e) {}
   if (!same && dockPlayer) {
     dockPlayer.className = "dock-player " + (v.short ? "ratio-9x16" : "ratio-16x9");
@@ -1067,16 +1084,6 @@ function playNow(id) {
   if (isSmallScreen() && (wasHidden || !same) && window.scrollY > 0) {
     try { window.scrollTo(0, 0); } catch (e) {}
   }
-  // is video ki asli RELATED videos neeche (title + author dono bhejo smart fallback ke liye)
-    // WhatsApp share links dynamic update
-  try {
-    var shareWa = $("dockShareWa");
-    var dockWaLink = $("dockWaLink");
-    var shareMsg = "🔥 Dekho yeh mast video: " + (v.title || "") + "\n👉 https://vumora.github.io/#v=" + encodeURIComponent(id);
-    var waUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareMsg);
-    if (shareWa) shareWa.href = waUrl;
-    if (dockWaLink) dockWaLink.href = waUrl;
-  } catch (e) {}
   if (!same) loadRelated(id, v.title && v.title !== "Video" ? v.title : "", v.author || "");
 }
 
@@ -1590,10 +1597,32 @@ new IntersectionObserver(function (entries) {
   if (!state.loading && state.more && state.videos.length > 0) nextPage(false);
 }, { rootMargin: "900px" }).observe($("scrollSentinel"));
 
-/* #v= deep link */
+/* #v= deep link fix (dynamic title & related fetch on direct open) */
 function openHashVideo() {
   var m = /#v=([A-Za-z0-9_-]{6,})/.exec(location.hash || "");
-  if (m) playNow(m[1]);
+  if (!m) return;
+  var id = m[1];
+  playNow(id);
+
+  var currentVid = findVideo(id);
+  if (!currentVid || !currentVid.title || currentVid.title === "Video") {
+    fetch("https://noembed.com/embed?url=https://www.youtube.com/watch?v=" + encodeURIComponent(id))
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data && data.title) {
+          var t = data.title;
+          var a = data.author_name || "YouTube";
+          if (dockTitle) dockTitle.textContent = t;
+          var nowTitle = $("dockNowTitle");
+          if (nowTitle) nowTitle.textContent = t;
+          if (dockMeta) dockMeta.textContent = a;
+          updateShareLinks(id, t);
+          try { document.title = t + " — Vumora"; } catch (e) {}
+          loadRelated(id, t, a);
+        }
+      })
+      .catch(function() {});
+  }
 }
 window.addEventListener("hashchange", openHashVideo);
 
@@ -2115,7 +2144,6 @@ function renderAffiliateBar(videoTitle, videoAuthor) {
         '<div class="amz-brand-tag"><span class="amz-brand-label">TOP PICKS</span> <span class="amz-badge-text">' + escapeHtml(item.badge) + '</span></div>' +
         '<span class="amz-category-chip">' + escapeHtml(item.category) + '</span>' +
       '</div>' +
-      '<p class="amz-paid-tag">(paid link) · Amazon.in Associate</p>' +
       '<div class="amz-body-row">' +
         '<div class="amz-product-icon" aria-hidden="true">' + item.icon + '</div>' +
         '<div class="amz-details">' +
@@ -2128,12 +2156,12 @@ function renderAffiliateBar(videoTitle, videoAuthor) {
         '</div>' +
       '</div>' +
       '<div class="amz-action-row">' +
-        '<a class="amz-buy-btn" href="' + amzUrl + '" target="_blank" rel="nofollow sponsored noopener noreferrer" data-affiliate="amazon" data-paid-link="1">' +
+        '<a class="amz-buy-btn" href="' + amzUrl + '" target="_blank" rel="nofollow sponsored noopener noreferrer" data-affiliate="amazon">' +
           '<span>See offers on Amazon.in</span>' +
           '<span class="amz-arrow">Check Price →</span>' +
         '</a>' +
       '</div>' +
-      '<div class="amz-disclaimer-note"><strong>As an Amazon Associate I earn from qualifying purchases.</strong> (paid link) · Live price &amp; stock only on Amazon.in — subject to change at purchase time. <a href="disclosure.html" style="color:#febd69;">Details</a></div>' +
+      '<div class="amz-disclaimer-note"><strong>As an Amazon Associate I earn from qualifying purchases.</strong> Live price &amp; stock only on Amazon.in — subject to change at purchase time. <a href="disclosure.html" style="color:#febd69;">Details</a></div>' +
     '</div>';
 
   showAffiliateBarEl(bar);
