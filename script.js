@@ -1027,13 +1027,25 @@ function toggleDockSize() {
   else setDockMode("wide");
 }
 
+// WhatsApp Video Thumbnail & Social Preview Worker URL (100% Free Cloudflare Worker)
+// Set this to your Cloudflare Worker URL to get live HD Video Thumbnails on WhatsApp preview cards!
+var SHARE_WORKER_URL = ""; // e.g. "https://vumora-share.yourname.workers.dev"
+
+function getShareUrl(id) {
+  if (SHARE_WORKER_URL && SHARE_WORKER_URL.trim() !== "") {
+    var base = SHARE_WORKER_URL.trim().replace(/\/+$/, "");
+    return base + "/?v=" + encodeURIComponent(id);
+  }
+  return "https://vumora.github.io/#v=" + encodeURIComponent(id);
+}
+
 function getShareMessage(title, id) {
   var t = (title && title !== "Video") ? title.trim() : "";
-  var shareUrl = "https://vumora.github.io/#v=" + encodeURIComponent(id);
+  var shareUrl = getShareUrl(id);
   if (t) {
-    return t + "\n\nWatch on Vumora: " + shareUrl;
+    return t + "\n\nWatch on Vumora:\n" + shareUrl;
   }
-  return "Watch on Vumora: " + shareUrl;
+  return "Watch on Vumora:\n" + shareUrl;
 }
 
 function updateShareLinks(id, title) {
