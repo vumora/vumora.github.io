@@ -153,6 +153,12 @@ a { color: var(--link); text-decoration: none; }
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  /* FIX: content lamba ho to upar (Close/Language/Theme) gayab na ho — scroll */
+  max-height: 86vh;
+  max-height: 86dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 .settings-head {
   display: flex;
@@ -1101,3 +1107,157 @@ html.light .az-chip:not(.is-active):not(.az-for-you),
 html.light .nav-btn:not(.is-active) {
   border: 1px solid var(--line);
 }
+
+/* ====================================================================
+ * VUMORA TRENDING LIVE SYSTEM — styles (v1)
+ * ==================================================================== */
+.vt-section {
+  margin: 10px 14px 4px;
+  padding: 12px 12px 10px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(255, 60, 60, 0.10), rgba(255, 140, 0, 0.07) 55%, rgba(45, 212, 191, 0.07));
+  border: 1px solid rgba(255, 82, 82, 0.35);
+}
+.vt-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.vt-live-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #ff3b30;
+  box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.6);
+  animation: vtPulse 1.4s infinite;
+  flex: 0 0 auto;
+}
+@keyframes vtPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.55); }
+  70% { box-shadow: 0 0 0 9px rgba(255, 59, 48, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+}
+.vt-title {
+  font-size: .95rem; letter-spacing: .6px; color: #ff5252; font-weight: 800;
+}
+.vt-count {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  font-size: .78rem; font-weight: 700;
+  color: #ffb300;
+  background: rgba(255, 179, 0, 0.12);
+  border: 1px solid rgba(255, 179, 0, 0.4);
+  padding: 3px 8px; border-radius: 999px;
+  white-space: nowrap;
+}
+.vt-by {
+  font-size: .75rem; color: var(--dim, #9aa4af); font-weight: 600;
+  background: rgba(127,127,127,.12);
+  padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+}
+.vt-sub { margin: 6px 0 10px; font-size: .8rem; color: var(--dim, #9aa4af); line-height: 1.4; }
+.vt-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(200px, 240px);
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.vt-row::-webkit-scrollbar { height: 6px; }
+.vt-row::-webkit-scrollbar-thumb { background: rgba(127,127,127,.4); border-radius: 3px; }
+.vt-card { width: auto; }
+.vt-tag {
+  position: absolute; top: 6px; left: 6px;
+  font-size: 9px; font-weight: 800; letter-spacing: .8px;
+  color: #fff; background: linear-gradient(135deg, #ff3b30, #ff9500);
+  padding: 2px 6px; border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+
+/* Mera Trending (sirf mere phone par) */
+.vt-mine-box {
+  margin-top: 12px; padding: 10px;
+  border-radius: 12px;
+  background: rgba(45, 212, 191, 0.07);
+  border: 1px dashed rgba(45, 212, 191, 0.45);
+}
+.vt-mine-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.vt-mine-head strong { color: #2dd4bf; font-size: .85rem; }
+.vt-mine-note { font-size: .72rem; color: var(--dim, #9aa4af); flex: 1 1 100%; line-height: 1.35; }
+
+/* Settings panel section */
+.vt-set-label { color: #ff5252 !important; font-weight: 700; }
+.vt-input {
+  width: 100%; box-sizing: border-box;
+  background: var(--card, #1a1a1a);
+  border: 1px solid var(--line, #333);
+  color: inherit;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: .85rem;
+  margin-bottom: 8px;
+}
+.vt-input:focus { outline: 2px solid #ff5252; border-color: transparent; }
+.vt-set-row { display: flex; gap: 8px; }
+.vt-select {
+  flex: 0 0 auto;
+  background: var(--card, #1a1a1a);
+  border: 1px solid var(--line, #333);
+  color: inherit; border-radius: 10px; padding: 9px 8px; font-size: .82rem;
+}
+.vt-go-btn {
+  flex: 1;
+  border: none; cursor: pointer;
+  background: linear-gradient(135deg, #ff3b30, #ff9500);
+  color: #fff; font-weight: 800; font-size: .85rem;
+  border-radius: 10px; padding: 10px 12px;
+  letter-spacing: .3px;
+}
+.vt-go-btn:disabled { opacity: .6; cursor: wait; }
+.vt-set-note { font-size: .72rem; color: var(--dim, #9aa4af); line-height: 1.45; margin: 8px 0 0; }
+.vt-set-note.vt-err { color: #ff6b6b; font-weight: 600; }
+.vt-dim { opacity: .75; }
+.vt-sim-btn {
+  margin-top: 8px; width: 100%;
+  background: transparent; cursor: pointer;
+  border: 1px dashed var(--line, #555);
+  color: var(--dim, #9aa4af);
+  font-size: .72rem; border-radius: 8px; padding: 7px;
+}
+html.light .vt-section {
+  background: linear-gradient(145deg, rgba(255, 60, 60, 0.07), rgba(255, 140, 0, 0.05) 55%, rgba(13, 148, 136, 0.06));
+  border-color: rgba(234, 67, 53, 0.35);
+}
+html.light .vt-title { color: #d93025; }
+html.light .vt-mine-head strong { color: #0d9488; }
+
+/* 🔥 TRENDING tag — feed ke andar normal cards par (koi alag section nahi) */
+.vt-feed-tag {
+  position: absolute; top: 6px; left: 6px;
+  font-size: 9px; font-weight: 800; letter-spacing: .6px;
+  color: #fff; background: linear-gradient(135deg, #ff3b30, #ff9500);
+  padding: 2px 7px; border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+  pointer-events: none;
+}
+html.light .vt-feed-tag {
+  background: linear-gradient(135deg, #d93025, #e8710a);
+}
+
+/* MERA TRENDING box — settings ke andar (counter + live timers) */
+.vt-mine-vid {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 7px 8px; margin: 6px 0 0;
+  background: rgba(127,127,127,.08);
+  border: 1px solid var(--line, #333);
+  border-radius: 10px;
+  font-size: .78rem;
+}
+.vt-mine-title { flex: 1 1 100%; font-weight: 600; line-height: 1.35; word-break: break-word; }
+.vt-mine-timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700; color: #ffb300;
+  background: rgba(255,179,0,.12);
+  border: 1px solid rgba(255,179,0,.4);
+  padding: 2px 8px; border-radius: 999px;
+  font-size: .72rem; white-space: nowrap;
+}
+.vt-mine-added { font-size: .68rem; color: var(--dim, #9aa4af); white-space: nowrap; }
+.vt-mine-note { margin-top: 8px; font-size: .72rem; color: #ff6b6b; font-weight: 700; }

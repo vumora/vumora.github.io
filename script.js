@@ -2238,3 +2238,7 @@ window.addEventListener("appinstalled", function () {
   if (installBanner) installBanner.classList.add("hidden");
   deferredPrompt = null;
 });
+
+/* Bridge: trending.js (ya future extensions) ke liye feed internals expose.
+   const/let lexical scope me hote hain — cross-script reliability ke liye window par. */
+window.VumoraFeed = { state: state, appendCards: appendCards, renderAll: renderAll, findVideo: findVideo, addToHist: addToHist, visibleVideos: visibleVideos };
