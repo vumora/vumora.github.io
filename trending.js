@@ -432,6 +432,7 @@
           if (mine.videos.length >= VT.MAX_PER_USER) throw LIMIT_ERR;
           mine.videos.push(video);
           mine.count = mine.videos.length;
+          mine.submittedAt = nowMs();   /* naya action → feed me top par */
         }
         if (entries.length > VT.MAX_ENTRIES) entries = entries.slice(entries.length - VT.MAX_ENTRIES);
         return dbWrite({ v: 1, entries: entries }).then(function () {
@@ -579,11 +580,14 @@
       if (typeof window.appendCards === "function") window.appendCards();
     });
   }
+  /* ORDER: jo user SABSE AAKHRI me trending kiya uski video SABSE UPAR.
+     Baaki round-robin (sabki pehli, fir sabki doosri) — sabko barabar jagah. */
   function roundRobin(entries) {
+    var sorted = entries.slice().sort(function (a, b) { return b.submittedAt - a.submittedAt; });
     var out = [];
     for (var i = 0; i < VT.MAX_PER_USER; i++) {
-      for (var j = 0; j < entries.length; j++) {
-        if (entries[j].videos && entries[j].videos[i]) out.push(entries[j].videos[i]);
+      for (var j = 0; j < sorted.length; j++) {
+        if (sorted[j].videos && sorted[j].videos[i]) out.push(sorted[j].videos[i]);
       }
     }
     return out;

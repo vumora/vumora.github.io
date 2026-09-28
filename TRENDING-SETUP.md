@@ -21,9 +21,10 @@ load hoti hain (alag section nahi — 🔥 TRENDING tag card par)
         ↓
 DUNIYA BHAR ke sabhi visitors ko 24 ghante tak dikhti hain
         ↓
-FAIR: har user ka apna entry — kisi ki video replace NAHI hoti.
-2 users → [U1 ki, U2 ki, U1 ki 2nd, U2 ki 2nd]
-100 users → sab ki ek-ek karke (round-robin, barabar)
+ORDER (naya): jo user SABSE AAKHRI me trending kiya uski video SABSE UPAR!
+  U1 ne kiya → U1 top. Fir U2 ne kiya → [U2, U1]. Fir U3 ne → [U3, U2, U1].
+  Round-robin barabar rehta hai: sabki pehli video pehle, fir sabki doosri.
+  Kisi ki video replace NAHI hoti — sabki 24h tak dikhti hain.
         ↓
 LIMIT: 24 ghante me 1 baar, max 2 videos.
 Aur try karne par user ko "🚫 Limit reached!" dikhta hai.
