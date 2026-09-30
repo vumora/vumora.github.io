@@ -1,5 +1,5 @@
 /* ====================================================================
- * VUMORA FREE TRENDING SYSTEM v1.5 (A2Z: i18n + 0/2 counter + timers)
+ * VUMORA FREE FEATURED SYSTEM v1.6 (was: Trending) (A2Z: i18n + 0/2 counter + timers)
  * ====================================================================
  *  - FREE, REAL GLOBAL (shared database — sabhi visitors ko dikhta hai)
  *  - Har user max 2 videos/24h: counter 0/2 → 1/2 → 2/2 → "Limit reached"
@@ -7,7 +7,7 @@
  *  - Settings me MERA TRENDING box: kaunsi video, kab, kitna time bacha
  *    (live ticking countdown)
  *  - UI 28 languages me (site ki language ke hisaab se)
- *  - Videos MAIN FEED me normal cards ki tarah (🔥 tag), fair round-robin
+ *  - Videos MAIN FEED me normal cards ki tarah (⭐ Featured tag), fair round-robin
  * ==================================================================== */
 
 (function () {
@@ -27,34 +27,34 @@
 
   /* ---------------- i18n (28 languages — site LANGS ke hisaab se) ---------------- */
   var STR = {
-    en: { label: "🔥 Free Trending ({n}/2)", ph: "YouTube link: video / shorts", btn: "🚀 Trend My Video", live: "🎉 LIVE! Your video is now visible to every visitor for 24 hours", limit: "🚫 Daily limit reached (2/2). Come back tomorrow!", invalid: "❌ Not a YouTube link. Paste a video/shorts link.", fail: "❌ Couldn't load this video. Try again.", mine: "My Trending", left: "left", added: "Added", video: "Video" },
-    hi: { label: "🔥 फ्री ट्रेंडिंग ({n}/2)", ph: "YouTube लिंक: video / shorts", btn: "🚀 ट्रेंडिंग करो", live: "🎉 लाइव! आपकी वीडियो अब 24 घंटे तक सभी visitors को दिखेगी", limit: "🚫 डेली लिमिट पूरी (2/2)। कल फिर आएँ!", invalid: "❌ ये YouTube लिंक नहीं लगता। video/shorts का लिंक डालें।", fail: "❌ वीडियो लोड नहीं हुई। दोबारा कोशिश करें।", mine: "मेरी ट्रेंडिंग", left: "बाकी", added: "जोड़ी गई", video: "वीडियो" },
-    ur: { label: "🔥 مفت ٹرینڈنگ ({n}/2)", ph: "YouTube لنک: ویڈیو / شارٹس", btn: "🚀 ٹرینڈ کریں", live: "🎉 لائیو! آپ کی ویڈیو اب 24 گھنٹے سب کو دکھے گی", limit: "🚫 روزانہ کی حد مکمل (2/2)۔ کل دوبارہ آئیں!", invalid: "❌ یہ YouTube لنک نہیں۔ ویڈیو/شارٹس کا لنک دیں۔", fail: "❌ ویڈیو لوڈ نہیں ہوئی۔ دوبارہ کوشش کریں۔", mine: "میری ٹرینڈنگ", left: "باقی", added: "شامل", video: "ویڈیو" },
-    ar: { label: "🔥 ترند مجاني ({n}/2)", ph: "رابط يوتيوب: فيديو / شورتس", btn: "🚀 روّج الفيديو", live: "🎉 مباشر! ستظهر فيديوك للجميع لمدة 24 ساعة", limit: "🚫 تم بلوغ الحد اليومي (2/2). عد غداً!", invalid: "❌ هذا ليس رابط يوتيوب. الصق رابط فيديو/شورتس.", fail: "❌ تعذر تحميل الفيديو. حاول مجدداً.", mine: "ترندي", left: "متبقٍ", added: "أُضيفت", video: "فيديو" },
-    bn: { label: "🔥 ফ্রি ট্রেন্ডিং ({n}/2)", ph: "YouTube লিঙ্ক: ভিডিও / শর্টস", btn: "🚀 ট্রেন্ড করুন", live: "🎉 লাইভ! আপনার ভিডিও ২৪ ঘণ্টা সবার কাছে দেখা যাবে", limit: "🚫 দৈনিক সীমা শেষ (2/2)। আগামীকাল আসুন!", invalid: "❌ এটি YouTube লিঙ্ক নয়। ভিডিও/শর্টস লিঙ্ক দিন।", fail: "❌ ভিডিও লোড হয়নি। আবার চেষ্টা করুন।", mine: "আমার ট্রেন্ডিং", left: "বাকি", added: "যোগ হয়েছে", video: "ভিডিও" },
-    mr: { label: "🔥 फ्री ट्रेंडिंग ({n}/2)", ph: "YouTube लिंक: व्हिडिओ / शॉर्ट्स", btn: "🚀 ट्रेंड करा", live: "🎉 लाइव! तुमचा व्हिडिओ २४ तास सर्वांना दिसेल", limit: "🚫 दैनिक मर्यादा संपली (2/2). उद्या या!", invalid: "❌ हा YouTube लिंक नाही. व्हिडिओ/शॉर्ट्स लिंक टाका.", fail: "❌ व्हिडिओ लोड झाला नाही. पुन्हा प्रयत्न करा.", mine: "माझी ट्रेंडिंग", left: "शिल्लक", added: "जोडले", video: "व्हिडिओ" },
-    pa: { label: "🔥 ਮੁਫ਼ਤ ਟ੍ਰੈਂਡਿੰਗ ({n}/2)", ph: "YouTube ਲਿੰਕ: ਵੀਡੀਓ / ਸ਼ਾਰਟਸ", btn: "🚀 ਟ੍ਰੈਂਡ ਕਰੋ", live: "🎉 ਲਾਈਵ! ਤੁਹਾਡੀ ਵੀਡੀਓ 24 ਘੰਟੇ ਸਭਨਾਂ ਨੂੰ ਦਿਖੇਗੀ", limit: "🚫 ਰੋਜ਼ਾਨਾ ਸੀਮਾ ਪੂਰੀ (2/2). ਕੱਲ੍ਹ ਆਓ!", invalid: "❌ ਇਹ YouTube ਲਿੰਕ ਨਹੀਂ ਹੈ। ਵੀਡੀਓ/ਸ਼ਾਰਟਸ ਲਿੰਕ ਪਾਓ।", fail: "❌ ਵੀਡੀਓ ਲੋਡ ਨਹੀਂ ਹੋਈ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।", mine: "ਮੇਰੀ ਟ੍ਰੈਂਡਿੰਗ", left: "ਬਾਕੀ", added: "ਜੋੜੀ", video: "ਵੀਡੀਓ" },
-    ta: { label: "🔥 இலவச டிரெண்டிங் ({n}/2)", ph: "YouTube லிங்க்: வீடியோ / ஷார்ட்ஸ", btn: "🚀 டிரெண்ட் செய்", live: "🎉 லைவ்! உங்கள் வீடியோ 24 மணி நேரம் அனைவருக்கும் தெரியும்", limit: "🚫 தினசரி வரம்பு முடிந்தது (2/2). நாளை வாருங்கள்!", invalid: "❌ இது YouTube லிங்க் அல்ல. வீடியோ/ஷார்ட்ஸ லிங்கை இடுங்கள்.", fail: "❌ வீடியோ ஏற்றப்படவில்லை. மீண்டும் முயற்சிக்கவும்.", mine: "என் டிரெண்டிங்", left: "மீதி", added: "சேர்க்கப்பட்டது", video: "வீடியோ" },
-    te: { label: "🔥 ఫ్రీ ట్రెండింగ్ ({n}/2)", ph: "YouTube లింక్: వీడియో / షార్ట్స్", btn: "🚀 ట్రెండ్ చేయండి", live: "🎉 లైవ్! మీ వీడియో 24 గంటలు అందరికీ కనిపిస్తుంది", limit: "🚫 రోజువారీ పరిమితి పూర్తి (2/2). రేపు రండి!", invalid: "❌ ఇది YouTube లింక్ కాదు. వీడియో/షార్ట్స్ లింక్ పెట్టండి.", fail: "❌ వీడియో లోడ్ కాలేదు. మళ్లీ ప్రయత్నించండి.", mine: "నా ట్రెండింగ్", left: "మిగిలింది", added: "జోడించబడింది", video: "వీడియో" },
-    es: { label: "🔥 Tendencia gratis ({n}/2)", ph: "Enlace de YouTube: vídeo / shorts", btn: "🚀 Poner en tendencia", live: "🎉 ¡EN VIVO! Tu vídeo se mostrará a todos durante 24 horas", limit: "🚫 Límite diario alcanzado (2/2). ¡Vuelve mañana!", invalid: "❌ No parece un enlace de YouTube. Pega un enlace de vídeo/short.", fail: "❌ No se pudo cargar el vídeo. Inténtalo de nuevo.", mine: "Mi tendencia", left: "restante", added: "Añadido", video: "Vídeo" },
-    fr: { label: "🔥 Tendance gratuite ({n}/2)", ph: "Lien YouTube : vidéo / short", btn: "🚀 Mettre en tendance", live: "🎉 EN DIRECT ! Votre vidéo sera visible par tous pendant 24 h", limit: "🚫 Limite quotidienne atteinte (2/2). Revenez demain !", invalid: "❌ Ce n'est pas un lien YouTube. Collez un lien de vidéo/short.", fail: "❌ Impossible de charger la vidéo. Réessayez.", mine: "Ma tendance", left: "restant", added: "Ajouté", video: "Vidéo" },
-    pt: { label: "🔥 Em alta grátis ({n}/2)", ph: "Link do YouTube: vídeo / shorts", btn: "🚀 Colocar em alta", live: "🎉 AO VIVO! Seu vídeo aparecerá para todos por 24 horas", limit: "🚫 Limite diário atingido (2/2). Volte amanhã!", invalid: "❌ Isso não parece um link do YouTube. Cole um link de vídeo/short.", fail: "❌ Não foi possível carregar o vídeo. Tente novamente.", mine: "Minha alta", left: "restante", added: "Adicionado", video: "Vídeo" },
-    de: { label: "🔥 Gratis-Trend ({n}/2)", ph: "YouTube-Link: Video / Shorts", btn: "🚀 In Trend bringen", live: "🎉 LIVE! Dein Video ist 24 Stunden für alle sichtbar", limit: "🚫 Tageslimit erreicht (2/2). Komm morgen wieder!", invalid: "❌ Das ist kein YouTube-Link. Füge einen Video-/Shorts-Link ein.", fail: "❌ Video konnte nicht geladen werden. Nochmal versuchen.", mine: "Mein Trend", left: "übrig", added: "Hinzugefügt", video: "Video" },
-    it: { label: "🔥 Trending gratis ({n}/2)", ph: "Link YouTube: video / shorts", btn: "🚀 Metti in tendenza", live: "🎉 LIVE! Il tuo video sarà visibile a tutti per 24 ore", limit: "🚫 Limite giornaliero raggiunto (2/2). Torna domani!", invalid: "❌ Non sembra un link YouTube. Incolla un link video/short.", fail: "❌ Impossibile caricare il video. Riprova.", mine: "La mia tendenza", left: "rimasto", added: "Aggiunto", video: "Video" },
-    nl: { label: "🔥 Gratis trending ({n}/2)", ph: "YouTube-link: video / shorts", btn: "🚀 In de trend", live: "🎉 LIVE! Je video is 24 uur voor iedereen zichtbaar", limit: "🚫 Daglimiet bereikt (2/2). Kom morgen terug!", invalid: "❌ Dit lijkt geen YouTube-link. Plak een video-/shorts-link.", fail: "❌ Video kon niet laden. Probeer opnieuw.", mine: "Mijn trend", left: "resterend", added: "Toegevoegd", video: "Video" },
-    pl: { label: "🔥 Darmowe trendy ({n}/2)", ph: "Link YouTube: film / shorts", btn: "🚀 Na czas", live: "🎉 NA ŻYWO! Twój film będzie widoczny dla wszystkich przez 24 h", limit: "🚫 Dzienny limit osiągnięty (2/2). Wróć jutro!", invalid: "❌ To nie wygląda jak link YouTube. Wklej link filmu/shorta.", fail: "❌ Nie udało się wczytać filmu. Spróbuj ponownie.", mine: "Moje trendy", left: "zostało", added: "Dodano", video: "Film" },
-    ru: { label: "🔥 Бесплатный тренд ({n}/2)", ph: "Ссылка YouTube: видео / shorts", btn: "🚀 В тренде", live: "🎉 В ЭФИРЕ! Ваше видео увидят все в течение 24 часов", limit: "🚫 Дневной лимит достигнут (2/2). Приходите завтра!", invalid: "❌ Это не ссылка YouTube. Вставьте ссылку на видео/short.", fail: "❌ Не удалось загрузить видео. Попробуйте снова.", mine: "Мой тренд", left: "осталось", added: "Добавлено", video: "Видео" },
-    uk: { label: "🔥 Безкоштовний тренд ({n}/2)", ph: "Посилання YouTube: відео / shorts", btn: "🚀 У тренд", live: "🎉 В ЕФІРІ! Ваше відео побачать усі протягом 24 годин", limit: "🚫 Денний ліміт вичерпано (2/2). Завтра знову!", invalid: "❌ Це не посилання YouTube. Вставте посилання на відео/short.", fail: "❌ Не вдалося завантажити відео. Спробуйте ще раз.", mine: "Мій тренд", left: "залишилось", added: "Додано", video: "Відео" },
-    tr: { label: "🔥 Ücretsiz trend ({n}/2)", ph: "YouTube bağlantısı: video / shorts", btn: "🚀 Trend yap", live: "🎉 CANLI! Videon 24 saat herkese görünecek", limit: "🚫 Günlük limite ulaşıldı (2/2). Yarın gel!", invalid: "❌ Bu bir YouTube bağlantısı değil. Video/shorts bağlantısı yapıştır.", fail: "❌ Video yüklenemedi. Tekrar dene.", mine: "Trendim", left: "kaldı", added: "Eklendi", video: "Video" },
-    fa: { label: "🔥 ترند رایگان ({n}/2)", ph: "لینک یوتیوب: ویدیو / شورتس", btn: "🚀 ترند کن", live: "🎉 زنده! ویدیوی شما ۲۴ ساعت به همه نشان داده می‌شود", limit: "🚫 سقف روزانه پر شد (2/2). فردا بیا!", invalid: "❌ این لینک یوتیوب نیست. لینک ویدیو/شورتس بگذار.", fail: "❌ ویدیو بارگذاری نشد. دوباره تلاش کن.", mine: "ترند من", left: "باقی", added: "اضافه شد", video: "ویدیو" },
-    id: { label: "🔥 Trending gratis ({n}/2)", ph: "Tautan YouTube: video / shorts", btn: "🚀 Trendingkan", live: "🎉 LANGSUNG! Video Anda terlihat oleh semua selama 24 jam", limit: "🚫 Batas harian tercapai (2/2). Kembali besok!", invalid: "❌ Ini bukan tautan YouTube. Tempel tautan video/shorts.", fail: "❌ Video gagal dimuat. Coba lagi.", mine: "Trending saya", left: "tersisa", added: "Ditambahkan", video: "Video" },
-    ms: { label: "🔥 Trending percuma ({n}/2)", ph: "Pautan YouTube: video / shorts", btn: "🚀 Trendingkan", live: "🎉 LANGSUNG! Video anda dilihat semua selama 24 jam", limit: "🚫 Had harian tercapai (2/2). Datang esok!", invalid: "❌ Ini bukan pautan YouTube. Tampal pautan video/shorts.", fail: "❌ Video gagal dimuatkan. Cuba lagi.", mine: "Trending saya", left: "baki", added: "Ditambah", video: "Video" },
-    ja: { label: "🔥 無料トレンド ({n}/2)", ph: "YouTubeリンク: 動画 / ショート", btn: "🚀 トレンドにする", live: "🎉 ライブ！あなたの動画が24時間みんなに表示されます", limit: "🚫 本日の上限に達しました（2/2）。また明日！", invalid: "❌ YouTubeのリンクではありません。動画/ショートのリンクを貼ってください。", fail: "❌ 動画を読み込めませんでした。もう一度お試しください。", mine: "マイトレンド", left: "残り", added: "追加済み", video: "動画" },
-    ko: { label: "🔥 무료 트렌드 ({n}/2)", ph: "YouTube 링크: 동영상 / 쇼츠", btn: "🚀 트렌드하기", live: "🎉 라이브! 내 동영상이 24시간 동안 모두에게 표시됩니다", limit: "🚫 일일 한도 도달 (2/2). 내일 다시 오세요!", invalid: "❌ YouTube 링크가 아닙니다. 동영상/쇼츠 링크를 붙여넣으세요.", fail: "❌ 동영상을 불러오지 못했습니다. 다시 시도하세요.", mine: "내 트렌드", left: "남음", added: "추가됨", video: "동영상" },
-    th: { label: "🔥 ยอดนิยมฟรี ({n}/2)", ph: "ลิงก์ YouTube: วิดีโอ / ช็อตส์", btn: "🚀 ทำให้ยอดนิยม", live: "🎉 สด! วิดีโอของคุณจะแสดงให้ทุกคนเห็น 24 ชั่วโมง", limit: "🚫 ถึงขีดจำกัดรายวันแล้ว (2/2) กลับมาพรุ่งนี้!", invalid: "❌ ไม่ใช่ลิงก์ YouTube วางลิงก์วิดีโอ/ช็อตส์", fail: "❌ โหลดวิดีโอไม่สำเร็จ ลองอีกครั้ง", mine: "ยอดนิยมของฉัน", left: "เหลือ", added: "เพิ่มแล้ว", video: "วิดีโอ" },
-    vi: { label: "🔥 Thịnh hành miễn phí ({n}/2)", ph: "Liên kết YouTube: video / shorts", btn: "🚀 Lên xu hướng", live: "🎉 TRỰC TIẾP! Video của bạn hiển thị với mọi người trong 24 giờ", limit: "🚫 Đã đạt giới hạn ngày (2/2). Hẹn gặp lại ngày mai!", invalid: "❌ Đây không phải liên kết YouTube. Dán liên kết video/shorts.", fail: "❌ Không tải được video. Thử lại.", mine: "Xu hướng của tôi", left: "còn lại", added: "Đã thêm", video: "Video" },
-    zh: { label: "🔥 免费热门 ({n}/2)", ph: "YouTube 链接：视频 / 短视频", btn: "🚀 上热门", live: "🎉 直播中！您的视频将在 24 小时内向所有人展示", limit: "🚫 已达每日上限 (2/2)。明天再来！", invalid: "❌ 这不是 YouTube 链接。请粘贴视频/短视频链接。", fail: "❌ 视频加载失败。请重试。", mine: "我的热门", left: "剩余", added: "已添加", video: "视频" },
-    sw: { label: "🔥 Mwenendo bure ({n}/2)", ph: "Kiungo cha YouTube: video / shorts", btn: "🚀 Weka mwenendo", live: "🎉 MUBASHARA! Video yako itaonekana na wote kwa masaa 24", limit: "🚫 Kikomo cha kila siku kimefikiwa (2/2). Rudi kesho!", invalid: "❌ Hiki si kiungo cha YouTube. Weka kiungo cha video/shorts.", fail: "❌ Imeshindikana kupakia video. Jaribu tena.", mine: "Mwenendo wangu", left: "imebaki", added: "Imeongezwa", video: "Video" }
+    en: { label: "⭐ Free Featured ({n}/2)", ph: "YouTube link: video / shorts", btn: "🚀 Feature My Video", live: "🎉 LIVE! Your video is now visible to every visitor for 24 hours", limit: "🚫 Daily limit reached (2/2). Come back tomorrow!", invalid: "❌ Not a YouTube link. Paste a video/shorts link.", fail: "❌ Couldn't load this video. Try again.", mine: "My Featured", left: "left", added: "Added", video: "Video" },
+    hi: { label: "⭐ फ्री फ़ीचर्ड ({n}/2)", ph: "YouTube लिंक: video / shorts", btn: "🚀 मेरा वीडियो फ़ीचर करें", live: "🎉 लाइव! आपकी वीडियो अब 24 घंटे तक सभी visitors को दिखेगी", limit: "🚫 डेली लिमिट पूरी (2/2)। कल फिर आएँ!", invalid: "❌ ये YouTube लिंक नहीं लगता। video/shorts का लिंक डालें।", fail: "❌ वीडियो लोड नहीं हुई। दोबारा कोशिश करें।", mine: "मेरे फ़ीचर्ड", left: "बाकी", added: "जोड़ी गई", video: "वीडियो" },
+    ur: { label: "⭐ مفت نمایاں ({n}/2)", ph: "YouTube لنک: ویڈیو / شارٹس", btn: "🚀 نمایاں کریں", live: "🎉 لائیو! آپ کی ویڈیو اب 24 گھنٹے سب کو دکھے گی", limit: "🚫 روزانہ کی حد مکمل (2/2)۔ کل دوبارہ آئیں!", invalid: "❌ یہ YouTube لنک نہیں۔ ویڈیو/شارٹس کا لنک دیں۔", fail: "❌ ویڈیو لوڈ نہیں ہوئی۔ دوبارہ کوشش کریں۔", mine: "میری نمایاں", left: "باقی", added: "شامل", video: "ویڈیو" },
+    ar: { label: "⭐ مميّز مجاني ({n}/2)", ph: "رابط يوتيوب: فيديو / شورتس", btn: "🚀 ميّز الفيديو", live: "🎉 مباشر! ستظهر فيديوك للجميع لمدة 24 ساعة", limit: "🚫 تم بلوغ الحد اليومي (2/2). عد غداً!", invalid: "❌ هذا ليس رابط يوتيوب. الصق رابط فيديو/شورتس.", fail: "❌ تعذر تحميل الفيديو. حاول مجدداً.", mine: "مميّزاتي", left: "متبقٍ", added: "أُضيفت", video: "فيديو" },
+    bn: { label: "⭐ ফ্রি ফিচার্ড ({n}/2)", ph: "YouTube লিঙ্ক: ভিডিও / শর্টস", btn: "🚀 ফিচার করুন", live: "🎉 লাইভ! আপনার ভিডিও ২৪ ঘণ্টা সবার কাছে দেখা যাবে", limit: "🚫 দৈনিক সীমা শেষ (2/2)। আগামীকাল আসুন!", invalid: "❌ এটি YouTube লিঙ্ক নয়। ভিডিও/শর্টস লিঙ্ক দিন।", fail: "❌ ভিডিও লোড হয়নি। আবার চেষ্টা করুন।", mine: "আমার ফিচার্ড", left: "বাকি", added: "যোগ হয়েছে", video: "ভিডিও" },
+    mr: { label: "⭐ फ्री फीचर्ड ({n}/2)", ph: "YouTube लिंक: व्हिडिओ / शॉर्ट्स", btn: "🚀 फीचर करा", live: "🎉 लाइव! तुमचा व्हिडिओ २४ तास सर्वांना दिसेल", limit: "🚫 दैनिक मर्यादा संपली (2/2). उद्या या!", invalid: "❌ हा YouTube लिंक नाही. व्हिडिओ/शॉर्ट्स लिंक टाका.", fail: "❌ व्हिडिओ लोड झाला नाही. पुन्हा प्रयत्न करा.", mine: "माझे फीचर्ड", left: "शिल्लक", added: "जोडले", video: "व्हिडिओ" },
+    pa: { label: "⭐ ਮੁਫ਼ਤ ਫੀਚਰਡ ({n}/2)", ph: "YouTube ਲਿੰਕ: ਵੀਡੀਓ / ਸ਼ਾਰਟਸ", btn: "🚀 ਫੀਚਰ ਕਰੋ", live: "🎉 ਲਾਈਵ! ਤੁਹਾਡੀ ਵੀਡੀਓ 24 ਘੰਟੇ ਸਭਨਾਂ ਨੂੰ ਦਿਖੇਗੀ", limit: "🚫 ਰੋਜ਼ਾਨਾ ਸੀਮਾ ਪੂਰੀ (2/2). ਕੱਲ੍ਹ ਆਓ!", invalid: "❌ ਇਹ YouTube ਲਿੰਕ ਨਹੀਂ ਹੈ। ਵੀਡੀਓ/ਸ਼ਾਰਟਸ ਲਿੰਕ ਪਾਓ।", fail: "❌ ਵੀਡੀਓ ਲੋਡ ਨਹੀਂ ਹੋਈ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।", mine: "ਮੇਰੇ ਫੀਚਰਡ", left: "ਬਾਕੀ", added: "ਜੋੜੀ", video: "ਵੀਡੀਓ" },
+    ta: { label: "⭐ இலவச சிறப்பு ({n}/2)", ph: "YouTube லிங்க்: வீடியோ / ஷார்ட்ஸ", btn: "🚀 சிறப்பிக்கவும்", live: "🎉 லைவ்! உங்கள் வீடியோ 24 மணி நேரம் அனைவருக்கும் தெரியும்", limit: "🚫 தினசரி வரம்பு முடிந்தது (2/2). நாளை வாருங்கள்!", invalid: "❌ இது YouTube லிங்க் அல்ல. வீடியோ/ஷார்ட்ஸ லிங்கை இடுங்கள்.", fail: "❌ வீடியோ ஏற்றப்படவில்லை. மீண்டும் முயற்சிக்கவும்.", mine: "என் சிறப்பு", left: "மீதி", added: "சேர்க்கப்பட்டது", video: "வீடியோ" },
+    te: { label: "⭐ ఫ్రీ ఫీచర్డ్ ({n}/2)", ph: "YouTube లింక్: వీడియో / షార్ట్స్", btn: "🚀 ఫీచర్ చేయండి", live: "🎉 లైవ్! మీ వీడియో 24 గంటలు అందరికీ కనిపిస్తుంది", limit: "🚫 రోజువారీ పరిమితి పూర్తి (2/2). రేపు రండి!", invalid: "❌ ఇది YouTube లింక్ కాదు. వీడియో/షార్ట్స్ లింక్ పెట్టండి.", fail: "❌ వీడియో లోడ్ కాలేదు. మళ్లీ ప్రయత్నించండి.", mine: "నా ఫీచర్డ్", left: "మిగిలింది", added: "జోడించబడింది", video: "వీడియో" },
+    es: { label: "⭐ Destacado gratis ({n}/2)", ph: "Enlace de YouTube: vídeo / shorts", btn: "🚀 Destacar mi vídeo", live: "🎉 ¡EN VIVO! Tu vídeo se mostrará a todos durante 24 horas", limit: "🚫 Límite diario alcanzado (2/2). ¡Vuelve mañana!", invalid: "❌ No parece un enlace de YouTube. Pega un enlace de vídeo/short.", fail: "❌ No se pudo cargar el vídeo. Inténtalo de nuevo.", mine: "Mis destacados", left: "restante", added: "Añadido", video: "Vídeo" },
+    fr: { label: "⭐ En vedette gratuit ({n}/2)", ph: "Lien YouTube : vidéo / short", btn: "🚀 Mettre en vedette", live: "🎉 EN DIRECT ! Votre vidéo sera visible par tous pendant 24 h", limit: "🚫 Limite quotidienne atteinte (2/2). Revenez demain !", invalid: "❌ Ce n'est pas un lien YouTube. Collez un lien de vidéo/short.", fail: "❌ Impossible de charger la vidéo. Réessayez.", mine: "Mes vedettes", left: "restant", added: "Ajouté", video: "Vidéo" },
+    pt: { label: "⭐ Destaque grátis ({n}/2)", ph: "Link do YouTube: vídeo / shorts", btn: "🚀 Destacar meu vídeo", live: "🎉 AO VIVO! Seu vídeo aparecerá para todos por 24 horas", limit: "🚫 Limite diário atingido (2/2). Volte amanhã!", invalid: "❌ Isso não parece um link do YouTube. Cole um link de vídeo/short.", fail: "❌ Não foi possível carregar o vídeo. Tente novamente.", mine: "Meus destaques", left: "restante", added: "Adicionado", video: "Vídeo" },
+    de: { label: "⭐ Gratis hervorgehoben ({n}/2)", ph: "YouTube-Link: Video / Shorts", btn: "🚀 Video hervorheben", live: "🎉 LIVE! Dein Video ist 24 Stunden für alle sichtbar", limit: "🚫 Tageslimit erreicht (2/2). Komm morgen wieder!", invalid: "❌ Das ist kein YouTube-Link. Füge einen Video-/Shorts-Link ein.", fail: "❌ Video konnte nicht geladen werden. Nochmal versuchen.", mine: "Meine Highlights", left: "übrig", added: "Hinzugefügt", video: "Video" },
+    it: { label: "⭐ In evidenza gratis ({n}/2)", ph: "Link YouTube: video / shorts", btn: "🚀 Metti in evidenza", live: "🎉 LIVE! Il tuo video sarà visibile a tutti per 24 ore", limit: "🚫 Limite giornaliero raggiunto (2/2). Torna domani!", invalid: "❌ Non sembra un link YouTube. Incolla un link video/short.", fail: "❌ Impossibile caricare il video. Riprova.", mine: "I miei in evidenza", left: "rimasto", added: "Aggiunto", video: "Video" },
+    nl: { label: "⭐ Gratis uitgelicht ({n}/2)", ph: "YouTube-link: video / shorts", btn: "🚀 Video uitlichten", live: "🎉 LIVE! Je video is 24 uur voor iedereen zichtbaar", limit: "🚫 Daglimiet bereikt (2/2). Kom morgen terug!", invalid: "❌ Dit lijkt geen YouTube-link. Plak een video-/shorts-link.", fail: "❌ Video kon niet laden. Probeer opnieuw.", mine: "Mijn uitgelicht", left: "resterend", added: "Toegevoegd", video: "Video" },
+    pl: { label: "⭐ Wyróżnienie gratis ({n}/2)", ph: "Link YouTube: film / shorts", btn: "🚀 Wyróżnij film", live: "🎉 NA ŻYWO! Twój film będzie widoczny dla wszystkich przez 24 h", limit: "🚫 Dzienny limit osiągnięty (2/2). Wróć jutro!", invalid: "❌ To nie wygląda jak link YouTube. Wklej link filmu/shorta.", fail: "❌ Nie udało się wczytać filmu. Spróbuj ponownie.", mine: "Moje wyróżnione", left: "zostało", added: "Dodano", video: "Film" },
+    ru: { label: "⭐ Бесплатное выделение ({n}/2)", ph: "Ссылка YouTube: видео / shorts", btn: "🚀 Выделить видео", live: "🎉 В ЭФИРЕ! Ваше видео увидят все в течение 24 часов", limit: "🚫 Дневной лимит достигнут (2/2). Приходите завтра!", invalid: "❌ Это не ссылка YouTube. Вставьте ссылку на видео/short.", fail: "❌ Не удалось загрузить видео. Попробуйте снова.", mine: "Мои выделенные", left: "осталось", added: "Добавлено", video: "Видео" },
+    uk: { label: "⭐ Безкоштовне виділення ({n}/2)", ph: "Посилання YouTube: відео / shorts", btn: "🚀 Виділити відео", live: "🎉 В ЕФІРІ! Ваше відео побачать усі протягом 24 годин", limit: "🚫 Денний ліміт вичерпано (2/2). Завтра знову!", invalid: "❌ Це не посилання YouTube. Вставте посилання на відео/short.", fail: "❌ Не вдалося завантажити відео. Спробуйте ще раз.", mine: "Мої виділені", left: "залишилось", added: "Додано", video: "Відео" },
+    tr: { label: "⭐ Ücretsiz öne çıkar ({n}/2)", ph: "YouTube bağlantısı: video / shorts", btn: "🚀 Videomu öne çıkar", live: "🎉 CANLI! Videon 24 saat herkese görünecek", limit: "🚫 Günlük limite ulaşıldı (2/2). Yarın gel!", invalid: "❌ Bu bir YouTube bağlantısı değil. Video/shorts bağlantısı yapıştır.", fail: "❌ Video yüklenemedi. Tekrar dene.", mine: "Öne çıkanlarım", left: "kaldı", added: "Eklendi", video: "Video" },
+    fa: { label: "⭐ ویژه رایگان ({n}/2)", ph: "لینک یوتیوب: ویدیو / شورتس", btn: "🚀 ویدیو را ویژه کن", live: "🎉 زنده! ویدیوی شما ۲۴ ساعت به همه نشان داده می‌شود", limit: "🚫 سقف روزانه پر شد (2/2). فردا بیا!", invalid: "❌ این لینک یوتیوب نیست. لینک ویدیو/شورتس بگذار.", fail: "❌ ویدیو بارگذاری نشد. دوباره تلاش کن.", mine: "ویژه‌های من", left: "باقی", added: "اضافه شد", video: "ویدیو" },
+    id: { label: "⭐ Unggulan gratis ({n}/2)", ph: "Tautan YouTube: video / shorts", btn: "🚀 Unggulkan video saya", live: "🎉 LANGSUNG! Video Anda terlihat oleh semua selama 24 jam", limit: "🚫 Batas harian tercapai (2/2). Kembali besok!", invalid: "❌ Ini bukan tautan YouTube. Tempel tautan video/shorts.", fail: "❌ Video gagal dimuat. Coba lagi.", mine: "Unggulan saya", left: "tersisa", added: "Ditambahkan", video: "Video" },
+    ms: { label: "⭐ Pilihan percuma ({n}/2)", ph: "Pautan YouTube: video / shorts", btn: "🚀 Pilihkan video saya", live: "🎉 LANGSUNG! Video anda dilihat semua selama 24 jam", limit: "🚫 Had harian tercapai (2/2). Datang esok!", invalid: "❌ Ini bukan pautan YouTube. Tampal pautan video/shorts.", fail: "❌ Video gagal dimuatkan. Cuba lagi.", mine: "Pilihan saya", left: "baki", added: "Ditambah", video: "Video" },
+    ja: { label: "⭐ 無料おすすめ ({n}/2)", ph: "YouTubeリンク: 動画 / ショート", btn: "🚀 おすすめに載せる", live: "🎉 ライブ！あなたの動画が24時間みんなに表示されます", limit: "🚫 本日の上限に達しました（2/2）。また明日！", invalid: "❌ YouTubeのリンクではありません。動画/ショートのリンクを貼ってください。", fail: "❌ 動画を読み込めませんでした。もう一度お試しください。", mine: "マイおすすめ", left: "残り", added: "追加済み", video: "動画" },
+    ko: { label: "⭐ 무료 추천 ({n}/2)", ph: "YouTube 링크: 동영상 / 쇼츠", btn: "🚀 추천하기", live: "🎉 라이브! 내 동영상이 24시간 동안 모두에게 표시됩니다", limit: "🚫 일일 한도 도달 (2/2). 내일 다시 오세요!", invalid: "❌ YouTube 링크가 아닙니다. 동영상/쇼츠 링크를 붙여넣으세요.", fail: "❌ 동영상을 불러오지 못했습니다. 다시 시도하세요.", mine: "내 추천", left: "남음", added: "추가됨", video: "동영상" },
+    th: { label: "⭐ แนะนำฟรี ({n}/2)", ph: "ลิงก์ YouTube: วิดีโอ / ช็อตส์", btn: "🚀 แนะนำวิดีโอ", live: "🎉 สด! วิดีโอของคุณจะแสดงให้ทุกคนเห็น 24 ชั่วโมง", limit: "🚫 ถึงขีดจำกัดรายวันแล้ว (2/2) กลับมาพรุ่งนี้!", invalid: "❌ ไม่ใช่ลิงก์ YouTube วางลิงก์วิดีโอ/ช็อตส์", fail: "❌ โหลดวิดีโอไม่สำเร็จ ลองอีกครั้ง", mine: "แนะนำของฉัน", left: "เหลือ", added: "เพิ่มแล้ว", video: "วิดีโอ" },
+    vi: { label: "⭐ Nổi bật miễn phí ({n}/2)", ph: "Liên kết YouTube: video / shorts", btn: "🚀 Làm nổi bật video", live: "🎉 TRỰC TIẾP! Video của bạn hiển thị với mọi người trong 24 giờ", limit: "🚫 Đã đạt giới hạn ngày (2/2). Hẹn gặp lại ngày mai!", invalid: "❌ Đây không phải liên kết YouTube. Dán liên kết video/shorts.", fail: "❌ Không tải được video. Thử lại.", mine: "Nổi bật của tôi", left: "còn lại", added: "Đã thêm", video: "Video" },
+    zh: { label: "⭐ 免费精选 ({n}/2)", ph: "YouTube 链接：视频 / 短视频", btn: "🚀 设为精选", live: "🎉 直播中！您的视频将在 24 小时内向所有人展示", limit: "🚫 已达每日上限 (2/2)。明天再来！", invalid: "❌ 这不是 YouTube 链接。请粘贴视频/短视频链接。", fail: "❌ 视频加载失败。请重试。", mine: "我的精选", left: "剩余", added: "已添加", video: "视频" },
+    sw: { label: "⭐ Iliyoangaziwa bure ({n}/2)", ph: "Kiungo cha YouTube: video / shorts", btn: "🚀 Angazia video yangu", live: "🎉 MUBASHARA! Video yako itaonekana na wote kwa masaa 24", limit: "🚫 Kikomo cha kila siku kimefikiwa (2/2). Rudi kesho!", invalid: "❌ Hiki si kiungo cha YouTube. Weka kiungo cha video/shorts.", fail: "❌ Imeshindikana kupakia video. Jaribu tena.", mine: "Zilizoangaziwa zangu", left: "imebaki", added: "Imeongezwa", video: "Video" }
   };
   var myLang = "en";
   function T() {
@@ -385,20 +385,34 @@
   var DUP_ERR = { dup: true };
   /* duplicate message — 28 languages */
   var DUP_MSG = {
-    en: "❌ This video is already on your trending slot!", hi: "❌ ये वीडियो पहले से आपके ट्रेंडिंग slot पर है!",
-    ur: "❌ یہ ویڈیو پہلے ہی آپ کے ٹرینڈنگ slot پر ہے!", ar: "❌ هذا الفيديو موجود في الترند بالفعل!",
-    bn: "❌ এই ভিডিও ইতিমধ্যে আপনার ট্রেন্ডিং slot-এ আছে!", mr: "❌ हा व्हिडिओ आधीच तुमच्या ट्रेंडिंग slot वर आहे!",
-    pa: "❌ ਇਹ ਵੀਡੀਓ ਪਹਿਲਾਂ ਹੀ ਤੁਹਾਡੇ ਟ੍ਰੈਂਡਿੰਗ slot 'ਤੇ ਹੈ!", ta: "❌ இந்த வீடியோ ஏற்கனவே உங்கள் டிரெண்டிங் slot-ல் உள்ளது!",
-    te: "❌ ఈ వీడియో ఇప్పటికే మీ ట్రెండింగ్ slotలో ఉంది!", es: "❌ ¡Este vídeo ya está en tu slot de tendencia!",
-    fr: "❌ Cette vidéo est déjà dans votre slot de tendance !", pt: "❌ Este vídeo já está no seu slot de alta!",
-    de: "❌ Dieses Video ist bereits in deinem Trend-Slot!", it: "❌ Questo video è già nel tuo slot di tendenza!",
-    nl: "❌ Deze video staat al in je trend-slot!", pl: "❌ Ten film jest już w Twoim slocie na czas!",
-    ru: "❌ Это видео уже в вашем тренде!", uk: "❌ Це відео вже у вашому слоті тренду!",
-    tr: "❌ Bu video zaten trend slotunuzda!", fa: "❌ این ویدیو از قبل در اسلات ترند شماست!",
-    id: "❌ Video ini sudah di slot trending Anda!", ms: "❌ Video ini sudah dalam slot trending anda!",
-    ja: "❌ この動画はすでにトレンド枠に入っています！", ko: "❌ 이 동영상은 이미 트렌드 슬롯에 있습니다!",
-    th: "❌ วิดีโอนี้อยู่ในสล็อตยอดนิยมของคุณแล้ว!", vi: "❌ Video này đã có trong slot xu hướng của bạn!",
-    zh: "❌ 这个视频已经在你的热门位上了！", sw: "❌ Video hii iko kwenye slot yako ya mwenendo tayari!"
+    en: "❌ This video is already in your featured slot!",
+    hi: "❌ ये वीडियो पहले से आपके फ़ीचर्ड slot में है!",
+    ur: "❌ یہ ویڈیو پہلے ہی آپ کے نمایاں slot میں ہے!",
+    ar: "❌ هذا الفيديو مميّز بالفعل!",
+    bn: "❌ এই ভিডিও ইতিমধ্যে আপনার ফিচার্ড slot-এ আছে!",
+    mr: "❌ हा व्हिडिओ आधीच तुमच्या फीचर्ड slot मध्ये आहे!",
+    pa: "❌ ਇਹ ਵੀਡੀਓ ਪਹਿਲਾਂ ਹੀ ਤੁਹਾਡੇ ਫੀਚਰਡ slot 'ਤੇ ਹੈ!",
+    ta: "❌ இந்த வீடியோ ஏற்கனவே உங்கள் சிறப்பு slot-இல் உள்ளது!",
+    te: "❌ ఈ వీడియో ఇప్పటికే మీ ఫీచర్డ్ slotలో ఉంది!",
+    es: "❌ ¡Este vídeo ya está en tu espacio destacado!",
+    fr: "❌ Cette vidéo est déjà dans votre espace en vedette !",
+    pt: "❌ Este vídeo já está no seu espaço de destaque!",
+    de: "❌ Dieses Video ist bereits hervorgehoben!",
+    it: "❌ Questo video è già in evidenza!",
+    nl: "❌ Deze video is al uitgelicht!",
+    pl: "❌ Ten film jest już wyróżniony!",
+    ru: "❌ Это видео уже выделено!",
+    uk: "❌ Це відео вже виділено!",
+    tr: "❌ Bu video zaten öne çıkarıldı!",
+    fa: "❌ این ویدیو از قبل ویژه شده است!",
+    id: "❌ Video ini sudah diunggulkan!",
+    ms: "❌ Video ini sudah dipilih!",
+    ja: "❌ この動画はすでにおすすめに入っています！",
+    ko: "❌ 이 동영상은 이미 추천에 있습니다!",
+    th: "❌ วิดีโอนี้ถูกแนะนำแล้ว!",
+    vi: "❌ Video này đã được làm nổi bật!",
+    zh: "❌ 这个视频已经是精选了！",
+    sw: "❌ Video hii tayari imeangaziwa!"
   };
   function dupMsg() { return DUP_MSG[myLang] || DUP_MSG.en; }
   /* video APPEND karo (0→1→2). 2 hone par LIMIT_ERR.
@@ -536,7 +550,7 @@
       if (vtIds[cards[i].getAttribute("data-id")] && !cards[i].querySelector(".vt-feed-tag")) {
         var b = document.createElement("span");
         b.className = "vt-feed-tag";
-        b.textContent = "🔥 TRENDING";
+        b.textContent = "⭐ FEATURED";
         var thumbBtn = cards[i].querySelector(".thumb-btn");
         if (thumbBtn) thumbBtn.appendChild(b);
         else cards[i].appendChild(b);

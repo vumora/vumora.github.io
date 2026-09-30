@@ -1,7 +1,7 @@
 {
-  "name": "Vumora — Watch Trending Videos & Shorts",
+  "name": "Vumora — Discover Featured Videos & Shorts",
   "short_name": "Vumora",
-  "description": "Watch trending videos and shorts with official YouTube player.",
+  "description": "Watch featured videos and shorts with the official YouTube player.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -348,7 +348,7 @@ const I18N = {
     search: "Search Vumora", ready: "Ready", settings: "Settings", language: "Language", theme: "Theme",
     forYou: "For You", nowPlaying: "Now playing", nearYou: "near you", loading: "Loading…", videosWord: "videos",
     scrollMore: "scroll for more", feedBusy: "Feed busy — tap ↻", region: "Region", autoRegion: "Auto (my location)",
-    regionNote: "Home feed aapki location se. Search aapki query se.", bigScreen: "Big screen", smallScreen: "Small player",
+    regionNote: "Your home feed follows your location. Search follows what you type.", bigScreen: "Big screen", smallScreen: "Small player",
     closePlayer: "Close player", searchIn: "Search results for", notFound: "No videos found. Try another word.",
     openYt: "Open on YouTube", related: "Related videos"
   },
@@ -1772,7 +1772,7 @@ function getExactProductForVideo(title, author) {
   var t = (title || "").toLowerCase();
   
   var topic = words.slice(0, 3).join(" ");
-  if (!topic) topic = (author || "Trending Products");
+  if (!topic) topic = (author || "Featured Products");
 
   var category = "Matched to Video";
   var icon = "🛍️";
@@ -1783,10 +1783,10 @@ function getExactProductForVideo(title, author) {
 
   // 1. NEWS / CRIME / CONTROVERSY / VIRAL INCIDENTS
   if (/\barrest\b|\bpolice\b|\bcrime\b|\bcourt\b|court case|police case|\bincident\b|\bnews\b|\bkhabar\b|\bsamachar\b|\bbreaking\b|\baunty\b|\buncle\b|\bladai\b|\bfight\b|\bhungama\b|\bmodi\b|\brahul\b|\bbjp\b|\bcongress\b|\belection\b|\bscam\b|\bfraud\b|\bmurder\b|\baccident\b|\bpadtal\b/i.test(t)) {
-    category = "Trending Deals";
+    category = "Featured Deals";
     icon = "🔥";
-    badge = "Trending Offer";
-    dynamicTitle = "Today's Trending Deals & Top Offers on Amazon";
+    badge = "Featured Offer";
+    dynamicTitle = "Today's Featured Deals & Top Offers on Amazon";
     dynamicTagline = "Explore popular electronics, home & daily essentials on Amazon.in";
     searchKeywords = "todays deals trending products best offers";
   }
@@ -2078,10 +2078,10 @@ function getExactProductForVideo(title, author) {
   }
   // 26. SMART HIGH-CONVERTING GENERAL FALLBACK
   else {
-    category = "Trending Specials";
+    category = "Featured Specials";
     icon = "🛍️";
-    badge = "Trending Deals";
-    dynamicTitle = "Best Selling Products & Trending Offers on Amazon.in";
+    badge = "Featured Deals";
+    dynamicTitle = "Popular Products & Featured Offers on Amazon.in";
     dynamicTagline = "Explore popular electronics, home & fashion picks on Amazon.in";
     searchKeywords = "trending products best offers deals";
   }

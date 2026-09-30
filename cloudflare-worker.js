@@ -37,7 +37,7 @@ export default {
 
     // Default metadata fallback
     let title = "Watch Video on Vumora";
-    let desc = "Watch trending videos and viral shorts on Vumora.";
+    let desc = "Watch featured videos and shorts on Vumora.";
     let thumb = `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`;
 
     // Fetch video title and author via fast noembed endpoint
